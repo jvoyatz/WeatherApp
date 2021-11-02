@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/citiesFragment"
+        android:name="com.jvoyatz.weather.app.ui.cities.CitiesFragment"
+        android:label="@string/cities"
+        tools:layout="@layout/cities_fragment" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.jvoyatz.weather.app.ui.home.HomeFragment"
+        android:label="@string/home"
+        tools:layout="@layout/home_fragment" />
+
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="com.jvoyatz.weather.app.ui.preferences.PreferencesFragment"
+        android:label="@string/settings" />
+
+</navigation>
