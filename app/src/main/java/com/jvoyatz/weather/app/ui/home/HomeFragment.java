@@ -1,23 +1,20 @@
 package com.jvoyatz.weather.app.ui.home;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jvoyatz.weather.app.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.jvoyatz.weather.app.databinding.HomeFragmentBinding;
 
 /**
  * Home Screen of the Weather App.
- *
+ * <p>
  * Provides info regarding the forecast of the selected city.
  */
 public class HomeFragment extends Fragment {
