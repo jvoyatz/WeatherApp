@@ -1,8 +1,9 @@
 package com.jvoyatz.weather.app.di;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
+
+import com.google.gson.Gson;
+import com.jvoyatz.weather.app.api.config.LiveDataCallAdapterFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import timber.log.Timber;
 
 /**
  * There are 3 ways to add dependencies to the generated graph using Dagger Hilt.
@@ -55,8 +57,15 @@ public class NetworkModule {
 
     @Singleton
     @Provides
+    public static Gson provideGson(){
+        return new Gson();
+    }
+
+    @Singleton
+    @Provides
     @NotNull
-    public static Retrofit provideRetrofit(@NonNull OkHttpClient okHttpClient /*@NonNull LiveDataCallAdapterFactory liveDataCallAdapterFactory*/) {
+    public static Retrofit provideRetrofit(@NonNull OkHttpClient okHttpClient, @NonNull LiveDataCallAdapterFactory liveDataCallAdapterFactory) {
+        Timber.d("provideRetrofit() called with: okHttpClient = [" + okHttpClient + "], liveDataCallAdapterFactory = [" + liveDataCallAdapterFactory + "]");
         return new Retrofit.Builder()
                 .baseUrl(ENDPOINT)
                 .client(okHttpClient)
