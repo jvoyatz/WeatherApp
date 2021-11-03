@@ -28,7 +28,12 @@ public class AuthInterceptor implements Interceptor {
         Request request = chain.request();
 
         HttpUrl updatedUrl = request.url().newBuilder().addQueryParameter(QUERY_PARAM_TOKEN, TOKEN).build();
-        Request updatedRequest = request.newBuilder().url(updatedUrl).build();
+        Request updatedRequest =
+                request.newBuilder()
+//                    .header("Accept", "application/json")
+//                    .header("Content-Type", "application/json")
+                    .url(updatedUrl)
+                .build();
 
         return chain.proceed(updatedRequest);
     }
