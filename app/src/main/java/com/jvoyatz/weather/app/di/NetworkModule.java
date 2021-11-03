@@ -3,6 +3,7 @@ package com.jvoyatz.weather.app.di;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.jvoyatz.weather.app.api.WorldWeatherAPI;
 import com.jvoyatz.weather.app.api.config.LiveDataCallAdapterFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +52,7 @@ public class NetworkModule {
             /*@NonNull @Named("netInterceptor") Interceptor networkConnectionInterceptor*/) {
         return new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor(authInterceptor)
                 .retryOnConnectionFailure(true)
                 .build();
     }
@@ -65,13 +67,12 @@ public class NetworkModule {
     @Provides
     @NotNull
     public static Retrofit provideRetrofit(@NonNull OkHttpClient okHttpClient, @NonNull LiveDataCallAdapterFactory liveDataCallAdapterFactory) {
-        Timber.d("provideRetrofit() called with: okHttpClient = [" + okHttpClient + "], liveDataCallAdapterFactory = [" + liveDataCallAdapterFactory + "]");
         return new Retrofit.Builder()
                 .baseUrl(ENDPOINT)
                 .client(okHttpClient)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                //.addCallAdapterFactory(liveDataCallAdapterFactory)
+                .addCallAdapterFactory(liveDataCallAdapterFactory)
                 .build();
     }
 
@@ -83,4 +84,10 @@ public class NetworkModule {
                 .setLevel(HttpLoggingInterceptor.Level.BODY);
     }
 
+    @Singleton
+    @Provides
+    @NotNull
+    public static WorldWeatherAPI provideWorldWeatherService(Retrofit retrofit){
+        return retrofit.create(WorldWeatherAPI.class);
+    }
 }

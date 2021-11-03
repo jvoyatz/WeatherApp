@@ -11,6 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import timber.log.Timber;
 
 /**
@@ -19,6 +22,7 @@ import timber.log.Timber;
  * Tasks regarding network requests have their execution happening in a different thread pool than
  * tasks which need to save data locally
  */
+@Singleton
 public class AppExecutors {
 
     //not used since we don't need many network requests
@@ -32,6 +36,7 @@ public class AppExecutors {
     //executes runnables on the UI thread
     private final UiThreadExecutor ui;
 
+    @Inject
     public AppExecutors() {
         PriorityThreadFactory priorityThreadFactory = new PriorityThreadFactory(Process.THREAD_PRIORITY_BACKGROUND);
 
