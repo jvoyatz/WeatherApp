@@ -40,16 +40,34 @@ public class AppExecutors {
         ui = new UiThreadExecutor();
     }
 
-    public ExecutorService getDiskIO() {
+    public ExecutorService diskIO() {
         return diskIO;
     }
 
-    public ExecutorService getNetworkIO() {
+    public ExecutorService networkIO() {
         return networkIO;
     }
 
-    public UiThreadExecutor getUi() {
+    public Executor ui() {
         return ui;
+    }
+
+    public void destroy(){
+        try{
+            diskIO.shutdown();
+            networkIO.shutdown();
+        }catch (Exception e){
+            Timber.e(e);
+        }
+        finally {
+            if(!diskIO.isShutdown()){
+                diskIO.shutdownNow();
+            }
+
+            if(!networkIO.isShutdown()){
+                networkIO.shutdownNow();
+            }
+        }
     }
 
     /**
