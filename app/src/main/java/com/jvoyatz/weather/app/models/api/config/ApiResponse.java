@@ -23,7 +23,7 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.jvoyatz.weather.app.Constants;
 import com.jvoyatz.weather.app.models.api.error.ApiErrorWrapper;
-import com.jvoyatz.weather.app.models.exceptions.WeatherAppException;
+import com.jvoyatz.weather.app.models.WeatherAppException;
 
 import java.util.Collections;
 import java.util.Map;
