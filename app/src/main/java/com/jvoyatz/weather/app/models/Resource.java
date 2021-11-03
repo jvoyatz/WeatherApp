@@ -22,8 +22,6 @@ import static com.jvoyatz.weather.app.models.Status.SUCCESS;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.jvoyatz.weather.app.models.exceptions.WeatherAppException;
-
 /**
  * A generic class that holds a value with its loading status.
  * @param <T>
@@ -89,12 +87,14 @@ public class Resource<T> {
         return result;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Resource{" +
                 "status=" + status +
                 ", message='" + message + '\'' +
                 ", data=" + data +
+                ", weatherAppException=" + weatherAppException +
                 '}';
     }
 }

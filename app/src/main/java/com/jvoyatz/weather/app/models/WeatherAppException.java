@@ -1,4 +1,4 @@
-package com.jvoyatz.weather.app.models.exceptions;
+package com.jvoyatz.weather.app.models;
 
 import androidx.annotation.NonNull;
 
@@ -50,5 +50,14 @@ public class WeatherAppException extends Exception{
 
     public static WeatherAppException create(@NonNull String message, Throwable cause, Integer errorCode, List<ApiError> errorItems){
         return new WeatherAppException(message, cause, errorCode, errorItems);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "WeatherAppException{" +
+                "errorCode=" + errorCode +
+                ", errorItems=" + errorItems +
+                '}';
     }
 }
