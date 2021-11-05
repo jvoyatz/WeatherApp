@@ -26,7 +26,7 @@
         </activity>
         <provider
             android:exported="false"
-            android:name=".MySuggestionProvider"
+            android:name=".storage.WeatherSearchesSuggestionsProvider"
             android:authorities="com.jvoyatz.weather.app.SuggestionProvider" />
     </application>
 
