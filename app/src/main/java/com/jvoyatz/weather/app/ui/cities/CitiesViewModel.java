@@ -10,9 +10,12 @@ import androidx.lifecycle.ViewModel;
 
 import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.api.CityResponse;
+import com.jvoyatz.weather.app.models.api.entities.CityEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
 import com.jvoyatz.weather.app.repository.WeatherRepository;
 import com.jvoyatz.weather.app.util.AbsentLiveData;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,10 +49,10 @@ public class CitiesViewModel extends ViewModel {
      *
      * @return Livedata, returns the Livedata containing the results regarding user search
      */
-    public LiveData<Resource<CityResponse>> getSearchLiveData(){
-        return Transformations.switchMap(triggerSearchCityLiveData, new Function<String, LiveData<Resource<CityResponse>>>() {
+    public LiveData<Resource<List<CityEntity>>> getSearchLiveData(){
+        return Transformations.switchMap(triggerSearchCityLiveData, new Function<String, LiveData<Resource<List<CityEntity>>>>() {
             @Override
-            public LiveData<Resource<CityResponse>> apply(String input) {
+            public LiveData<Resource<List<CityEntity>>> apply(String input) {
                 if(!TextUtils.isEmpty(input)){
                     return cityRepository.searchCity(input);
                 }

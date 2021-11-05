@@ -3,7 +3,6 @@ package com.jvoyatz.weather.app;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,18 +14,19 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.gson.Gson;
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
-import com.jvoyatz.weather.app.util.AndroidUtil;
+import com.jvoyatz.weather.app.storage.WeatherSearchesSuggestionsProvider;
 
 import java.util.Objects;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
@@ -41,14 +41,17 @@ import timber.log.Timber;
 @AndroidEntryPoint
 public class WeatherActivity extends AppCompatActivity {
 
-    private SearchRecentSuggestions suggestions;
+    @Inject
+    SearchRecentSuggestions suggestions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         @NonNull ActivityWeatherBinding mBinding = ActivityWeatherBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-      // setSupportActionBar(mBinding.toolbar);
+        // setSupportActionBar(mBinding.toolbar);
+
         // top level destinations
         // home, saved cities
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.homeFragment, R.id.citiesFragment).build();
@@ -62,12 +65,6 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.weather_activity_menu, menu);
 
@@ -78,12 +75,9 @@ public class WeatherActivity extends AppCompatActivity {
         searchView.setIconifiedByDefault(true);
         searchView.setIconified(false);
 
-
         EditText editText = (EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(Color.WHITE);
         editText.setHintTextColor(Color.WHITE);
-
-        //searchView.setSubmitButtonEnabled(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -123,10 +117,19 @@ public class WeatherActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    /**
+     *  Handles submitted queries via the standard ACTION_SEARCH Intent
+     */
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            suggestions = new SearchRecentSuggestions(this, MySuggestionProvider.AUTHORITY, MySuggestionProvider.MODE);
             suggestions.saveRecentQuery(query, null);
         }
     }

@@ -12,11 +12,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.jvoyatz.weather.app.databinding.HomeFragmentBinding;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Home Screen of the Weather App.
  * <p>
  * Provides info regarding the forecast of the selected city.
  */
+@AndroidEntryPoint
 public class HomeFragment extends Fragment {
 
     private HomeViewModel mViewModel;
