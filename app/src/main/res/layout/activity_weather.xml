@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".WeatherActivity">
 
-    <!--
-        <com.google.android.material.appbar.AppBarLayout
+<!--        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -15,11 +14,10 @@
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="?attr/toolbarStyle"
+                android:theme="@style/ThemeOverlay.Toobar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize" />
-        </com.google.android.material.appbar.AppBarLayout>
-    -->
+        </com.google.android.material.appbar.AppBarLayout>-->
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"

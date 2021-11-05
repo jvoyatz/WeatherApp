@@ -3,4 +3,6 @@
     <string name="home">Αρχική</string>
     <string name="cities">Αποθηκευμένες Πόλεις</string>
     <string name="settings">Ρυθμίσεις</string>
+    <string name="search_hint">Αναζήτηση πόλεων</string>
+    <string name="search_title">Search</string>
 </resources>
