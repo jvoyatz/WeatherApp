@@ -30,9 +30,8 @@ public class AppExecutors {
 
     //pool size : 1, tasks are being executed sequentially
     private final ExecutorService diskIO;
-    //thread pool which can executes 3 tasks
+    //thread pool which can executes 2 tasks in parallel
     private final ExecutorService networkIO;
-
     //executes runnables on the UI thread
     private final UiThreadExecutor ui;
 
