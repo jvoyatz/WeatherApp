@@ -4,5 +4,11 @@
     <string name="cities">Αποθηκευμένες Πόλεις</string>
     <string name="settings">Ρυθμίσεις</string>
     <string name="search_hint">Αναζήτηση πόλεων</string>
-    <string name="search_title">Search</string>
+    <string name="search_title">Αναζήτηση</string>
+    <string name="city_population">"Πληθυσμός: %1$s"</string>
+    <string name="weather_forecast">Καιρός</string>
+    <string name="map">Χάρτης</string>
+    <string name="city_timezone">Ζώνη Ώρας : %1$s</string>
+    <string name="city_icon_content_descr">Εικονίδιο κατοικιών</string>
+    <string name="city_favorite_icon_content_description">Εικονίδιο για προσθήκη πόλης στα αγαπημένα</string>
 </resources>
