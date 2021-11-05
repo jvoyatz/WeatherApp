@@ -1,18 +1,24 @@
 package com.jvoyatz.weather.app.di;
 
-import android.os.Handler;
-import android.os.Looper;
+import android.content.Context;
+import android.provider.SearchRecentSuggestions;
+
+import com.jvoyatz.weather.app.storage.WeatherSearchesSuggestionsProvider;
+
+import javax.inject.Inject;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 
-@Module
 @InstallIn(ActivityComponent.class)
+@Module
 public class ActivityModule {
+
     @Provides
-    public static Handler provideHandler() {
-        return new Handler(Looper.getMainLooper());
+    public static SearchRecentSuggestions provideSearchRecentSuggestions(@ApplicationContext Context context){
+        return new SearchRecentSuggestions(context, WeatherSearchesSuggestionsProvider.AUTHORITY, WeatherSearchesSuggestionsProvider.MODE);
     }
 }

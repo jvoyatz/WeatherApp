@@ -11,6 +11,5 @@ public class AbsentObserver<T> implements Observer<T> {
     }
 
     @Override
-    public void onChanged(T o) {
-    }
+    public void onChanged(T o) {}
 }
