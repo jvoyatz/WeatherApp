@@ -33,5 +33,4 @@ public abstract class BindsNetworkModule {
     @Binds
     @Named("authInterceptor")
     public abstract Interceptor bindAuthInterceptor(AuthInterceptor authInterceptor);
-
 }
