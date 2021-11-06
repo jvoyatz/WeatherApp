@@ -9,10 +9,8 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.jvoyatz.weather.app.models.Resource;
-import com.jvoyatz.weather.app.models.api.CityResponse;
-import com.jvoyatz.weather.app.models.api.entities.CityEntity;
+import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
-import com.jvoyatz.weather.app.repository.WeatherRepository;
 import com.jvoyatz.weather.app.util.AbsentLiveData;
 
 import java.util.List;
@@ -54,7 +52,7 @@ public class CitiesViewModel extends ViewModel {
             @Override
             public LiveData<Resource<List<CityEntity>>> apply(String input) {
                 if(!TextUtils.isEmpty(input)){
-                    return cityRepository.searchCity(input);
+                   // return cityRepository.searchCity(input);
                 }
                 return AbsentLiveData.create();
             }

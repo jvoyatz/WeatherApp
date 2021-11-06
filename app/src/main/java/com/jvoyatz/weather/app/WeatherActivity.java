@@ -7,22 +7,24 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.text.TextUtils;
-import android.view.Menu;
+import android.util.Pair;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.gson.Gson;
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
-import com.jvoyatz.weather.app.storage.WeatherSearchesSuggestionsProvider;
+import com.jvoyatz.weather.app.models.Resource;
+import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
 
 import java.util.Objects;
 
@@ -39,18 +41,20 @@ import timber.log.Timber;
  * in this activity. A hilt component will be generated for this class.
  */
 @AndroidEntryPoint
-public class WeatherActivity extends AppCompatActivity {
+public class WeatherActivity extends AppCompatActivity implements CitiesCursorAdapter.OnCityClickListener{
 
     @Inject
     SearchRecentSuggestions suggestions;
+    private WeatherViewModel mWeatherViewModel;
+    private CitiesCursorAdapter mAdapter;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         @NonNull ActivityWeatherBinding mBinding = ActivityWeatherBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-        // setSupportActionBar(mBinding.toolbar);
+        setSupportActionBar(mBinding.toolbar);
 
         // top level destinations
         // home, saved cities
@@ -61,23 +65,37 @@ public class WeatherActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, navController);
 
-        handleIntent(getIntent());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.weather_activity_menu, menu);
-
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(true);
-        searchView.setIconified(false);
 
+        searchView = mBinding.searchview;
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        //searchView.setIconified(false);
+
+
+        //setting color of text
         EditText editText = (EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(Color.WHITE);
         editText.setHintTextColor(Color.WHITE);
+
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+            @Override
+            public boolean onSuggestionClick(int position) {
+                try{
+                    Cursor cursor = (Cursor) mAdapter.getItem(position);
+                    String txt = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    searchView.setQuery(txt, true);
+                    return true;
+                }catch (Exception e){
+                    Timber.e(e);
+                }
+                return false;
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -87,36 +105,70 @@ public class WeatherActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                if(newText.length() < 3 ) {
+                    return false;
+                }
+
+                mWeatherViewModel.searchForCitiesSuggestions(newText);
+                return true;
             }
         });
 
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                return false;
-            }
+        handleIntent(getIntent());
 
+        mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
+        mWeatherViewModel.getCitiesSuggestions().observe(this, new Observer<Resource<Cursor>>() {
             @Override
-            public boolean onSuggestionClick(int position) {
-                try {
-                    Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
-                    int index = cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1);
-                    String suggestion = cursor.getString(index);
-                    if(!TextUtils.isEmpty(suggestion)){
-                        searchView.setQuery(suggestion, false);
-                        return true;
+            public void onChanged(Resource<Cursor> cursorResource) {
+                Timber.d("onChanged() called with: cursorResource = [" + cursorResource + "]");
+                try{
+                    switch (cursorResource.status){
+                        case SUCCESS:
+//                            Cursor cursor = cursorResource.data;
+//                            Cursor oldCursor = mAdapter.swapCursor(cursor);
+//                            if(oldCursor != null)
+//                                oldCursor.close();
+
+                            mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, searchView, WeatherActivity.this);
+                            searchView.setSuggestionsAdapter(mAdapter);
+                            break;
+                        case ERROR:
+                            Toast.makeText(WeatherActivity.this, R.string.cities_suggestions_no_results_found, Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            break;
                     }
-                } catch (IllegalArgumentException e) {
+                }catch (Exception e){
                     Timber.e(e);
                 }
-                return false;
             }
         });
 
-        return super.onCreateOptionsMenu(menu);
+        mWeatherViewModel.getFavoriteCityResultLiveData().observe(this, pair -> {
+            if(pair != null && pair.first){
+                mWeatherViewModel.searchForCitiesSuggestions(mBinding.searchview.getQuery().toString());
+                if(pair.second != null && pair.second)
+                    Toast.makeText(WeatherActivity.this, R.string.city_favorite_success, Toast.LENGTH_SHORT).show();
+                else if(pair.second != null && !pair.second)
+                    Toast.makeText(WeatherActivity.this, R.string.city_not_favorite_success, Toast.LENGTH_SHORT).show();
+            }else if(pair != null && !pair.first){
+                Toast.makeText(WeatherActivity.this, R.string.city_favorite_error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.weather_activity_menu, menu);
+//
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//
+//        return super.onPrepareOptionsMenu(menu);
+//    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -128,9 +180,14 @@ public class WeatherActivity extends AppCompatActivity {
      *  Handles submitted queries via the standard ACTION_SEARCH Intent
      */
     private void handleIntent(Intent intent) {
+        Timber.d("handleIntent() called with: intent = [" + intent + "]");
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            suggestions.saveRecentQuery(query, null);
+
         }
+    }
+
+    @Override
+    public void onCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite){
+        mWeatherViewModel.markCityAsFavorite(cityName, region, country);
     }
 }

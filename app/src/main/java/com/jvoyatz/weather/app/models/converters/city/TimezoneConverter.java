@@ -1,7 +1,7 @@
 package com.jvoyatz.weather.app.models.converters.city;
 
 import com.jvoyatz.weather.app.models.api.city.Timezone;
-import com.jvoyatz.weather.app.models.api.entities.TimezoneEntity;
+import com.jvoyatz.weather.app.models.entities.TimezoneEntity;
 import com.jvoyatz.weather.app.models.converters.TypeConverter;
 
 import javax.inject.Inject;

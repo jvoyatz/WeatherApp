@@ -1,8 +1,6 @@
-package com.jvoyatz.weather.app.models.api.entities;
+package com.jvoyatz.weather.app.models.entities;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import javax.annotation.Nonnull;
 

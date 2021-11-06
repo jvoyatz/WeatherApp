@@ -24,10 +24,11 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <provider
+<!-- used custom adapter for suggestions finally -->
+<!--        <provider
             android:exported="false"
             android:name=".storage.WeatherSearchesSuggestionsProvider"
-            android:authorities="com.jvoyatz.weather.app.SuggestionProvider" />
+            android:authorities="com.jvoyatz.weather.app.SuggestionProvider" />-->
     </application>
 
 

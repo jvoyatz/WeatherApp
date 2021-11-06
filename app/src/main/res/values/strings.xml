@@ -26,4 +26,9 @@
     <string name="city_timezone">Timezone : %1$s</string>
     <string name="city_icon_content_descr">Icon which shows city buildings</string>
     <string name="city_favorite_icon_content_description">Icon used to mark this city as favorite</string>
+    <string name="cities_suggestions_no_results_found">No results found!</string>
+    <string name="city_selected_msg">%1$s selected!</string>
+    <string name="city_favorite_success">This city has been added to the list of favorites cities</string>
+    <string name="city_favorite_error">An error occurred while adding city to the favorites.</string>
+    <string name="city_not_favorite_success">City removed from favorites</string>
 </resources>

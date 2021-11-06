@@ -11,4 +11,9 @@
     <string name="city_timezone">Ζώνη Ώρας : %1$s</string>
     <string name="city_icon_content_descr">Εικονίδιο κατοικιών</string>
     <string name="city_favorite_icon_content_description">Εικονίδιο για προσθήκη πόλης στα αγαπημένα</string>
+    <string name="cities_suggestions_no_results_found">Δεν βρέθηκαν αποτελέσματα!</string>
+    <string name="city_selected_msg">Επιλέχθηκε η πόλη: %1$s</string>
+    <string name="city_favorite_success">Η πόλη προστέθηκε στα αγαπημένα</string>
+    <string name="city_favorite_error">Προέκυψε σφάλμα κατά την αποθήκευση της πόλης στα αγαπημένα</string>
+    <string name="city_not_favorite_success">Η πόλη αφαιρέθηκε από τα αγαπημένα</string>
 </resources>

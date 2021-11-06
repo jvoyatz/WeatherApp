@@ -1,28 +1,30 @@
-package com.jvoyatz.weather.app.models.api.entities;
+package com.jvoyatz.weather.app.models.entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Entity;
-import androidx.room.Fts4;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Fts4
-@Entity
+@Entity(primaryKeys = {"_id", "name", "region", "country"})
 public class CityEntity {
-    // Specifying a primary key for an FTS-table-backed entity is optional, but
-    // if you include one, it must use this type and column name.
-    @PrimaryKey
-  //  @ColumnInfo(name = "rowid")
-    public int rowid;
+    public int _id;
 
+    @NonNull
     private String name;
+    @NonNull
     private String country;
+    @NonNull
     private String region;
     private String latitude;
     private String longitude;
     private String population;
     private String weatherUrl;
+
     @Embedded
     private TimezoneEntity timezone;
+
+    private boolean isFavorite;
 
     public CityEntity() {
     }
@@ -70,8 +72,8 @@ public class CityEntity {
         this.timezone = timezone;
     }
 
-    public int getRowid() {
-        return rowid;
+    public int get_id() {
+        return _id;
     }
 
     public String getName() {
@@ -106,10 +108,18 @@ public class CityEntity {
         return timezone;
     }
 
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
     @Override
     public String toString() {
         return "CityEntity{" +
-                "rowid=" + rowid +
+                "_id=" + _id +
                 ", name='" + name + '\'' +
                 ", country='" + country + '\'' +
                 ", region='" + region + '\'' +

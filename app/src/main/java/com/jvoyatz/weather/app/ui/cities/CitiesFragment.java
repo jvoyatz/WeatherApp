@@ -1,11 +1,9 @@
 package com.jvoyatz.weather.app.ui.cities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,8 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.jvoyatz.weather.app.databinding.CitiesFragmentBinding;
 import com.jvoyatz.weather.app.models.Resource;
-import com.jvoyatz.weather.app.models.api.CityResponse;
-import com.jvoyatz.weather.app.models.api.entities.CityEntity;
+import com.jvoyatz.weather.app.models.entities.CityEntity;
 
 import java.util.List;
 

@@ -1,8 +1,5 @@
 package com.jvoyatz.weather.app.models.converters;
 
-import com.jvoyatz.weather.app.models.api.city.CitySearchApi;
-import com.jvoyatz.weather.app.models.api.entities.CityEntity;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

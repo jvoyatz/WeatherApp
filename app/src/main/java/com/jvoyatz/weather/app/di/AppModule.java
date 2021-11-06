@@ -23,7 +23,9 @@ public class AppModule{
     @Provides
     public static WeatherDatabase providesWeatherDB(@ApplicationContext Context context){
         WeatherDatabase db = Room.databaseBuilder(context,
-                WeatherDatabase.class, "weather-app-database").build();
+                WeatherDatabase.class, "weather-app-database")
+                //.addMigrations(WeatherDatabase.MIGRATION_1_2)
+                .build();
 
         return db;
     }
