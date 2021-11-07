@@ -22,6 +22,8 @@ import com.jvoyatz.weather.app.models.converters.city.CityConverter;
 import com.jvoyatz.weather.app.storage.db.CityDao;
 import com.jvoyatz.weather.app.util.CursorLiveData;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,10 +31,11 @@ import javax.inject.Singleton;
 
 import timber.log.Timber;
 
-@Singleton
+
 /**
  * Repository class that handles all the tasks regarding Cities entities
  */
+@Singleton
 public class CityRepository {
     WorldWeatherAPI worldWeatherService;
     AppExecutors appExecutors;
@@ -47,50 +50,6 @@ public class CityRepository {
         this.cityConverter = cityConverter;
     }
 
-    /**
-     * Searches for a city given as argument if it is not found in the database
-     *
-     * @param query the city to be searched in the remoteAPI
-     * @return LiveData instance, holding the response from the server
-     */
-/*    public LiveData<Resource<List<CityEntity>>> searchCity(@NonNull String query){
-       return new NetworkBoundResource<List<CityEntity>, CityResponse>(appExecutors){
-
-           @Override
-           protected void saveCallResult(@NonNull CityResponse item) {
-               try {
-                   if(item.getSearchApi() != null){
-                       List<CityEntity> cities = cityConverter.toEntities(item.getSearchApi().getResult());
-                       cityDao.insertAll(cities);
-                   }
-               } catch (Exception e) {
-                   Timber.e(e);
-               }
-           }
-
-           @Override
-           protected boolean shouldFetch(@Nullable List<CityEntity> data) {
-               return Objects.isEmpty(data);
-           }
-
-           @NonNull
-           @Override
-           protected LiveData<List<CityEntity>> loadFromDb() {
-               try {
-                   return cityDao.findByName(query);
-               } catch (Exception e) {
-                   Timber.e(e);
-                   return AbsentLiveData.create();
-               }
-           }
-
-           @NonNull
-           @Override
-           protected LiveData<ApiResponse<CityResponse>> createCall() {
-               return worldWeatherService.getCity(query, Constants.QUERY_PARAM_SHOW_LOCALTIME_VALUE_YES, Constants.QUERY_PARAM_FORMAT);
-           }
-       }.asLiveData();
-    }*/
 
     /**
      * Checks whether there are cities matching user's in the local database.
@@ -179,8 +138,28 @@ public class CityRepository {
             }
         });
 
-
         return resultLiveData;
+    }
+
+    public LiveData<List<CityEntity>> getFavoriteCities(){
+        return new LiveData<List<CityEntity>>() {
+            @Override
+            protected void onActive() {
+                super.onActive();
+                appExecutors.diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            List<CityEntity> favoriteCities = cityDao.getFavoriteCities();
+                            postValue(favoriteCities);
+                        } catch (Exception e) {
+                            Timber.e(e);
+                            postValue(Collections.emptyList());
+                        }
+                    }
+                });
+            }
+        };
     }
 // used for suggestions, commented out block of code
 //    MediatorLiveData<Resource<Cursor>> result = new MediatorLiveData<>();

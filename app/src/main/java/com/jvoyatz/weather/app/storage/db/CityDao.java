@@ -30,8 +30,9 @@ public interface CityDao {
     @Query("SELECT * FROM CityEntity WHERE name LIKE '%' || :city || '%' AND  region LIKE '%' ||  :region || '%' AND country LIKE '%' || :country || '%' limit 1")
     LiveData<CityEntity> findByMultipleCriteria(@NonNull String city, @NonNull String region, @NonNull String country);
 
-    @Query("SELECT * FROM CityEntity WHERE name LIKE '%' || :query || '%' OR  region LIKE '%' ||  :query || '%' OR country LIKE '%' || :query || '%'")
-    LiveData<List<CityEntity>> findByName(String query);
+    @Query("SELECT * FROM CityEntity WHERE isFavorite = 1")
+    List<CityEntity> getFavoriteCities();
+
 
 //    @Query("SELECT * FROM FavoriteCityEntity")
 //    LiveData<List<FavoriteCityEntity>> getAllFavoriteCities();

@@ -12,6 +12,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.jvoyatz.weather.app.models.Resource;
+import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
 import com.jvoyatz.weather.app.util.AbsentLiveData;
 
@@ -29,12 +30,14 @@ public class WeatherViewModel extends ViewModel {
     private final CityRepository cityRepository;
     private final MutableLiveData<String> citySearchQueryLiveData;
     private final MutableLiveData<Triple<String, String, String>> favoriteCityTriggerLiveData;
+    private final MutableLiveData<CityEntity> currentCityLiveData;
 
     @Inject
     public WeatherViewModel(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
         citySearchQueryLiveData = new MutableLiveData<>();
         favoriteCityTriggerLiveData = new MutableLiveData<>();
+        currentCityLiveData = new MutableLiveData<>();
     }
 
     /**
@@ -86,5 +89,13 @@ public class WeatherViewModel extends ViewModel {
                 return AbsentLiveData.create();
             }
         });
+    }
+
+    public MutableLiveData<CityEntity> getCurrentCityLiveData() {
+        return currentCityLiveData;
+    }
+
+    public void setCurrentCityLiveData(CityEntity cityEntity){
+        currentCityLiveData.postValue(cityEntity);
     }
 }

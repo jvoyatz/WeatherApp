@@ -25,6 +25,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
 import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
+import com.jvoyatz.weather.app.util.AbsentLiveData;
+import com.jvoyatz.weather.app.util.AbsentObserver;
 
 import java.util.Objects;
 
@@ -155,6 +157,8 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                 Toast.makeText(WeatherActivity.this, R.string.city_favorite_error, Toast.LENGTH_SHORT).show();
             }
         });
+
+        mWeatherViewModel.getCurrentCityLiveData().observe(this, AbsentObserver.create());
     }
 
 //    @Override

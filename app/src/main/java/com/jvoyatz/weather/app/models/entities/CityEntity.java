@@ -1,10 +1,13 @@
 package com.jvoyatz.weather.app.models.entities;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
+
+import java.util.Objects;
+
 
 @Entity(primaryKeys = {"_id", "name", "region", "country"})
 public class CityEntity {
@@ -30,7 +33,6 @@ public class CityEntity {
     }
 
     public CityEntity(Builder builder) {
-
         name = builder.name;
         country = builder.country;
         region = builder.region;
@@ -38,17 +40,18 @@ public class CityEntity {
         longitude = builder.longitude;
         population = builder.population;
         weatherUrl = builder.weatherUrl;
+        timezone = builder.timezone;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(@NonNull String country) {
         this.country = country;
     }
 
-    public void setRegion(String region) {
+    public void setRegion(@NonNull String region) {
         this.region = region;
     }
 
@@ -72,18 +75,17 @@ public class CityEntity {
         this.timezone = timezone;
     }
 
-    public int get_id() {
-        return _id;
-    }
-
+    @NonNull
     public String getName() {
         return name;
     }
 
+    @NonNull
     public String getCountry() {
         return country;
     }
 
+    @NonNull
     public String getRegion() {
         return region;
     }
@@ -116,6 +118,7 @@ public class CityEntity {
         isFavorite = favorite;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "CityEntity{" +
@@ -131,10 +134,31 @@ public class CityEntity {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CityEntity that = (CityEntity) o;
+
+        return isFavorite == that.isFavorite
+                && TextUtils.equals(name, that.name)
+                && TextUtils.equals(country, that.country)
+                && TextUtils.equals(region, that.region)
+                && TextUtils.equals(latitude, that.latitude)
+                && TextUtils.equals(longitude, that.longitude)
+                && TextUtils.equals(population, that.population)
+                && TextUtils.equals(weatherUrl, that.weatherUrl)
+                && timezone != null && timezone.equals(that.timezone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, country, region, latitude, longitude, population, weatherUrl, timezone, isFavorite);
+    }
+
     public static Builder builder(){
         return new Builder();
     }
-
 
     public static final class Builder {
         String name;

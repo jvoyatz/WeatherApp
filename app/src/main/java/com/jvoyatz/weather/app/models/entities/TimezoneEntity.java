@@ -1,6 +1,11 @@
 package com.jvoyatz.weather.app.models.entities;
 
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
+
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -34,12 +39,28 @@ public class TimezoneEntity {
 		this.zone = zone;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "TimezoneEntity{" +
 				"offset='" + offset + '\'' +
 				", zone='" + zone + '\'' +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TimezoneEntity that = (TimezoneEntity) o;
+
+		return TextUtils.equals(offset, that.offset)
+				&& TextUtils.equals(zone, that.zone);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(offset, zone);
 	}
 
 	public static Builder builder() {

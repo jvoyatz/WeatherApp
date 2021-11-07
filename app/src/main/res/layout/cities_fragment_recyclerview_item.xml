@@ -1,152 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+        <variable
+            name="city"
+            type="com.jvoyatz.weather.app.models.entities.CityEntity" />
+
+        <variable
+            name="handler"
+            type="com.jvoyatz.weather.app.ui.cities.CitiesHandler" />
+
+        <variable
+            name="viewmodel"
+            type="com.jvoyatz.weather.app.ui.cities.CitiesViewModel" />
+
+        <import type="com.jvoyatz.weather.app.util.Utils"/>
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:onClick="@{() -> handler.onViewClicked(city, viewmodel.currentCityLiveData)}"
+        item="@{city}"
+        currentSelectedItem="@{viewmodel.currentCityLiveData}"
+        android:layout_margin="8dp">
 
-        <TextView
-            android:id="@+id/cityName"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toTopOf="@+id/region"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="Paris" />
+            android:background="@drawable/background_selector"
+            android:padding="8dp">
 
-        <TextView
-            android:id="@+id/region"
-            style="@style/TextAppearance.MaterialComponents.Body2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="?android:attr/textColorSecondary"
-            app:layout_constraintBottom_toTopOf="@+id/population"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cityName"
-            tools:text="Texas" />
+            <TextView
+                android:id="@+id/cityName"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toTopOf="@+id/region"
+                app:layout_constraintStart_toEndOf="@id/city_favorite"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@{city.name}"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Paris" />
 
-        <TextView
-            android:id="@+id/comma"
-            style="@style/TextAppearance.MaterialComponents.Body2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/comma"
-            android:textColor="?android:attr/textColorSecondary"
-            app:layout_constraintBottom_toBottomOf="@+id/region"
-            app:layout_constraintStart_toEndOf="@+id/region"
-            app:layout_constraintTop_toTopOf="@+id/region" />
+            <TextView
+                android:id="@+id/region"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:text="@{city.region}"
+                app:layout_constraintBottom_toTopOf="@+id/population"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cityName"
+                tools:text="Texas" />
 
-        <TextView
-            android:id="@+id/country"
-            style="@style/TextAppearance.MaterialComponents.Body2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="?android:attr/textColorSecondary"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toBottomOf="@+id/region"
-            app:layout_constraintStart_toEndOf="@+id/comma"
-            app:layout_constraintTop_toTopOf="@+id/region"
-            tools:text="United States Of America" />
+            <TextView
+                android:id="@+id/comma"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/comma"
+                android:textColor="?android:attr/textColorSecondary"
+                app:layout_constraintBottom_toBottomOf="@+id/region"
+                app:layout_constraintStart_toEndOf="@+id/region"
+                app:layout_constraintTop_toTopOf="@+id/region" />
 
-        <TextView
-            android:id="@+id/population"
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/city_population"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/region"
-            tools:text="Population: 400000" />
+            <TextView
+                android:id="@+id/country"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="?android:attr/textColorSecondary"
+                android:text="@{city.country}"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="@+id/region"
+                app:layout_constraintStart_toEndOf="@+id/comma"
+                app:layout_constraintTop_toTopOf="@+id/region"
+                tools:text="United States Of America" />
 
-        <ImageView
-            android:id="@+id/cityIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/city_icon_content_descr"
-            app:srcCompat="@drawable/baseline_location_city_black_24dp" />
+            <TextView
+                android:id="@+id/population"
+                style="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/city_population(city.population)}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/region"
+                tools:text="Population: 400000" />
 
-        <TextView
-            android:id="@+id/timezone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/city_timezone"
-            app:layout_constraintStart_toStartOf="@+id/cityName"
-            app:layout_constraintTop_toBottomOf="@id/population"
-            style="@style/TextAppearance.MaterialComponents.Caption"/>
+            <ImageView
+                android:id="@+id/cityIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/city_icon_content_descr"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="@+id/date"
+                app:layout_constraintStart_toStartOf="@+id/date"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_location_city_black_24dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/city_weather_forecast_btn"
-            style="?attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/weather_forecast"
-            app:layout_constraintTop_toBottomOf="@id/timezone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            <TextView
+                android:id="@+id/timezone"
+                style="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/city_timezone(city.timezone.zone)}"
+                app:layout_constraintStart_toStartOf="@+id/city_favorite"
+                app:layout_constraintTop_toBottomOf="@id/population" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/city_mapview_btn"
-            style="?attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="2dp"
-            android:text="@string/map"
-            app:layout_constraintStart_toEndOf="@id/city_weather_forecast_btn"
-            app:layout_constraintTop_toBottomOf="@+id/timezone" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/city_weather_forecast_btn"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/weather_forecast"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/timezone" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/city_mapview_btn"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/map"
+                app:layout_constraintStart_toEndOf="@id/city_weather_forecast_btn"
+                app:layout_constraintTop_toBottomOf="@+id/timezone" />
 
-        <!--   app:layout_constraintEnd_toEndOf="@+id/cityIcon"
-            app:layout_constraintStart_toStartOf="@+id/cityIcon"
-            app:layout_constraintTop_toBottomOf="@id/time"
-            app:layout_constraintBottom_toBottomOf="@id/timezone"-->
+            <ImageView
+                android:id="@+id/city_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> handler.onFavoriteIconClick(city)}"
+                bind:isFavorite="@{city.isFavorite}"
+                android:contentDescription="@string/city_favorite_icon_content_description"
+                app:layout_constraintBottom_toBottomOf="@+id/cityName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/cityName"
+                app:srcCompat="@drawable/baseline_favorite_border_black_24dp" />
 
+            <TextView
+                android:id="@+id/date"
+                style="@style/TextAppearance.MaterialComponents.Overline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constrainedWidth="true"
+                android:textColor="@color/material_on_surface_emphasis_medium"
+                android:textStyle="italic"
+                android:padding="1dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@{Utils.formatDate(Utils.getDateTimeByZone(city.timezone.zone))}"
+                app:layout_constraintTop_toBottomOf="@+id/cityIcon"
+                tools:text="17:32" />
 
-        <ImageView
-            android:id="@+id/city_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/cityName"
-            app:layout_constraintStart_toEndOf="@+id/cityName"
-            app:layout_constraintTop_toTopOf="@+id/cityName"
-            android:contentDescription="@string/city_favorite_icon_content_description"
-            app:srcCompat="@drawable/baseline_favorite_border_black_24dp" />
-
-        <TextView
-            android:id="@+id/time"
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/material_on_surface_emphasis_medium"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toEndOf="@+id/cityIcon"
-            app:layout_constraintStart_toStartOf="@+id/cityIcon"
-            app:layout_constraintTop_toBottomOf="@+id/cityIcon"
-            tools:text="17:32" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</com.google.android.material.card.MaterialCardView>
+            <TextView
+                android:id="@+id/time"
+                style="@style/TextAppearance.MaterialComponents.Overline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constrainedWidth="true"
+                android:textColor="@color/material_on_surface_emphasis_medium"
+                android:textStyle="italic"
+                android:padding="1dp"
+                android:gravity="center"
+                android:text="@{Utils.formatTime(Utils.getDateTimeByZone(city.timezone.zone))}"
+                app:layout_constraintEnd_toEndOf="@+id/date"
+                app:layout_constraintStart_toStartOf="@+id/date"
+                app:layout_constraintTop_toBottomOf="@+id/date"
+                tools:text="17:32" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

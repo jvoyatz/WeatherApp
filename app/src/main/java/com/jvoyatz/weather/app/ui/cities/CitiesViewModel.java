@@ -1,17 +1,12 @@
 package com.jvoyatz.weather.app.ui.cities;
 
-import android.text.TextUtils;
-
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
-import com.jvoyatz.weather.app.util.AbsentLiveData;
 
 import java.util.List;
 
@@ -21,41 +16,47 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class CitiesViewModel extends ViewModel {
-
     private final CityRepository cityRepository;
-
-    private final MutableLiveData<String> triggerSearchCityLiveData;
+    private final MutableLiveData<Boolean> triggerRefreshFavoriteCities;
+    public MutableLiveData<CityEntity> currentCityLiveData;
 
     @Inject
     public CitiesViewModel(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
-        triggerSearchCityLiveData = new MutableLiveData<>();
+        triggerRefreshFavoriteCities = new MutableLiveData<>();
     }
 
     /**
-     * Called when user selects to search the written name in the search box
-     * @param query String, the city, region or area name
+     * Returns a livedata instance containing a list of CityEntity objects
      */
-    public void triggerSearch(String query){
-        triggerSearchCityLiveData.postValue(query);
+    public LiveData<List<CityEntity>> getFavoritesCitiesLiveData(){
+        return Transformations.switchMap(triggerRefreshFavoriteCities, input -> cityRepository.getFavoriteCities());
     }
 
     /**
-     * {@link Transformations#switchMap(LiveData, Function)} is being used to trigger the invoking of the
-     * {@link CityRepository#searchCity(String)} from {@link CityRepository}.
-     * This happens if the triggerSearchCityLiveData has a non-null value
-     *
-     * @return Livedata, returns the Livedata containing the results regarding user search
+     * Sets the value of triggerRefreshFavoriteCities equals to true, so as to trigger the switchMap
+     * used in the getFavoritesCitiesLiveData() method
      */
-    public LiveData<Resource<List<CityEntity>>> getSearchLiveData(){
-        return Transformations.switchMap(triggerSearchCityLiveData, new Function<String, LiveData<Resource<List<CityEntity>>>>() {
-            @Override
-            public LiveData<Resource<List<CityEntity>>> apply(String input) {
-                if(!TextUtils.isEmpty(input)){
-                   // return cityRepository.searchCity(input);
-                }
-                return AbsentLiveData.create();
-            }
-        });
+    public void refreshFavoriteCitiesList(){
+        triggerRefreshFavoriteCities.postValue(true);
+    }
+
+    /**
+     * Sets the currentCityLiveData field.
+     * @param currentCityLiveData the already initiated livedata instance
+     */
+    public void setCurrentCitySelectedLiveData(MutableLiveData<CityEntity> currentCityLiveData) {
+        this.currentCityLiveData = currentCityLiveData;
+    }
+
+    /**
+     * Returns the livedata holder holding the value of the selected city
+     * at the moment.
+     */
+    public MutableLiveData<CityEntity> getCurrentCitySelectedLiveData() {
+        if(currentCityLiveData == null){
+            currentCityLiveData = new MutableLiveData<>();
+        }
+        return currentCityLiveData;
     }
 }

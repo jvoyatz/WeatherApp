@@ -16,4 +16,6 @@
     <string name="city_favorite_success">Η πόλη προστέθηκε στα αγαπημένα</string>
     <string name="city_favorite_error">Προέκυψε σφάλμα κατά την αποθήκευση της πόλης στα αγαπημένα</string>
     <string name="city_not_favorite_success">Η πόλη αφαιρέθηκε από τα αγαπημένα</string>
+    <string name="cities_no_favorite_found">Δεν έχετε προσθέσει καμία αγαπημένη πόλη ακόμα.</string>
+    <string name="cities_favorites_header">Αγαπημένες Πόλεις</string>
 </resources>

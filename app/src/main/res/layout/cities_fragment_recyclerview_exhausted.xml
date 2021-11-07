@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="text"
+            type="String" />
+    </data>
+    <com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/adapter_generic_exhausted_textview"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:gravity="center"
+        android:textAppearance="?textAppearanceBody2"
+        tools:text="Nothing found..."
+        android:text="@{text}"/>
+</layout>
+
+
+

@@ -31,4 +31,6 @@
     <string name="city_favorite_success">This city has been added to the list of favorites cities</string>
     <string name="city_favorite_error">An error occurred while adding city to the favorites.</string>
     <string name="city_not_favorite_success">City removed from favorites</string>
+    <string name="cities_no_favorite_found">You have not marked any city as favorite yet.</string>
+    <string name="cities_favorites_header">Favorite Cities</string>
 </resources>
