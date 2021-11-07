@@ -99,10 +99,6 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
         }
     }
 
-    @Override
-    public CityEntity getCurrentSelectedCity() {
-        return mWeatherViewModel.getCurrentCityLiveData().getValue();
-    }
 
     @Override
     public void onFavoriteIconClick(@NonNull CityEntity item) {

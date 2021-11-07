@@ -18,4 +18,6 @@
     <string name="city_not_favorite_success">Η πόλη αφαιρέθηκε από τα αγαπημένα</string>
     <string name="cities_no_favorite_found">Δεν έχετε προσθέσει καμία αγαπημένη πόλη ακόμα.</string>
     <string name="cities_favorites_header">Αγαπημένες Πόλεις</string>
+    <string name="weather_today">Σήμερα</string>
+    <string name="weather_per_hour">Ανά ώρα</string>
 </resources>

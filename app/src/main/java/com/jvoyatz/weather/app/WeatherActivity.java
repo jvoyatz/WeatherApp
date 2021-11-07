@@ -22,8 +22,11 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.jvoyatz.weather.app.api.WorldWeatherAPI;
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
 import com.jvoyatz.weather.app.models.Resource;
+import com.jvoyatz.weather.app.models.api.WeatherResponse;
+import com.jvoyatz.weather.app.models.api.config.ApiResponse;
 import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
 import com.jvoyatz.weather.app.util.AbsentLiveData;
 import com.jvoyatz.weather.app.util.AbsentObserver;
@@ -50,6 +53,9 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
     private WeatherViewModel mWeatherViewModel;
     private CitiesCursorAdapter mAdapter;
     private SearchView searchView;
+
+    @Inject
+    WorldWeatherAPI worldWeatherAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +165,13 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         });
 
         mWeatherViewModel.getCurrentCityLiveData().observe(this, AbsentObserver.create());
+
+        worldWeatherAPI.getWeatherForecast("paris", 5, "yes", "json").observe(this, new Observer<ApiResponse<WeatherResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<WeatherResponse> weatherResponseApiResponse) {
+
+            }
+        });
     }
 
 //    @Override
