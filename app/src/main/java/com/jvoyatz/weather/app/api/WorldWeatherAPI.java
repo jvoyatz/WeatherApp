@@ -3,8 +3,9 @@ package com.jvoyatz.weather.app.api;
 import androidx.lifecycle.LiveData;
 
 import com.jvoyatz.weather.app.models.api.CityResponse;
-import com.jvoyatz.weather.app.models.api.WeatherResponse;
+import com.jvoyatz.weather.app.models.api.weather.WeatherData;
 import com.jvoyatz.weather.app.models.api.config.ApiResponse;
+import com.jvoyatz.weather.app.models.api.weather.WeatherResponse;
 
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
