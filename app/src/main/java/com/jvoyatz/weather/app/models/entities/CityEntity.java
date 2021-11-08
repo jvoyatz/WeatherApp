@@ -5,12 +5,14 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
 
 @Entity(primaryKeys = {"_id", "name", "region", "country"})
 public class CityEntity {
+    //@PrimaryKey(autoGenerate = true)
     public int _id;
 
     @NonNull

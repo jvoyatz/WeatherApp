@@ -13,6 +13,9 @@ import com.jvoyatz.weather.app.models.entities.CityEntity;
 
 import java.util.List;
 
+/**
+ * Inteface for accessing database of City data
+ */
 @Dao
 public interface CityDao {
     @Query("SELECT *  FROM CityEntity")
@@ -29,6 +32,9 @@ public interface CityDao {
 
     @Query("SELECT * FROM CityEntity WHERE name LIKE '%' || :city || '%' AND  region LIKE '%' ||  :region || '%' AND country LIKE '%' || :country || '%' limit 1")
     LiveData<CityEntity> findByMultipleCriteria(@NonNull String city, @NonNull String region, @NonNull String country);
+
+    @Query("SELECT * FROM CityEntity WHERE name LIKE '%' || :city || '%' AND  region LIKE '%' ||  :region || '%' AND country LIKE '%' || :country || '%' limit 1")
+    List<CityEntity> findByMultipleCriteriaList(@NonNull String city, @NonNull String region, @NonNull String country);
 
     @Query("SELECT * FROM CityEntity WHERE isFavorite = 1")
     List<CityEntity> getFavoriteCities();
