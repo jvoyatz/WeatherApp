@@ -13,7 +13,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.jvoyatz.weather.app.R;
+import com.jvoyatz.weather.app.WeatherViewModel;
 import com.jvoyatz.weather.app.databinding.HomeFragmentBinding;
+import com.jvoyatz.weather.app.databinding.WeatherDetailsPagerFragmentBinding;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -26,38 +28,42 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class WeatherDetailsPagerFragment extends Fragment {
 
     private WeatherDetailsViewModel mViewModel;
-    private HomeFragmentBinding mBinding;
+    private WeatherDetailsPagerFragmentBinding mBinding;
     private TabLayoutMediator tabLayoutMediator;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = HomeFragmentBinding.inflate(getLayoutInflater(), container, false);
+        mBinding = WeatherDetailsPagerFragmentBinding.inflate(getLayoutInflater(), container, false);
         return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         mViewModel = new ViewModelProvider(this).get(WeatherDetailsViewModel.class);
+        WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
+        mBinding.setViewmodel(weatherViewModel);
+
         WeatherDetailsPagerAdapter adapter = new WeatherDetailsPagerAdapter(getChildFragmentManager(), getViewLifecycleOwner().getLifecycle());
-//        mBinding.viewpager.setAdapter(adapter);
-//        tabLayoutMediator = new TabLayoutMediator(mBinding.tabLayout, mBinding.viewpager, new TabLayoutMediator.TabConfigurationStrategy() {
-//            @Override
-//            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-//                String text;
-//                switch (position){
-//                    default:
-//                    case 0:
-//                        text = getString(R.string.weather_today);
-//                        break;
-//                    case 1:
-//                        text = getString(R.string.weather_per_hour);
-//                        break;
-//                }
-//                tab.setText(text);
-//            }
-//        });
-//        tabLayoutMediator.attach();
+        mBinding.weatherDetailsPager.setAdapter(adapter);
+        tabLayoutMediator = new TabLayoutMediator(mBinding.weatherDetailsTabLayout, mBinding.weatherDetailsPager, new TabLayoutMediator.TabConfigurationStrategy() {
+            @Override
+            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                String text;
+                switch (position){
+                    default:
+                    case 0:
+                        text = getString(R.string.weather_today);
+                        break;
+                    case 1:
+                        text = getString(R.string.weather_per_hour);
+                        break;
+                }
+                tab.setText(text);
+            }
+        });
+        tabLayoutMediator.attach();
     }
 
     @Override

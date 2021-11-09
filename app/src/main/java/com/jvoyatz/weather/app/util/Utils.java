@@ -26,10 +26,10 @@ import timber.log.Timber;
 
 public class Utils {
     public static SimpleDateFormat fullDateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault());
+    public static final SimpleDateFormat dayMonth3LettersFormatter = new SimpleDateFormat("dd MMM", Locale.getDefault());
     public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     public static SimpleDateFormat dayFormatter = new SimpleDateFormat("EEE", Locale.getDefault());
-    public static final SimpleDateFormat dayMonth3LettersFormatter = new SimpleDateFormat("dd MMM", Locale.getDefault());
-    public static final SimpleDateFormat hourFormatter = new SimpleDateFormat("h:mm a", Locale.getDefault());
+    public static final SimpleDateFormat formalDateFormatter = new SimpleDateFormat("EEEE, d MMMM yyyy");
     /**
      * Returns the date of the given timezone
      */
@@ -139,6 +139,26 @@ public class Utils {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+
+    /**
+     * Returns the given in a format
+     *         Day, 01 November
+     */
+    public static String getFormalDate(String dateStr){
+        if(!TextUtils.isEmpty(dateStr)){
+            try {
+                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                final Date date = simpleDateFormat.parse(dateStr);
+                if(date != null){
+                    return formalDateFormatter.format(date);
+                }
+            } catch (ParseException e) {
+                Timber.e(e);
+            }
+        }
+        return null;
     }
     /**
      * Finds a drawable and rotates it using the degrees argument provided

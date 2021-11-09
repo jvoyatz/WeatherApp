@@ -93,6 +93,14 @@ public class WeatherEntity {
         this.weather = weather;
     }
 
+    public WeatherTimezoneEntity getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(WeatherTimezoneEntity timezone) {
+        this.timezone = timezone;
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -110,13 +118,7 @@ public class WeatherEntity {
         return new Builder();
     }
 
-    public WeatherTimezoneEntity getTimezone() {
-        return timezone;
-    }
 
-    public void setTimezone(WeatherTimezoneEntity timezone) {
-        this.timezone = timezone;
-    }
 
     public static final class Builder {
         private String type;

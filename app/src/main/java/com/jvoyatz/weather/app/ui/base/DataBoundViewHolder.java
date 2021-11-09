@@ -1,22 +1,16 @@
 package com.jvoyatz.weather.app.ui.base;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
-import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.jvoyatz.weather.app.BR;
-import com.jvoyatz.weather.app.util.Objects;
 
 import timber.log.Timber;
 

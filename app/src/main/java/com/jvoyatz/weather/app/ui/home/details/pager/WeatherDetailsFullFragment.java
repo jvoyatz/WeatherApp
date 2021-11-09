@@ -19,11 +19,11 @@ import dagger.hilt.android.AndroidEntryPoint;
  * city.
  */
 @AndroidEntryPoint
-public class WeatherDetailsFragment extends Fragment {
+public class WeatherDetailsFullFragment extends Fragment {
 
     private WeatherDetailsPagerFragmentFullBinding mBinding;
 
-    public WeatherDetailsFragment() {
+    public WeatherDetailsFullFragment() {
     }
 
     @Nullable

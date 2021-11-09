@@ -1,9 +1,13 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
+import android.util.Log;
+
 import com.jvoyatz.weather.app.models.api.weather.TimeZone;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherTimezoneEntity;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 /**
  * Converts a Timezone instance from api to WeatherTimezonEntity

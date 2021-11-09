@@ -1,6 +1,7 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jvoyatz.weather.app.models.api.weather.WeatherData;
 import com.jvoyatz.weather.app.models.api.weather.Request;
@@ -12,6 +13,8 @@ import com.jvoyatz.weather.app.util.Objects;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class WeatherConverter extends TypeConverter<WeatherData, WeatherEntity> {
 

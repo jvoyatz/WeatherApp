@@ -47,6 +47,15 @@ public class WeatherTimezoneEntity {
         this.zone = zone;
     }
 
+    @Override
+    public String toString() {
+        return "WeatherTimezoneEntity{" +
+                "localtime='" + localtime + '\'' +
+                ", utcOffset='" + utcOffset + '\'' +
+                ", zone='" + zone + '\'' +
+                '}';
+    }
+
     public static final class Builder {
         private String localtime;
         private String utcOffset;
