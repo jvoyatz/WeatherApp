@@ -12,13 +12,14 @@ import androidx.core.content.ContextCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
 
 import com.jvoyatz.weather.app.R;
-import com.jvoyatz.weather.app.databinding.CitySuggestionItemBinding;
+import com.jvoyatz.weather.app.databinding.ActivityWeatherSearchSuggestionItemBinding;
+
 
 import timber.log.Timber;
 
 public class CitiesCursorAdapter extends CursorAdapter {
 
-    CitySuggestionItemBinding mBinding;
+    ActivityWeatherSearchSuggestionItemBinding mBinding;
     private LayoutInflater mLayoutInflater;
     private final SearchView mSearchView;
     private final OnSuggestedCityClickListener mListener;
@@ -47,7 +48,7 @@ public class CitiesCursorAdapter extends CursorAdapter {
 //
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        mBinding = CitySuggestionItemBinding.inflate(mLayoutInflater, parent, false);
+        mBinding = ActivityWeatherSearchSuggestionItemBinding.inflate(mLayoutInflater, parent, false);
         return mBinding.getRoot();
     }
 

@@ -1,7 +1,5 @@
-package com.jvoyatz.weather.app.ui.home.viewpager;
+package com.jvoyatz.weather.app.ui.home;
 
-import android.text.Layout;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -9,13 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
 
 import com.jvoyatz.weather.app.AppExecutors;
-import com.jvoyatz.weather.app.databinding.WeatherForecastDayQuickSummaryItemBinding;
+import com.jvoyatz.weather.app.databinding.HomeFragmentNextDayItemBinding;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
 import com.jvoyatz.weather.app.ui.base.DataBoundListAdapter;
-import com.jvoyatz.weather.app.ui.base.DataBoundViewHolder;
 
 public class WeatherNextDaysAdapter extends DataBoundListAdapter<WeatherDayEntity, ViewDataBinding> {
     public AppExecutors appExecutors;
@@ -26,7 +22,7 @@ public class WeatherNextDaysAdapter extends DataBoundListAdapter<WeatherDayEntit
     @Override
     protected ViewDataBinding createBinding(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return WeatherForecastDayQuickSummaryItemBinding.inflate(inflater, parent, false);
+        return HomeFragmentNextDayItemBinding.inflate(inflater, parent, false);
     }
 
     @Override

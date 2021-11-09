@@ -40,24 +40,24 @@ public class WeatherDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(WeatherDetailsViewModel.class);
         WeatherDetailsPagerAdapter adapter = new WeatherDetailsPagerAdapter(getChildFragmentManager(), getViewLifecycleOwner().getLifecycle());
-        mBinding.viewpager.setAdapter(adapter);
-        tabLayoutMediator = new TabLayoutMediator(mBinding.tabLayout, mBinding.viewpager, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                String text;
-                switch (position){
-                    default:
-                    case 0:
-                        text = getString(R.string.weather_today);
-                        break;
-                    case 1:
-                        text = getString(R.string.weather_per_hour);
-                        break;
-                }
-                tab.setText(text);
-            }
-        });
-        tabLayoutMediator.attach();
+//        mBinding.viewpager.setAdapter(adapter);
+//        tabLayoutMediator = new TabLayoutMediator(mBinding.tabLayout, mBinding.viewpager, new TabLayoutMediator.TabConfigurationStrategy() {
+//            @Override
+//            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+//                String text;
+//                switch (position){
+//                    default:
+//                    case 0:
+//                        text = getString(R.string.weather_today);
+//                        break;
+//                    case 1:
+//                        text = getString(R.string.weather_per_hour);
+//                        break;
+//                }
+//                tab.setText(text);
+//            }
+//        });
+//        tabLayoutMediator.attach();
     }
 
     @Override

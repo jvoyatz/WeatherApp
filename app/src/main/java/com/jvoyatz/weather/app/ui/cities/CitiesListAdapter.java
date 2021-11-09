@@ -1,9 +1,7 @@
 package com.jvoyatz.weather.app.ui.cities;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -15,17 +13,11 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
 import com.jvoyatz.weather.app.R;
-import com.jvoyatz.weather.app.databinding.CitiesFragmentRecyclerviewExhaustedBinding;
 import com.jvoyatz.weather.app.databinding.CitiesFragmentRecyclerviewItemBinding;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.ui.base.DataBoundListAdapter;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
-
-import retrofit2.http.HEAD;
-import timber.log.Timber;
 
 /**
  * ListAdapter for CitiesFragment. It uses ListAdapter, an extension of RecyclerViewAdapter, for representing list data in a RecyclerView.
@@ -85,7 +77,7 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
             case EMPTY_ID:
                 return DataBindingUtil.inflate(inflater, R.layout.cities_fragment_recyclerview_exhausted, parent, false);
             case HEADER_ID:
-                return DataBindingUtil.inflate(inflater, R.layout.city_fragment_recyclerview_header, parent, false);
+                return DataBindingUtil.inflate(inflater, R.layout.cities_fragment_recyclerview_header, parent, false);
         }
         return CitiesFragmentRecyclerviewItemBinding.inflate(inflater, parent, false);
     }

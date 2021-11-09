@@ -1,4 +1,4 @@
-package com.jvoyatz.weather.app.ui.home;
+package com.jvoyatz.weather.app.ui.home.details;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -6,14 +6,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.jvoyatz.weather.app.ui.home.viewpager.WeatherSummaryFragment;
+import com.jvoyatz.weather.app.ui.home.HomeFragment;
 
 /**
  * Holds child fragment representing each screen
  */
-public class WeatherAdapter extends FragmentStateAdapter {
+public class WeatherDetailsPagerAdapter extends FragmentStateAdapter {
 
-    public WeatherAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+    public WeatherDetailsPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
     }
 
@@ -24,7 +24,8 @@ public class WeatherAdapter extends FragmentStateAdapter {
             case 0:
             case 1:
             default:
-                return WeatherSummaryFragment.newInstance();
+                //return HomeFragment.newInstance();
+                return null;
         }
     }
 

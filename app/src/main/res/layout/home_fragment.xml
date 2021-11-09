@@ -146,18 +146,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView2" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
+            android:layout_height="0dp"
             android:layout_marginTop="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/next_5_days"
+            app:layout_constraintBottom_toBottomOf="@id/next_days_recyclerview_gudeline"
+            app:layout_constrainedHeight="true"
             tools:listitem="@layout/home_fragment_next_day_item" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/next_days_recyclerview_gudeline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.52"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/current_weather_conditions"
@@ -169,7 +180,7 @@
             android:textStyle="bold"
             android:text="@string/current_weather_conditions"
             app:layout_constraintStart_toStartOf="@+id/next_5_days"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+            app:layout_constraintTop_toBottomOf="@+id/next_days_recyclerview_gudeline" />
 
 
         <androidx.constraintlayout.helper.widget.Flow
