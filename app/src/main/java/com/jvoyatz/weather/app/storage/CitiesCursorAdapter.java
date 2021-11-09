@@ -2,7 +2,6 @@ package com.jvoyatz.weather.app.storage;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +21,9 @@ public class CitiesCursorAdapter extends CursorAdapter {
     CitySuggestionItemBinding mBinding;
     private LayoutInflater mLayoutInflater;
     private final SearchView mSearchView;
-    private final OnCityClickListener mListener;
+    private final OnSuggestedCityClickListener mListener;
 
-    public CitiesCursorAdapter(Context context, Cursor cursor, SearchView searchView, OnCityClickListener mListener) {
+    public CitiesCursorAdapter(Context context, Cursor cursor, SearchView searchView, OnSuggestedCityClickListener mListener) {
         // autoRequery – If true the adapter will call requery() on the cursor
         // whenever it changes so the most recent data is always displayed. Using true here is discouraged.
         super(context, cursor, false);
@@ -68,7 +67,7 @@ public class CitiesCursorAdapter extends CursorAdapter {
             if(isFavorite){
                 mBinding.cityAddIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.baseline_favorite_black_24dp));
             }
-            mBinding.cityAddIcon.setOnClickListener(v -> mListener.onCitySelected(name, region, country, true));
+            mBinding.cityAddIcon.setOnClickListener(v -> mListener.onSuggestedCitySelected(name, region, country, true));
 
 //            mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -91,7 +90,11 @@ public class CitiesCursorAdapter extends CursorAdapter {
         }
     }
 
-    public interface OnCityClickListener{
-        void onCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite);
+
+    /**
+     * Listener implemented by WeatherActivity, invoked when user clicks on a suggested item
+     */
+    public interface OnSuggestedCityClickListener {
+        void onSuggestedCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite);
     }
 }
