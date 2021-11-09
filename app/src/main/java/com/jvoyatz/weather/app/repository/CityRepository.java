@@ -1,15 +1,12 @@
 package com.jvoyatz.weather.app.repository;
 
 import android.database.Cursor;
-import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.Constants;
@@ -17,12 +14,11 @@ import com.jvoyatz.weather.app.api.WorldWeatherAPI;
 import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.api.CityResponse;
 import com.jvoyatz.weather.app.models.api.config.ApiResponse;
-import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.converters.city.CityConverter;
+import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.storage.db.CityDao;
 import com.jvoyatz.weather.app.util.CursorLiveData;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,11 +46,10 @@ public class CityRepository {
         this.cityConverter = cityConverter;
     }
 
-
     /**
      * Checks whether there are cities matching user's in the local database.
      * If not, then it tries directly to fetch from the api.
-     * Otherwise, dispatches directly everything found in the db
+     * Otherwise, dispatches directly everything as found by the query
      *
      * @param query city to be found
      * @return LiveData which holds a cursor wrapped in Resource instance.
@@ -79,15 +74,12 @@ public class CityRepository {
             @NonNull
             @Override
             protected LiveData<Cursor> loadFromDb() {
-                return new CursorLiveData(appExecutors, new CursorLiveData.DataLoader() {
-                    @Override
-                    public Cursor load() {
-                        try {
-                            return cityDao.findByNameCursor(query);
-                        } catch (Exception e) {
-                            Timber.e(e);
-                            return null;
-                        }
+                return new CursorLiveData(appExecutors, () -> {
+                    try {
+                        return cityDao.findByNameCursor(query);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                        return null;
                     }
                 });
             }
@@ -111,51 +103,45 @@ public class CityRepository {
      *
      * In a case of Exception, the second value gets ignored.
      */
-    public LiveData<Pair<Boolean, Boolean>> updateFavoriteCity(@NonNull String name, @NonNull String region, @NonNull String country) {
+    public LiveData<Pair<Boolean, Boolean>> addFavoriteCity(@NonNull String name, @NonNull String region, @NonNull String country) {
         MediatorLiveData<Pair<Boolean, Boolean>> resultLiveData = new MediatorLiveData<>();
 
         LiveData<CityEntity> dbSource = cityDao.findByMultipleCriteria(name, region, country);
 
-        resultLiveData.addSource(dbSource, new Observer<CityEntity>() {
-            @Override
-            public void onChanged(CityEntity cityEntity) {
-                resultLiveData.removeSource(dbSource);
-                if(cityEntity != null){
-                    appExecutors.diskIO().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                cityEntity.setFavorite(!cityEntity.isFavorite());
-                                cityDao.insert(cityEntity);
-                                resultLiveData.postValue(Pair.create(true, cityEntity.isFavorite()));
-                            } catch (Exception e) {
-                                Timber.e(e);
-                                resultLiveData.postValue(Pair.create(false, false));
-                            }
-                        }
-                    });
-                }
+        resultLiveData.addSource(dbSource, cityEntity -> {
+            resultLiveData.removeSource(dbSource);
+            if(cityEntity != null){
+                appExecutors.diskIO().execute(() -> {
+                    try {
+                        cityEntity.setFavorite(!cityEntity.isFavorite());
+                        cityDao.insert(cityEntity);
+                        resultLiveData.postValue(Pair.create(true, cityEntity.isFavorite()));
+                    } catch (Exception e) {
+                        Timber.e(e);
+                        resultLiveData.postValue(Pair.create(false, false));
+                    }
+                });
             }
         });
 
         return resultLiveData;
     }
 
+    /**
+     * Returns a livedata instanch which holds a list of {@link CityEntity} objects
+     */
     public LiveData<List<CityEntity>> getFavoriteCities(){
         return new LiveData<List<CityEntity>>() {
             @Override
             protected void onActive() {
                 super.onActive();
-                appExecutors.diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            List<CityEntity> favoriteCities = cityDao.getFavoriteCities();
-                            postValue(favoriteCities);
-                        } catch (Exception e) {
-                            Timber.e(e);
-                            postValue(Collections.emptyList());
-                        }
+                appExecutors.diskIO().execute(() -> {
+                    try {
+                        List<CityEntity> favoriteCities = cityDao.getFavoriteCities();
+                        postValue(favoriteCities);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                        postValue(Collections.emptyList());
                     }
                 });
             }
