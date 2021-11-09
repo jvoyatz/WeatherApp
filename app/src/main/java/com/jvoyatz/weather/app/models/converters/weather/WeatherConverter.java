@@ -41,7 +41,7 @@ public class WeatherConverter extends TypeConverter<WeatherData, WeatherEntity> 
 
             if(!TextUtils.isEmpty(query)){
                 final String[] strings = query.split(", ");
-                if(TextUtils.equals(type, "City") && strings != null && strings.length >= 2){
+                if(TextUtils.equals(type, "City") && strings.length >= 2){
                     builder.withCity(strings[0]);
                     builder.withCountry(strings[1]);
                 }
@@ -49,7 +49,6 @@ public class WeatherConverter extends TypeConverter<WeatherData, WeatherEntity> 
             builder.withType(type);
         }
 
-        Timber.d("toEntity: " + from.getWeather());
         builder.withWeather(dayEntityConverter.toEntities(from.getWeather()));
         final List<WeatherCurrentConditionEntity> conditionEntities = conditionEntityConverter.toEntities(from.getCurrentCondition());
 
