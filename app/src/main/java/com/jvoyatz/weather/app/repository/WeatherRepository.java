@@ -9,15 +9,12 @@ import androidx.lifecycle.LiveData;
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.api.WorldWeatherAPI;
 import com.jvoyatz.weather.app.models.Resource;
-import com.jvoyatz.weather.app.models.api.weather.WeatherData;
 import com.jvoyatz.weather.app.models.api.config.ApiResponse;
 import com.jvoyatz.weather.app.models.api.weather.WeatherResponse;
 import com.jvoyatz.weather.app.models.converters.weather.WeatherConverter;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
-import com.jvoyatz.weather.app.storage.db.CityDao;
 import com.jvoyatz.weather.app.storage.db.WeatherDao;
-import com.jvoyatz.weather.app.util.AbsentLiveData;
 
 import java.util.List;
 
@@ -36,15 +33,13 @@ public class WeatherRepository {
     WorldWeatherAPI worldWeatherService;
     private final AppExecutors appExecutors;
     private final WeatherConverter weatherConverter;
-    private final CityDao cityDao;
     private final WeatherDao weatherDao;
 
     @Inject
-    public WeatherRepository(WorldWeatherAPI worldWeatherService, AppExecutors appExecutors, WeatherConverter weatherConverter, CityDao cityDao, WeatherDao weatherDao) {
+    public WeatherRepository(WorldWeatherAPI worldWeatherService, AppExecutors appExecutors, WeatherConverter weatherConverter, WeatherDao weatherDao) {
         this.worldWeatherService = worldWeatherService;
         this.appExecutors = appExecutors;
         this.weatherConverter = weatherConverter;
-        this.cityDao = cityDao;
         this.weatherDao = weatherDao;
     }
 
@@ -52,7 +47,7 @@ public class WeatherRepository {
      * Fetches the weather forecast for the given value in the argument
      *
      * @param city the city we want to fetch weather forecast for
-     * @return
+     * @return Livedata holding a resource of WeatherEntity
      */
     public LiveData<Resource<WeatherEntity>> getCityWeatherForecast(@NonNull CityEntity city){
         return new NetworkBoundResource<WeatherEntity, WeatherResponse>(appExecutors){
@@ -67,8 +62,6 @@ public class WeatherRepository {
                     weatherEntity.setCountry(city.getCountry());
 
                     weatherDao.insert(weatherEntity);
-                    final List<WeatherEntity> weatherEntities = weatherDao.getWeatherEntities();
-                    Timber.d("saveCallResult: " + weatherEntities);
                 }catch (Exception e){
                     Timber.e(e);
                 }
@@ -82,7 +75,7 @@ public class WeatherRepository {
             @NonNull
             @Override
             protected LiveData<WeatherEntity> loadFromDb() {
-                return AbsentLiveData.create();
+                return weatherDao.getWeatherEntity(city.getName(), city.getRegion(), city.getCountry());
             }
 
             @NonNull
