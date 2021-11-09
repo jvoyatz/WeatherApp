@@ -15,11 +15,20 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.jvoyatz.weather.app.ui.home.HomeFragment"
-        tools:layout="@layout/weather_details_fragment" />
+        tools:layout="@layout/weather_details_fragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_weatherDetailsFragment"
+            app:destination="@id/weatherDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/preferencesFragment"
         android:name="com.jvoyatz.weather.app.ui.preferences.PreferencesFragment"
         android:label="@string/settings" />
+
+    <fragment
+        android:id="@+id/weatherDetailsFragment"
+        android:name="com.jvoyatz.weather.app.ui.home.details.WeatherDetailsFragment"
+        />
 
 </navigation>
