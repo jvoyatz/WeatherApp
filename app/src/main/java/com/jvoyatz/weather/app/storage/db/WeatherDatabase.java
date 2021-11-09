@@ -6,7 +6,7 @@ import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.jvoyatz.weather.app.models.converters.WeatherTypeListConverter;
+import com.jvoyatz.weather.app.models.converters.weather.WeatherTypeListConverter;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 

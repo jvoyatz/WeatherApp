@@ -1,7 +1,6 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
 import com.jvoyatz.weather.app.models.api.weather.Astronomy;
-import com.jvoyatz.weather.app.models.converters.TypeConverter;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayAstronomyEntity;
 
 import javax.inject.Inject;

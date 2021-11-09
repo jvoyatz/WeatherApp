@@ -1,7 +1,6 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
 import com.jvoyatz.weather.app.models.api.weather.CurrentCondition;
-import com.jvoyatz.weather.app.models.converters.TypeConverter;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherCurrentConditionEntity;
 import com.jvoyatz.weather.app.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.jvoyatz.weather.app.models.converters;
+package com.jvoyatz.weather.app.models.converters.weather;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -5,7 +5,7 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.TypeConverters;
 
-import com.jvoyatz.weather.app.models.converters.WeatherTypeListConverter;
+import com.jvoyatz.weather.app.models.converters.weather.WeatherTypeListConverter;
 
 import java.util.List;
 
@@ -23,6 +23,9 @@ public class WeatherEntity {
     private String country;
     @Embedded
     private WeatherCurrentConditionEntity currentCondition;
+    @Embedded
+    private WeatherTimezoneEntity timezone;
+
   //  @Embedded
     @TypeConverters(WeatherTypeListConverter.class)
     private List<WeatherDayEntity> weather;
@@ -30,12 +33,13 @@ public class WeatherEntity {
     public WeatherEntity() { }
 
     private WeatherEntity(Builder builder) {
-        setType(builder.type);
-        setCity(builder.city);
-        setRegion(builder.region);
-        setCountry(builder.country);
-        setCurrentCondition(builder.currentCondition);
-        setWeather(builder.weather);
+        this.type = builder.type;
+        this.city = builder.city;
+        this.region = builder.region;
+        this.country = builder.country;
+        this.currentCondition = builder.currentCondition;
+        this.weather = builder.weather;
+        this.timezone = builder.timezone;
     }
 
     public String getType() {
@@ -106,6 +110,14 @@ public class WeatherEntity {
         return new Builder();
     }
 
+    public WeatherTimezoneEntity getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(WeatherTimezoneEntity timezone) {
+        this.timezone = timezone;
+    }
+
     public static final class Builder {
         private String type;
         private String city;
@@ -113,6 +125,7 @@ public class WeatherEntity {
         private String country;
         private WeatherCurrentConditionEntity currentCondition;
         private List<WeatherDayEntity> weather;
+        private WeatherTimezoneEntity timezone;
 
         private Builder() {
         }
@@ -150,6 +163,12 @@ public class WeatherEntity {
         @Nonnull
         public Builder withWeather(@Nonnull List<WeatherDayEntity> weather) {
             this.weather = weather;
+            return this;
+        }
+
+        @Nonnull
+        public Builder withTimezone(@Nonnull WeatherTimezoneEntity timezone) {
+            this.timezone = timezone;
             return this;
         }
 

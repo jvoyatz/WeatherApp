@@ -4,26 +4,25 @@ import android.text.TextUtils;
 
 import com.jvoyatz.weather.app.models.api.weather.WeatherData;
 import com.jvoyatz.weather.app.models.api.weather.Request;
-import com.jvoyatz.weather.app.models.converters.TypeConverter;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherCurrentConditionEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherTimezoneEntity;
 import com.jvoyatz.weather.app.util.Objects;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import timber.log.Timber;
-
 public class WeatherConverter extends TypeConverter<WeatherData, WeatherEntity> {
 
     private final WeatherDayEntityConverter dayEntityConverter;
     private final WeatherCurrentConditionEntityConverter conditionEntityConverter;
-
+    private final WeatherTimezoneConverter weatherTimezoneConverter;
     @Inject
-    public WeatherConverter(WeatherDayEntityConverter dayEntityConverter, WeatherCurrentConditionEntityConverter conditionEntityConverter) {
+    public WeatherConverter(WeatherDayEntityConverter dayEntityConverter, WeatherCurrentConditionEntityConverter conditionEntityConverter, WeatherTimezoneConverter weatherTimezoneConverter) {
         this.dayEntityConverter = dayEntityConverter;
         this.conditionEntityConverter = conditionEntityConverter;
+        this.weatherTimezoneConverter = weatherTimezoneConverter;
     }
 
     @Override
@@ -48,7 +47,9 @@ public class WeatherConverter extends TypeConverter<WeatherData, WeatherEntity> 
             }
             builder.withType(type);
         }
-
+        final List<WeatherTimezoneEntity> weatherTimezoneEntities = weatherTimezoneConverter.toEntities(from.getTimeZone());
+        if(weatherTimezoneEntities != null)
+            builder.withTimezone(weatherTimezoneEntities.get(0));
         builder.withWeather(dayEntityConverter.toEntities(from.getWeather()));
         final List<WeatherCurrentConditionEntity> conditionEntities = conditionEntityConverter.toEntities(from.getCurrentCondition());
 

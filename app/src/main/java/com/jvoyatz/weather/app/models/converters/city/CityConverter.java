@@ -5,7 +5,7 @@ import static com.jvoyatz.weather.app.util.Objects.isEmpty;
 import com.jvoyatz.weather.app.Constants;
 import com.jvoyatz.weather.app.models.api.city.CityItem;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
-import com.jvoyatz.weather.app.models.converters.TypeConverter;
+import com.jvoyatz.weather.app.models.converters.weather.TypeConverter;
 
 import javax.inject.Inject;
 

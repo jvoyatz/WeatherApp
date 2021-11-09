@@ -1,20 +1,16 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.jvoyatz.weather.app.models.api.weather.Hourly;
-import com.jvoyatz.weather.app.models.converters.TypeConverter;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.util.Objects;
 import com.jvoyatz.weather.app.util.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
