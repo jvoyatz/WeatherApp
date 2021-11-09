@@ -28,7 +28,6 @@ public class CustomBindingAdapter {
 
     @BindingAdapter(value = {"item", "currentSelectedItem"})
     public static void setSelected(View view, CityEntity item, CityEntity currentSelectedItem) {
-        Timber.d("setSelected() called with: item = [" + item + "], currentSelectedItem = [" + currentSelectedItem + "]");
         if (currentSelectedItem != null) {
             boolean areItemsTheSame = DIFF_CALLBACK.areItemsTheSame(item, currentSelectedItem);
             view.setSelected(areItemsTheSame);
