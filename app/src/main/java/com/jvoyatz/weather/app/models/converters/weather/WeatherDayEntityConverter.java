@@ -3,8 +3,13 @@ package com.jvoyatz.weather.app.models.converters.weather;
 import com.jvoyatz.weather.app.models.api.weather.Weather;
 import com.jvoyatz.weather.app.models.converters.TypeConverter;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
+import com.jvoyatz.weather.app.util.Utils;
+
+import java.text.ParseException;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class WeatherDayEntityConverter extends TypeConverter<Weather, WeatherDayEntity> {
     private final WeatherDayHourEntityConverter dayHourEntityConverter;
@@ -22,6 +27,11 @@ public class WeatherDayEntityConverter extends TypeConverter<Weather, WeatherDay
             return null;
         }
 
+        try {
+            dayHourEntityConverter.setParentDate(Utils.dateFormatter.parse(from.getDate()));
+        } catch (ParseException e) {
+            Timber.e(e);
+        }
         WeatherDayEntity.Builder builder = WeatherDayEntity.builder();
         builder.withDate(from.getDate())
                 .withSunHour(from.getSunHour())

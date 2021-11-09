@@ -25,7 +25,7 @@ import java.util.TimeZone;
 import timber.log.Timber;
 
 public class Utils {
-
+    public static SimpleDateFormat fullDateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault());
     public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     public static SimpleDateFormat dayFormatter = new SimpleDateFormat("EEE", Locale.getDefault());
     public static final SimpleDateFormat dayMonth3LettersFormatter = new SimpleDateFormat("dd MMM", Locale.getDefault());
@@ -124,6 +124,22 @@ public class Utils {
     }
 
 
+    public static Calendar convertHourStrToCalendar(String hour){
+        try {
+            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+            Date date = simpleDateFormat.parse(hour);
+
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);//we set the date we created, however it starts from 1970
+            calendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
+            calendar.set(Calendar.DATE,Calendar.getInstance().get(Calendar.DATE));
+            calendar.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH));
+
+            return calendar;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
     /**
      * Finds a drawable and rotates it using the degrees argument provided
      */

@@ -12,17 +12,24 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.WeatherViewModel;
 import com.jvoyatz.weather.app.databinding.FragmentWeatherSummaryBinding;
 import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Fragment which shows a screen containing
  * details for the current forecast.
  */
+@AndroidEntryPoint
 public class WeatherSummaryFragment extends Fragment {
-    private static final String TAG = "WeatherSummaryFragment";
+    @Inject
+    AppExecutors appExecutors;
     private FragmentWeatherSummaryBinding mBinding;
     private WeatherViewModel mWeatherViewModel;
 
@@ -46,8 +53,8 @@ public class WeatherSummaryFragment extends Fragment {
         mWeatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
         mBinding.setViewmodel(mWeatherViewModel);
 
-
         final WeatherNextDaysAdapter adapter = new WeatherNextDaysAdapter(WeatherNextDaysAdapter.DAYS_DIFF_CALLBACK);
+        adapter.appExecutors = appExecutors;
         mBinding.recyclerView.setAdapter(adapter);
 
         mWeatherViewModel.getWeatherResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Resource<WeatherEntity>>() {
@@ -62,5 +69,6 @@ public class WeatherSummaryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mBinding = null;
     }
 }

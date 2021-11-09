@@ -8,6 +8,10 @@
             name="day"
             type="com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity" />
 
+        <variable
+            name="appExecutors"
+            type="com.jvoyatz.weather.app.AppExecutors" />
+
         <import type="com.jvoyatz.weather.app.util.Utils"/>
         <import type="com.jvoyatz.weather.app.Constants"/>
     </data>
@@ -58,7 +62,8 @@
             android:layout_height="64dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/baseline_wb_sunny_black_24dp"
-            imageUrl="@{day.hourly.get(4).weatherIconUrl}"
+            imageUrl="@{day.hourly}"
+            appExecutors="@{appExecutors}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/time"

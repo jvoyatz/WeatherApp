@@ -18,10 +18,25 @@ import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.ui.cities.CitiesHandler;
 import com.jvoyatz.weather.app.util.Utils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import timber.log.Timber;
 
@@ -55,6 +70,51 @@ public class CustomBindingAdapter {
 
         }else{
             Glide.with(view.getContext()).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
+        }
+    }
+
+    @BindingAdapter({"imageUrl", "appExecutors"})
+    public static void loadImage(ImageView view, List<WeatherDayHourEntity> hours, AppExecutors appExecutors) {
+        if(hours != null){
+            appExecutors.networkIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Map<Date, WeatherDayHourEntity> hoursMap = new HashMap<>(hours.size());
+                    final long now = System.currentTimeMillis();
+
+                    for (WeatherDayHourEntity hour : hours) {
+                        if(TextUtils.isEmpty(hour.getTime()))
+                            continue;
+                        try {
+                            final Date date = Utils.fullDateFormatter.parse(hour.getTime());
+                            if(date != null) {
+                                hoursMap.put(date, hour);
+                            }
+
+                        } catch (ParseException e) {
+                            Timber.e(e);
+                        }
+                    }
+                    Date closestDate = Collections.min(hoursMap.keySet(), (d1, d2) -> {
+                        long diff1 = Math.abs(d1.getTime() - now);
+                        long diff2 = Math.abs(d2.getTime() - now);
+
+                        return Long.compare(diff1, diff2);
+                    });
+                    final WeatherDayHourEntity hourEntity = hoursMap.get(closestDate);
+                    if(hourEntity != null && !TextUtils.isEmpty(hourEntity.getWeatherIconUrl())){
+                        appExecutors.ui().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                Glide.with(view.getContext())
+                                        .load(hourEntity.getWeatherIconUrl())
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .into(view);
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 

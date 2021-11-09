@@ -11,13 +11,14 @@ import androidx.databinding.library.baseAdapters.BR;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
+import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.databinding.WeatherForecastDayQuickSummaryItemBinding;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
 import com.jvoyatz.weather.app.ui.base.DataBoundListAdapter;
 import com.jvoyatz.weather.app.ui.base.DataBoundViewHolder;
 
 public class WeatherNextDaysAdapter extends DataBoundListAdapter<WeatherDayEntity, ViewDataBinding> {
-
+    public AppExecutors appExecutors;
     protected WeatherNextDaysAdapter(@NonNull DiffUtil.ItemCallback<WeatherDayEntity> diffCallback) {
         super(diffCallback);
     }
@@ -31,6 +32,7 @@ public class WeatherNextDaysAdapter extends DataBoundListAdapter<WeatherDayEntit
     @Override
     protected void bind(ViewDataBinding binding, WeatherDayEntity item) {
         binding.setVariable(BR.day, item);
+        binding.setVariable(BR.appExecutors, appExecutors);
     }
 
     public static  DiffUtil.ItemCallback<WeatherDayEntity> DAYS_DIFF_CALLBACK = new DiffUtil.ItemCallback<WeatherDayEntity>() {

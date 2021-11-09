@@ -1,14 +1,28 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.jvoyatz.weather.app.models.api.weather.Hourly;
 import com.jvoyatz.weather.app.models.converters.TypeConverter;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.util.Objects;
+import com.jvoyatz.weather.app.util.Utils;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, WeatherDayHourEntity> {
 
+    private Date parentDate;
     @Inject
     public WeatherDayHourEntityConverter() {
     }
@@ -18,6 +32,8 @@ public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, Weather
         if(from == null){
             return null;
         }
+
+
 
         WeatherDayHourEntity.Builder builder = WeatherDayHourEntity.builder()
                 .withWeatherCode(from.getWeatherCode())
@@ -49,7 +65,6 @@ public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, Weather
                 .withChanceoffog(from.getChanceoffog())
                 .withVisibilityMiles(from.getVisibilityMiles())
                 .withHeatIndexC(from.getHeatIndexC())
-                .withTime(from.getTime())
                 .withPrecipInches(from.getPrecipInches())
                 .withChanceofwindy(from.getChanceofwindy())
                 .withUvIndex(from.getUvIndex())
@@ -58,6 +73,10 @@ public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, Weather
                 .withHeatIndexF(from.getHeatIndexF())
                 .withChanceofremdry(from.getChanceofremdry());
 
+        if(!TextUtils.isEmpty(from.getTime())){
+            final String time = transformApiTimeStr(from.getTime());
+            builder.withTime(time);
+        }
         if(!Objects.isEmpty(from.getWeatherIconUrl())){
             builder.withWeatherIconUrl(from.getWeatherIconUrl().get(0).getValue());
         }
@@ -67,5 +86,39 @@ public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, Weather
         return builder.build();
 
 
+    }
+
+    /**
+     * Api returns times for WeatherDayHourEntity as a String in the
+     * following format 1300.
+     * We parse and transform it into Java Date
+     *
+     * @param time api's field
+     */
+    private String transformApiTimeStr(@NonNull String time){
+        try {
+            if(TextUtils.equals(time, "0")){
+                time = time + ":00";
+            }else {
+                time = time.replace("00", ":00");
+            }
+
+            if(parentDate != null) {
+                final Calendar hourCalendar = Utils.convertHourStrToCalendar(time);
+                if(hourCalendar != null) {
+                    Calendar parentCalendar = Calendar.getInstance();
+                    parentCalendar.setTime(parentDate);
+                    parentCalendar.set(Calendar.HOUR_OF_DAY, hourCalendar.get(Calendar.HOUR_OF_DAY));
+
+                    return Utils.fullDateFormatter.format(parentCalendar.getTime());
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return "";
+    }
+    public void setParentDate(Date parentDate) {
+        this.parentDate = parentDate;
     }
 }
