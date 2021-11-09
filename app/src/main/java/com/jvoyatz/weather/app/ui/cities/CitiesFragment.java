@@ -47,7 +47,7 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
 
         mWeatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
         mViewModel = new ViewModelProvider(this).get(CitiesViewModel.class);
-        mViewModel.setCurrentCitySelectedLiveData(mWeatherViewModel.getCurrentCityLiveData());
+        mViewModel.setCurrentCitySelectedLiveData(mWeatherViewModel.getSelectedCityEntityLiveData());
 
         RecyclerView recyclerView = mBinding.citiesRecyclerview;
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
@@ -61,13 +61,6 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
             public void onChanged(List<CityEntity> cityEntities) {
                 Timber.d("onChanged() called with: cityEntities = [" + cityEntities + "]");
                 adapter.submitList(cityEntities);
-            }
-        });
-
-        mViewModel.getCurrentCitySelectedLiveData().observe(getViewLifecycleOwner(), new Observer<CityEntity>() {
-            @Override
-            public void onChanged(CityEntity cityEntity) {
-                Timber.d("onChanged() called with: cityEntity = [" + cityEntity + "]");
             }
         });
 
@@ -93,15 +86,15 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
     public void onViewClicked(@NonNull CityEntity item, @Nullable CityEntity selectedItem) {
         boolean areItemsTheSame = CitiesListAdapter.DIFF_CALLBACK.areContentsTheSame(item, selectedItem);
         if(!areItemsTheSame) {
-            mWeatherViewModel.setCurrentCityLiveData(item);
+            mWeatherViewModel.setSelectedCityEntityLiveData(item);
         }else{
-            mWeatherViewModel.setCurrentCityLiveData(null);
+            mWeatherViewModel.setSelectedCityEntityLiveData(null);
         }
     }
 
 
     @Override
     public void onFavoriteIconClick(@NonNull CityEntity item) {
-        mWeatherViewModel.markCityAsFavorite(item.getName(), item.getRegion(), item.getCountry());
+        mWeatherViewModel.updateFavoriteCity(item.getName(), item.getRegion(), item.getCountry());
     }
 }

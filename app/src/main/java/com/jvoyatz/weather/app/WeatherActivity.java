@@ -1,13 +1,9 @@
 package com.jvoyatz.weather.app;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.util.Pair;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,10 +21,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.jvoyatz.weather.app.api.WorldWeatherAPI;
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
 import com.jvoyatz.weather.app.models.Resource;
-import com.jvoyatz.weather.app.models.api.WeatherResponse;
-import com.jvoyatz.weather.app.models.api.config.ApiResponse;
 import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
-import com.jvoyatz.weather.app.util.AbsentLiveData;
 import com.jvoyatz.weather.app.util.AbsentObserver;
 
 import java.util.Objects;
@@ -46,13 +39,12 @@ import timber.log.Timber;
  * in this activity. A hilt component will be generated for this class.
  */
 @AndroidEntryPoint
-public class WeatherActivity extends AppCompatActivity implements CitiesCursorAdapter.OnCityClickListener{
+public class WeatherActivity extends AppCompatActivity implements CitiesCursorAdapter.OnSuggestedCityClickListener {
 
     @Inject
     SearchRecentSuggestions suggestions;
     private WeatherViewModel mWeatherViewModel;
     private CitiesCursorAdapter mAdapter;
-    private SearchView searchView;
 
     @Inject
     WorldWeatherAPI worldWeatherAPI;
@@ -63,6 +55,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         @NonNull ActivityWeatherBinding mBinding = ActivityWeatherBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
         setSupportActionBar(mBinding.toolbar);
+        initSearchView(mBinding.searchview);
 
         // top level destinations
         // home, saved cities
@@ -73,14 +66,64 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, navController);
 
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
+        mWeatherViewModel.getCitiesSuggestions().observe(this, new Observer<Resource<Cursor>>() {
+            @Override
+            public void onChanged(Resource<Cursor> cursorResource) {
+                Timber.d("onChanged() called with: cursorResource = [" + cursorResource + "]");
+                try{
+                    switch (cursorResource.status){
+                        case SUCCESS:
+//                            Cursor cursor = cursorResource.data;
+//                            Cursor oldCursor = mAdapter.swapCursor(cursor);
+//                            if(oldCursor != null)
+//                                oldCursor.close();
 
-        searchView = mBinding.searchview;
-        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
-        //searchView.setIconified(false);
+                            mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, mBinding.searchview, WeatherActivity.this);
+                            mBinding.searchview.setSuggestionsAdapter(mAdapter);
+                            break;
+                        case ERROR:
+                            Toast.makeText(WeatherActivity.this, R.string.cities_suggestions_no_results_found, Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            break;
+                    }
+                }catch (Exception e){
+                    Timber.e(e);
+                }
+            }
+        });
 
+        mWeatherViewModel.getFavoriteCityResultLiveData().observe(this, pair -> {
+            if(pair != null && pair.first){
+                mWeatherViewModel.searchForCitiesSuggestions(mBinding.searchview.getQuery().toString());
+                if(pair.second != null && pair.second)
+                    Toast.makeText(WeatherActivity.this, R.string.city_favorite_success, Toast.LENGTH_SHORT).show();
+                else if(pair.second != null && !pair.second)
+                    Toast.makeText(WeatherActivity.this, R.string.city_not_favorite_success, Toast.LENGTH_SHORT).show();
+            }else if(pair != null && !pair.first){
+                Toast.makeText(WeatherActivity.this, R.string.city_favorite_error, Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        mWeatherViewModel.getSelectedCityEntityLiveData().observe(this, AbsentObserver.create());
+        mWeatherViewModel.getWeatherResponseLiveData().observe(this, AbsentObserver.create());
+    }
+
+    /**
+     * Calls the insertCity method from {@link WeatherViewModel} in order to add
+     * this city to the local db.
+     * @param cityName name of the city
+     * @param region the region where it belongs
+     * @param country the coutrny where city belongs
+     * @param storeAsFavorite declaring whether this city will be added or removed from the db (if already added)
+     */
+    @Override
+    public void onSuggestedCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite){
+        mWeatherViewModel.updateFavoriteCity(cityName, region, country);
+    }
+
+    public void initSearchView(SearchView searchView){
         //setting color of text
         EditText editText = (EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(Color.WHITE);
@@ -116,95 +159,9 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                 if(newText.length() < 3 ) {
                     return false;
                 }
-
                 mWeatherViewModel.searchForCitiesSuggestions(newText);
                 return true;
             }
         });
-
-        handleIntent(getIntent());
-
-        mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
-        mWeatherViewModel.getCitiesSuggestions().observe(this, new Observer<Resource<Cursor>>() {
-            @Override
-            public void onChanged(Resource<Cursor> cursorResource) {
-                Timber.d("onChanged() called with: cursorResource = [" + cursorResource + "]");
-                try{
-                    switch (cursorResource.status){
-                        case SUCCESS:
-//                            Cursor cursor = cursorResource.data;
-//                            Cursor oldCursor = mAdapter.swapCursor(cursor);
-//                            if(oldCursor != null)
-//                                oldCursor.close();
-
-                            mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, searchView, WeatherActivity.this);
-                            searchView.setSuggestionsAdapter(mAdapter);
-                            break;
-                        case ERROR:
-                            Toast.makeText(WeatherActivity.this, R.string.cities_suggestions_no_results_found, Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            break;
-                    }
-                }catch (Exception e){
-                    Timber.e(e);
-                }
-            }
-        });
-
-        mWeatherViewModel.getFavoriteCityResultLiveData().observe(this, pair -> {
-            if(pair != null && pair.first){
-                mWeatherViewModel.searchForCitiesSuggestions(mBinding.searchview.getQuery().toString());
-                if(pair.second != null && pair.second)
-                    Toast.makeText(WeatherActivity.this, R.string.city_favorite_success, Toast.LENGTH_SHORT).show();
-                else if(pair.second != null && !pair.second)
-                    Toast.makeText(WeatherActivity.this, R.string.city_not_favorite_success, Toast.LENGTH_SHORT).show();
-            }else if(pair != null && !pair.first){
-                Toast.makeText(WeatherActivity.this, R.string.city_favorite_error, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mWeatherViewModel.getCurrentCityLiveData().observe(this, AbsentObserver.create());
-
-        worldWeatherAPI.getWeatherForecast("paris", 5, "yes", "json").observe(this, new Observer<ApiResponse<WeatherResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<WeatherResponse> weatherResponseApiResponse) {
-
-            }
-        });
-    }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.weather_activity_menu, menu);
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//
-//        return super.onPrepareOptionsMenu(menu);
-//    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    /**
-     *  Handles submitted queries via the standard ACTION_SEARCH Intent
-     */
-    private void handleIntent(Intent intent) {
-        Timber.d("handleIntent() called with: intent = [" + intent + "]");
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-
-        }
-    }
-
-    @Override
-    public void onCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite){
-        mWeatherViewModel.markCityAsFavorite(cityName, region, country);
     }
 }

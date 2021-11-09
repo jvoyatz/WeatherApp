@@ -82,7 +82,7 @@ public class WeatherRepository {
             @Override
             protected LiveData<ApiResponse<WeatherResponse>> createCall() {
                 final StringBuilder query = new StringBuilder();
-                if(!TextUtils.isEmpty(city.getLatitude()) && !TextUtils.isEmpty(city.getLongitude())) {
+                if(TextUtils.isEmpty(city.getLatitude()) && !TextUtils.isEmpty(city.getLongitude())) {
                     query
                         .append(city.getLatitude())
                         .append(", ")

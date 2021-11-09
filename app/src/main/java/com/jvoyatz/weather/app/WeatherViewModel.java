@@ -13,13 +13,16 @@ import androidx.lifecycle.ViewModel;
 
 import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
+import com.jvoyatz.weather.app.repository.WeatherRepository;
 import com.jvoyatz.weather.app.util.AbsentLiveData;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import kotlin.Triple;
+import timber.log.Timber;
 
 /**
  * Viewmodel used in WeatherActivity
@@ -28,16 +31,18 @@ import kotlin.Triple;
 public class WeatherViewModel extends ViewModel {
 
     private final CityRepository cityRepository;
-    private final MutableLiveData<String> citySearchQueryLiveData;
-    private final MutableLiveData<Triple<String, String, String>> favoriteCityTriggerLiveData;
-    private final MutableLiveData<CityEntity> currentCityLiveData;
+    private final WeatherRepository weatherRepository;
+    private final MutableLiveData<String> searchCityLiveData;
+    private MutableLiveData<CityEntity> selectedCityEntityLiveData;
+    private final MutableLiveData<Triple<String, String, String>> favoriteCityLiveData;
+    private LiveData<Resource<WeatherEntity>> weatherEntityLiveData;
 
     @Inject
-    public WeatherViewModel(CityRepository cityRepository) {
+    public WeatherViewModel(CityRepository cityRepository, WeatherRepository weatherRepository) {
         this.cityRepository = cityRepository;
-        citySearchQueryLiveData = new MutableLiveData<>();
-        favoriteCityTriggerLiveData = new MutableLiveData<>();
-        currentCityLiveData = new MutableLiveData<>();
+        this.weatherRepository = weatherRepository;
+        searchCityLiveData = new MutableLiveData<>();
+        favoriteCityLiveData = new MutableLiveData<>();
     }
 
     /**
@@ -45,7 +50,7 @@ public class WeatherViewModel extends ViewModel {
      * @return Cursor object wrapped in LiveData
      */
     public LiveData<Resource<Cursor>> getCitiesSuggestions(){
-        return Transformations.switchMap(citySearchQueryLiveData, new Function<String, LiveData<Resource<Cursor>>>() {
+        return Transformations.switchMap(searchCityLiveData, new Function<String, LiveData<Resource<Cursor>>>() {
             @Override
             public LiveData<Resource<Cursor>> apply(String input) {
                 if(!TextUtils.isEmpty(input)) {
@@ -61,26 +66,25 @@ public class WeatherViewModel extends ViewModel {
      * @param query user's input
      */
     public void searchForCitiesSuggestions(@NonNull String query){
-        citySearchQueryLiveData.postValue(query);
+        searchCityLiveData.postValue(query);
     }
 
     /**
      * Called when users click on the add icon being shown in the search results
      * String (name, region, country) params to find city through a query
      */
-    public void markCityAsFavorite(@NonNull String cityName, @NonNull String region, @NonNull String country){
-        favoriteCityTriggerLiveData.postValue(new Triple<>(cityName, region, country));
+    public void updateFavoriteCity(@NonNull String cityName, @NonNull String region, @NonNull String country){
+        favoriteCityLiveData.postValue(new Triple<>(cityName, region, country));
     }
 
     /**
-     * favoritizeCityLiveData is used as a trigger to execute the insert task
-     * for a favorite city.
-     *
      * Returns livedata holding a boolean to know whether the task finished correctly.
      *
+     * The task of updating city in the db is being triggered when user selects a
+     * from the suggestions list.
      */
     public LiveData<Pair<Boolean, Boolean>> getFavoriteCityResultLiveData() {
-        return Transformations.switchMap(favoriteCityTriggerLiveData, new Function<Triple<String, String, String>, LiveData<Pair<Boolean, Boolean>>>() {
+        return Transformations.switchMap(favoriteCityLiveData, new Function<Triple<String, String, String>, LiveData<Pair<Boolean, Boolean>>>() {
             @Override
             public LiveData<Pair<Boolean, Boolean>> apply(Triple<String, String, String> input) {
                 if(input != null){
@@ -91,11 +95,41 @@ public class WeatherViewModel extends ViewModel {
         });
     }
 
-    public MutableLiveData<CityEntity> getCurrentCityLiveData() {
-        return currentCityLiveData;
+    /**
+     * Sets the current city as selected by the user
+     */
+    public void setSelectedCityEntityLiveData(CityEntity cityEntity){
+        selectedCityEntityLiveData.postValue(cityEntity);
+    }
+    /**
+     * Returns the livedata holder holding the value of the selected city
+     * at the moment.
+     */
+    public MutableLiveData<CityEntity> getSelectedCityEntityLiveData() {
+        if(selectedCityEntityLiveData == null){
+            selectedCityEntityLiveData = new MutableLiveData<>();
+        }
+        return selectedCityEntityLiveData;
     }
 
-    public void setCurrentCityLiveData(CityEntity cityEntity){
-        currentCityLiveData.postValue(cityEntity);
+    /**
+     * Returns the Weather Forecast inside a Livedata instance.
+     * Weather forecast is being fetched when user's selects a city.
+     */
+    public LiveData<Resource<WeatherEntity>> getWeatherResponseLiveData(){
+        if(weatherEntityLiveData == null) {
+            weatherEntityLiveData = Transformations.switchMap(getSelectedCityEntityLiveData(), new Function<CityEntity, LiveData<Resource<WeatherEntity>>>() {
+                @Override
+                public LiveData<Resource<WeatherEntity>> apply(CityEntity input) {
+                    Timber.d("apply() called with: input = [" + input + "]");
+                    if (input != null) {
+                        return weatherRepository.getCityWeatherForecast(input);
+                    }
+                    return AbsentLiveData.create();
+                }
+            });
+        }
+        return weatherEntityLiveData;
     }
+
 }

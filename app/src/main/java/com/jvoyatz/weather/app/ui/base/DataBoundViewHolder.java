@@ -83,8 +83,7 @@ public class DataBoundViewHolder<T extends ViewDataBinding> extends RecyclerView
      * @return A new ViewHolder that has a reference to the binding class
      */
     public static <T extends ViewDataBinding> DataBoundViewHolder<T> create(ViewGroup parent, @LayoutRes int layoutId) {
-        T binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
-                layoutId, parent, false);
+        T binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), layoutId, parent, false);
         return new DataBoundViewHolder<>(binding);
     }
 

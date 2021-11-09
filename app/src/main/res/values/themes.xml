@@ -7,9 +7,7 @@
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
         <item name="android:navigationBarDividerColor" tools:ignore="NewApi">?attr/colorControlHighlight</item>
         <item name="android:windowDisablePreview">true</item>
-
     </style>
-
 
     <style name="Theme.WeatherApp" parent="Base.Theme.MaterialThemeBuilder">
         <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
@@ -41,6 +39,25 @@
 
 
 </style>
+    <style name="Widget.MaterialComponents.CardView.Colored" parent="Widget.MaterialComponents.CardView">
+        <item name="enforceMaterialTheme">true</item>
+<!--
+        <item name="android:stateListAnimator" ns1:ignore="NewApi">
+            @animator/mtrl_card_state_list_anim
+        </item>-->
+
+        <item name="android:textColor">@color/white</item>
+        <item name="cardBackgroundColor">?attr/colorPrimary</item>
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardElevation">@dimen/mtrl_card_elevation</item>
+        <item name="cardForegroundColor">@color/mtrl_card_view_foreground</item>
+        <item name="checkedIcon">@drawable/ic_mtrl_checked_circle</item>
+        <item name="checkedIconTint">?attr/colorPrimary</item>
+        <item name="checkedIconSize">@dimen/mtrl_card_checked_icon_size</item>
+        <item name="checkedIconMargin">@dimen/mtrl_card_checked_icon_margin</item>
+        <item name="rippleColor">@color/mtrl_card_view_ripple</item>
+        <item name="shapeAppearance">?attr/shapeAppearanceMediumComponent</item>
+    </style>
 
     <style name="ThemeOverlay.Toobar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface">
 

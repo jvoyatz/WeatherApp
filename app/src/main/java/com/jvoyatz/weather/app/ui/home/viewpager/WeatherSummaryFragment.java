@@ -1,23 +1,30 @@
 package com.jvoyatz.weather.app.ui.home.viewpager;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jvoyatz.weather.app.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.jvoyatz.weather.app.WeatherViewModel;
 import com.jvoyatz.weather.app.databinding.FragmentWeatherSummaryBinding;
+import com.jvoyatz.weather.app.models.Resource;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 
 /**
  * Fragment which shows a screen containing
  * details for the current forecast.
  */
 public class WeatherSummaryFragment extends Fragment {
-
+    private static final String TAG = "WeatherSummaryFragment";
     private FragmentWeatherSummaryBinding mBinding;
+    private WeatherViewModel mWeatherViewModel;
 
     public static WeatherSummaryFragment newInstance() {
         return new WeatherSummaryFragment();
@@ -28,14 +35,28 @@ public class WeatherSummaryFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentWeatherSummaryBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mWeatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
+        mBinding.setViewmodel(mWeatherViewModel);
+
+
+        final WeatherNextDaysAdapter adapter = new WeatherNextDaysAdapter(WeatherNextDaysAdapter.DAYS_DIFF_CALLBACK);
+        mBinding.recyclerView.setAdapter(adapter);
+
+        mWeatherViewModel.getWeatherResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Resource<WeatherEntity>>() {
+            @Override
+            public void onChanged(Resource<WeatherEntity> weatherEntityResource) {
+                if(weatherEntityResource != null)
+                    adapter.submitList(weatherEntityResource.data.getWeather());
+            }
+        });
     }
 
     @Override

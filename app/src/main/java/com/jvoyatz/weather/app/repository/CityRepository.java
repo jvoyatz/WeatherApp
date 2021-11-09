@@ -103,7 +103,7 @@ public class CityRepository {
      *
      * In a case of Exception, the second value gets ignored.
      */
-    public LiveData<Pair<Boolean, Boolean>> addFavoriteCity(@NonNull String name, @NonNull String region, @NonNull String country) {
+    public LiveData<Pair<Boolean, Boolean>> updateFavoriteCity(@NonNull String name, @NonNull String region, @NonNull String country) {
         MediatorLiveData<Pair<Boolean, Boolean>> resultLiveData = new MediatorLiveData<>();
 
         LiveData<CityEntity> dbSource = cityDao.findByMultipleCriteria(name, region, country);

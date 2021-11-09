@@ -37,4 +37,19 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="weather_today">Today</string>
     <string name="weather_per_hour">Hourly</string>
+    <string name="weather_wind">Wind</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_cloud">Cloud</string>
+    <string name="weather_feels">Feels %1$s</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="weather_humidity">Humidity</string>
+    <string name="moonset">Moonset</string>
+    <string name="moonrise">Moonrise</string>
+    <string name="Sunset">Sunset</string>
+    <string name="weather_next_days">Next 5 days</string>
+    <string name="current_weather_conditions">Current Conditions</string>
+    <string name="temperature">Temperature</string>
+    <string name="weather_more_title">More</string>
+    <string name="weather_temp_max_min">Weather forecasted for today will have a maximum temperature of %1$s and a minimum of %2$s.</string>
+    <string name="latest_update">Latest Update: %1$s</string>
 </resources>
