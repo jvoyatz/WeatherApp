@@ -1,11 +1,10 @@
 package com.jvoyatz.weather.app.di;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.room.Room;
 
-import com.jvoyatz.weather.app.models.converters.WeatherTypeListConverter;
+import com.jvoyatz.weather.app.models.converters.weather.WeatherTypeListConverter;
 import com.jvoyatz.weather.app.storage.db.CityDao;
 import com.jvoyatz.weather.app.storage.db.WeatherDao;
 import com.jvoyatz.weather.app.storage.db.WeatherDatabase;
