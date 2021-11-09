@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Provides info regarding the forecast of the selected city.
  */
 @AndroidEntryPoint
-public class WeatherDetailsFragment extends Fragment {
+public class WeatherDetailsPagerFragment extends Fragment {
 
     private WeatherDetailsViewModel mViewModel;
     private HomeFragmentBinding mBinding;
