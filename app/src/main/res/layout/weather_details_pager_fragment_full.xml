@@ -2,11 +2,20 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.home.details.pager.WeatherDetailsHourlyListFragment">
+    tools:context=".ui.home.details.pager.WeatherDetailsHourlyListFragment"
+    tools:ignore="MissingConstraints" >
 
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.jvoyatz.weather.app.ui.home.details.WeatherDetailsViewModel" />
+
+        <import type="com.jvoyatz.weather.app.Constants"/>
+        <import type="com.jvoyatz.weather.app.util.Utils"/>
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_left_top"
@@ -15,22 +24,391 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.2" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/guideline_left_top"
-            app:layout_constraintEnd_toStartOf="@id/guideline_right_top"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/baseline_wb_sunny_black_24dp"
-            app:srcCompat="@drawable/baseline_wb_sunny_black_24dp"
-            />
-
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_right_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.8" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline_right_top"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/guideline_left_top"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/weather_icon"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_margin="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@null"
+                imageUrl="@{viewmodel.weatherEntityLiveData.currentCondition.weatherIconUrl}"
+                android:src="@drawable/baseline_wb_sunny_black_24dp"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toTopOf="@+id/weather_descr"
+                app:layout_constraintEnd_toStartOf="@id/temperature"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_wb_sunny_black_24dp" />
+
+            <!--  android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.tempC + ` ` + Constants.CELSIUS}"-->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/temperature"
+                style="?attr/textAppearanceHeadline3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:text="@{viewmodel.weatherEntityLiveData.currentCondition.tempC + Constants.CELSIUS}"
+                app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="0.5"
+                app:layout_constraintStart_toEndOf="@+id/weather_icon"
+                app:layout_constraintTop_toTopOf="@+id/weather_icon"
+                tools:text="19" />
+
+            <!--android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.weatherDesc}"-->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/weather_descr"
+                style="?attr/textAppearanceHeadline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="48dp"
+                android:text="@{viewmodel.weatherEntityLiveData.currentCondition.weatherDesc}"
+                app:layout_constraintEnd_toEndOf="@+id/temperature"
+                app:layout_constraintStart_toStartOf="@+id/weather_icon"
+                app:layout_constraintTop_toBottomOf="@id/weather_icon"
+                tools:text="SUnny" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/information"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="4dp"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/TextAppearance.MaterialComponents.Headline6" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"/>
+
+        
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/weather_info_sun_flow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="8dp"
+            app:flow_wrapMode="chain"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:flow_maxElementsWrap="2"
+            app:constraint_referenced_ids="weather_info_sun, weather_info_sun_duration, weather_info_sunrise, weather_info_sunrise_time, weather_info_sunset, weather_info_sunset_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_info"
+            app:layout_constraintTop_toBottomOf="@id/weather_info" />
+
+        <ImageView
+            android:id="@+id/weather_info_sun"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/baseline_wb_sunny_black_24dp"
+            android:padding="6dp"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_sun_duration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{@string/hours(viewmodel.weatherCurrentDayEntityLiveData.sunHour)}"
+            android:padding="6dp"
+            android:gravity="end"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_sunrise"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sunrise"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_sunrise_time"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunrise}"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_sunset"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/Sunset"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_sunset_time"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunset}"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="wrap_content"
+            app:layout_constrainedHeight="true"
+            android:background="?attr/colorPrimary"
+            app:layout_constraintTop_toTopOf="@id/weather_info_moon_flow"
+            app:layout_constraintStart_toEndOf="@id/weather_info_sun_flow"
+            app:layout_constraintEnd_toStartOf="@id/weather_info_moon_flow"
+            app:layout_constraintBottom_toBottomOf="@id/weather_info_sun_flow"/>
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/weather_info_moon_flow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="8dp"
+            app:flow_wrapMode="chain"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:flow_maxElementsWrap="2"
+            app:constraint_referenced_ids="weather_info_moon, weather_info_moon_duration, weather_info_moonrise, weather_info_moonrise_time, weather_info_moonset, weather_info_moonset_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline_info"
+            app:layout_constraintTop_toBottomOf="@id/weather_info" />
+
+        <ImageView
+            android:id="@+id/weather_info_moon"
+            android:scaleType="centerCrop"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_moon"
+            android:contentDescription="@null"
+            android:padding="6dp"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_moon_duration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonPhase}"
+            android:padding="6dp"
+            android:gravity="end"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_moonrise"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/moonrise"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_moonrise_time"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonrise}"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_moonset"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/moonset"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_info_moonset_time"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonset}"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/current_weather_conditions"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/weather_info_sun_flow"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="4dp"/>
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/weather_condition_flow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_margin="4dp"
+            android:padding="8dp"
+            app:constraint_referenced_ids="weather_condition_real_feel, weather_condition_real_feel_value, weather_condition_wind, weather_condition_wind_value, weather_condition_rain, weather_condition_rain_value, weather_condition_cloud, weather_condition_cloud_value, weather_condition_humidity, weather_condition_humidity_value, weather_condition_uv, weather_condition_uv_value, weather_condition_snow, weather_condition_snow_value"
+            app:flow_wrapMode="chain"
+            app:flow_horizontalStyle="spread_inside"
+            app:flow_maxElementsWrap="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/weather_condition"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_real_feel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_temp_feels"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_real_feel_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            tools:text="@{viewmodel.weatherEntityLiveData.currentCondition.tempC + ` ` + Constants.CELSIUS}"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_wind"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_wind"
+            android:padding="6dp"
+            android:background="@drawable/underline"
+            />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_wind_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.windspeedKmph + Constants.KM_H + viewmodel.weatherEntityLiveData.currentCondition.winddir16Point}"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_rain"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_rain"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_rain_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.precipMM + ` ` + Constants.MM}"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_cloud"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_cloud"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_cloud_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.cloudcover + ` ` + Constants.PERCENT}"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_humidity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_humidity"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_humidity_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.humidity + ` ` + Constants.PERCENT}"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_uv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_condition_uv_index"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_uv_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.uvIndex}"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_snow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_condition_snow"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/weather_condition_snow_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:text="@{viewmodel.weatherCurrentDayEntityLiveData.totalSnowCm + ` ` + Constants.CM}"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/underline"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -52,4 +52,9 @@
     <string name="weather_more_title">More</string>
     <string name="weather_temp_max_min">Weather forecasted for today will have a maximum temperature of %1$s and a minimum of %2$s.</string>
     <string name="latest_update">Latest Update: %1$s</string>
+    <string name="information">Information</string>
+    <string name="weather_temp_feels">Feels</string>
+    <string name="weather_condition_snow">Snow chance</string>
+    <string name="weather_condition_uv_index">UV Index</string>
+    <string name="hours">%1$s hours</string>
 </resources>

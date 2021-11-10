@@ -65,10 +65,7 @@ public class CustomBindingAdapter {
 
     @BindingAdapter("imageUrl")
     public static void loadImage(ImageView view, String url) {
-        Timber.d("loadImage() called with: view = [" + view + "], url = [" + url + "]");
-        if(TextUtils.isEmpty(url)){
-
-        }else{
+        if(!TextUtils.isEmpty(url)){
             Glide.with(view.getContext()).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
         }
     }
@@ -76,43 +73,35 @@ public class CustomBindingAdapter {
     @BindingAdapter({"imageUrl", "appExecutors"})
     public static void loadImage(ImageView view, List<WeatherDayHourEntity> hours, AppExecutors appExecutors) {
         if(hours != null){
-            appExecutors.networkIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    Map<Date, WeatherDayHourEntity> hoursMap = new HashMap<>(hours.size());
-                    final long now = System.currentTimeMillis();
+            appExecutors.networkIO().execute(() -> {
+                Map<Date, WeatherDayHourEntity> hoursMap = new HashMap<>(hours.size());
+                final long now = System.currentTimeMillis();
 
-                    for (WeatherDayHourEntity hour : hours) {
-                        if(TextUtils.isEmpty(hour.getTime()))
-                            continue;
-                        try {
-                            final Date date = Utils.fullDateFormatter.parse(hour.getTime());
-                            if(date != null) {
-                                hoursMap.put(date, hour);
-                            }
-
-                        } catch (ParseException e) {
-                            Timber.e(e);
+                for (WeatherDayHourEntity hour : hours) {
+                    if(TextUtils.isEmpty(hour.getTime()))
+                        continue;
+                    try {
+                        final Date date = Utils.fullDateFormatter.parse(hour.getTime());
+                        if(date != null) {
+                            hoursMap.put(date, hour);
                         }
-                    }
-                    Date closestDate = Collections.min(hoursMap.keySet(), (d1, d2) -> {
-                        long diff1 = Math.abs(d1.getTime() - now);
-                        long diff2 = Math.abs(d2.getTime() - now);
 
-                        return Long.compare(diff1, diff2);
-                    });
-                    final WeatherDayHourEntity hourEntity = hoursMap.get(closestDate);
-                    if(hourEntity != null && !TextUtils.isEmpty(hourEntity.getWeatherIconUrl())){
-                        appExecutors.ui().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Glide.with(view.getContext())
-                                        .load(hourEntity.getWeatherIconUrl())
-                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                        .into(view);
-                            }
-                        });
+                    } catch (ParseException e) {
+                        Timber.e(e);
                     }
+                }
+                Date closestDate = Collections.min(hoursMap.keySet(), (d1, d2) -> {
+                    long diff1 = Math.abs(d1.getTime() - now);
+                    long diff2 = Math.abs(d2.getTime() - now);
+
+                    return Long.compare(diff1, diff2);
+                });
+                final WeatherDayHourEntity hourEntity = hoursMap.get(closestDate);
+                if(hourEntity != null && !TextUtils.isEmpty(hourEntity.getWeatherIconUrl())){
+                    appExecutors.ui().execute(() -> Glide.with(view.getContext())
+                            .load(hourEntity.getWeatherIconUrl())
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(view));
                 }
             });
         }
@@ -120,11 +109,9 @@ public class CustomBindingAdapter {
 
     @BindingAdapter({"degrees"})
     public static void rotateDrawable(View view, String degrees){
-        Timber.d("rotateDrawable() called with: degrees = [" + degrees + "]");
         if(view instanceof TextView){
             final TextView textView = (TextView) view;
             final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_direction, degrees);
-            Timber.d("rotateDrawable: bitmap " + bitmap);
             if(bitmap != null){
                 textView.setCompoundDrawablesWithIntrinsicBounds(null, null, bitmap, null);
             }

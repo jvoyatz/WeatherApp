@@ -51,8 +51,8 @@ public class WeatherDayEntityConverter extends TypeConverter<Weather, WeatherDay
             builder.withHourly(dayHourEntityConverter.toEntities(from.getHourly()));
         }
         final List<WeatherDayAstronomyEntity> astronomyEntities = astronomyEntityConverter.toEntities(from.getAstronomy());
-        if(!Objects.isEmpty(astronomyEntities))
-            builder.withAstronomy(astronomyEntities.get(0));
+       // if(!Objects.isEmpty(astronomyEntities))
+            builder.withAstronomy(astronomyEntities);
 
         return builder.build();
     }

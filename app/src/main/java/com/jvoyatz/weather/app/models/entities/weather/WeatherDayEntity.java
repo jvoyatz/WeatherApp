@@ -19,7 +19,7 @@ public class WeatherDayEntity {
     private String maxtempF;
     private List<WeatherDayHourEntity> hourly;
     private String avgtempC;
-    private WeatherDayAstronomyEntity astronomy;
+    private List<WeatherDayAstronomyEntity> astronomy;
     private String uvIndex;
     private String maxtempC;
 
@@ -113,11 +113,11 @@ public class WeatherDayEntity {
         this.avgtempC = avgtempC;
     }
 
-    public WeatherDayAstronomyEntity getAstronomy() {
+    public List<WeatherDayAstronomyEntity> getAstronomy() {
         return astronomy;
     }
 
-    public void setAstronomy(WeatherDayAstronomyEntity astronomy) {
+    public void setAstronomy(List<WeatherDayAstronomyEntity> astronomy) {
         this.astronomy = astronomy;
     }
 
@@ -170,7 +170,7 @@ public class WeatherDayEntity {
         private String maxtempF;
         private List<WeatherDayHourEntity> hourly;
         private String avgtempC;
-        private WeatherDayAstronomyEntity astronomy;
+        private List<WeatherDayAstronomyEntity> astronomy;
         private String uvIndex;
         private String maxtempC;
 
@@ -232,7 +232,7 @@ public class WeatherDayEntity {
         }
 
         @Nonnull
-        public Builder withAstronomy(@Nonnull WeatherDayAstronomyEntity astronomy) {
+        public Builder withAstronomy(@Nonnull List<WeatherDayAstronomyEntity> astronomy) {
             this.astronomy = astronomy;
             return this;
         }

@@ -1,10 +1,9 @@
 package com.jvoyatz.weather.app.models.entities.weather;
 
-import androidx.room.Entity;
+import androidx.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 
-@Entity
 public class WeatherDayAstronomyEntity {
     private String moonset;
     private String moonIllumination;
@@ -71,6 +70,19 @@ public class WeatherDayAstronomyEntity {
 
     public void setMoonrise(String moonrise) {
         this.moonrise = moonrise;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "WeatherDayAstronomyEntity{" +
+                "moonset='" + moonset + '\'' +
+                ", moonIllumination='" + moonIllumination + '\'' +
+                ", sunrise='" + sunrise + '\'' +
+                ", moonPhase='" + moonPhase + '\'' +
+                ", sunset='" + sunset + '\'' +
+                ", moonrise='" + moonrise + '\'' +
+                '}';
     }
 
     public static Builder builder() {
