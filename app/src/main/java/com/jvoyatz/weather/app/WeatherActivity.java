@@ -11,16 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.jvoyatz.weather.app.api.WorldWeatherAPI;
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
-import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
 import com.jvoyatz.weather.app.util.AbsentObserver;
 
@@ -35,7 +32,7 @@ import timber.log.Timber;
  * The only Activity defined for this app. It has SEARCH action its intent-filter declared
  * so as to receive the queries submitted inside here and handle them.
  *
- * @AndroidEntryPoint annotation is used so as for dependencies defined in Hilt components or modules, to be provided
+ * AndroidEntryPoint annotation is used so as for dependencies defined in Hilt components or modules, to be provided
  * in this activity. A hilt component will be generated for this class.
  */
 @AndroidEntryPoint
@@ -43,11 +40,10 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
 
     @Inject
     SearchRecentSuggestions suggestions;
+    private AppBarConfiguration appBarConfiguration;
+    private NavController navController;
     private WeatherViewModel mWeatherViewModel;
     private CitiesCursorAdapter mAdapter;
-
-    @Inject
-    WorldWeatherAPI worldWeatherAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,40 +53,32 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         setSupportActionBar(mBinding.toolbar);
         initSearchView(mBinding.searchview);
 
+        mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
+
         // top level destinations
         // home, saved cities
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.homeFragment, R.id.citiesFragment).build();
+        appBarConfiguration = new AppBarConfiguration.Builder(R.id.homeFragment, R.id.citiesFragment).build();
         //When using <fragmentContainerView> we need get NavHostFragment using getSupportFragmentManager()
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        NavController navController = ((NavHostFragment) Objects.requireNonNull(fragment)).getNavController();
+        navController = ((NavHostFragment) Objects.requireNonNull(fragment)).getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, navController);
 
-        mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
-        mWeatherViewModel.getCitiesSuggestions().observe(this, new Observer<Resource<Cursor>>() {
-            @Override
-            public void onChanged(Resource<Cursor> cursorResource) {
-                Timber.d("onChanged() called with: cursorResource = [" + cursorResource + "]");
-                try{
-                    switch (cursorResource.status){
-                        case SUCCESS:
-//                            Cursor cursor = cursorResource.data;
-//                            Cursor oldCursor = mAdapter.swapCursor(cursor);
-//                            if(oldCursor != null)
-//                                oldCursor.close();
-
-                            mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, mBinding.searchview, WeatherActivity.this);
-                            mBinding.searchview.setSuggestionsAdapter(mAdapter);
-                            break;
-                        case ERROR:
-                            Toast.makeText(WeatherActivity.this, R.string.cities_suggestions_no_results_found, Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            break;
-                    }
-                }catch (Exception e){
-                    Timber.e(e);
+        mWeatherViewModel.getCitiesSuggestions().observe(this, cursorResource -> {
+            try{
+                switch (cursorResource.status){
+                    case SUCCESS:
+                        mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, mBinding.searchview, WeatherActivity.this);
+                        mBinding.searchview.setSuggestionsAdapter(mAdapter);
+                        break;
+                    case ERROR:
+                        Toast.makeText(WeatherActivity.this, R.string.cities_suggestions_no_results_found, Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
                 }
+            }catch (Exception e){
+                Timber.e(e);
             }
         });
 
@@ -99,15 +87,20 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                 mWeatherViewModel.searchForCitiesSuggestions(mBinding.searchview.getQuery().toString());
                 if(pair.second != null && pair.second)
                     Toast.makeText(WeatherActivity.this, R.string.city_favorite_success, Toast.LENGTH_SHORT).show();
-                else if(pair.second != null && !pair.second)
+                else if(pair.second != null)
                     Toast.makeText(WeatherActivity.this, R.string.city_not_favorite_success, Toast.LENGTH_SHORT).show();
-            }else if(pair != null && !pair.first){
+            }else if(pair != null){
                 Toast.makeText(WeatherActivity.this, R.string.city_favorite_error, Toast.LENGTH_SHORT).show();
             }
         });
 
         mWeatherViewModel.getSelectedCityEntityLiveData().observe(this, AbsentObserver.create());
         mWeatherViewModel.getWeatherResponseLiveData().observe(this, AbsentObserver.create());
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return navController.navigateUp() || super.onSupportNavigateUp();
     }
 
     /**
@@ -125,7 +118,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
 
     public void initSearchView(SearchView searchView){
         //setting color of text
-        EditText editText = (EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         editText.setTextColor(Color.WHITE);
         editText.setHintTextColor(Color.WHITE);
 
