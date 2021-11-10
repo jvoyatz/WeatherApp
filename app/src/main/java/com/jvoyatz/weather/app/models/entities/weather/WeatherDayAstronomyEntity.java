@@ -1,7 +1,10 @@
 package com.jvoyatz.weather.app.models.entities.weather;
 
+import androidx.room.Entity;
+
 import javax.annotation.Nonnull;
 
+@Entity
 public class WeatherDayAstronomyEntity {
     private String moonset;
     private String moonIllumination;

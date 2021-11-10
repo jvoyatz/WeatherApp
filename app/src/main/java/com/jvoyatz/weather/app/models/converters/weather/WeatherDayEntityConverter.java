@@ -1,10 +1,13 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
 import com.jvoyatz.weather.app.models.api.weather.Weather;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherDayAstronomyEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
+import com.jvoyatz.weather.app.util.Objects;
 import com.jvoyatz.weather.app.util.Utils;
 
 import java.text.ParseException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -47,9 +50,9 @@ public class WeatherDayEntityConverter extends TypeConverter<Weather, WeatherDay
         if(from.getHourly() != null){
             builder.withHourly(dayHourEntityConverter.toEntities(from.getHourly()));
         }
-        if(from.getAstronomy() != null){
-            builder.withAstronomy(astronomyEntityConverter.toEntities(from.getAstronomy()));
-        }
+        final List<WeatherDayAstronomyEntity> astronomyEntities = astronomyEntityConverter.toEntities(from.getAstronomy());
+        if(!Objects.isEmpty(astronomyEntities))
+            builder.withAstronomy(astronomyEntities.get(0));
 
         return builder.build();
     }
