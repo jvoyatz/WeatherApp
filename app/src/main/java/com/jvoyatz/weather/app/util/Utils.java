@@ -8,28 +8,29 @@ import android.graphics.drawable.BitmapDrawable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
-import java.text.DateFormat;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
+import com.jvoyatz.weather.app.ui.home.details.pager.WeatherHourItemsAdapter;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import timber.log.Timber;
 
 public class Utils {
-    public static SimpleDateFormat fullDateFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault());
-    public static final SimpleDateFormat dayMonth3LettersFormatter = new SimpleDateFormat("dd MMM", Locale.getDefault());
-    public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    public static SimpleDateFormat dayFormatter = new SimpleDateFormat("EEE", Locale.getDefault());
-    public static final SimpleDateFormat formalDateFormatter = new SimpleDateFormat("EEEE, d MMMM yyyy");
+
+
     /**
      * Returns the date of the given timezone
      */
@@ -42,124 +43,180 @@ public class Utils {
         return calendar.getTime();
     }
 
-    /**
-     * Gets date and converts it to dd/MM/yyyy format
-     *
-     */
-    public static String formatDate(Date date) {
-        if (date == null)
-            return null;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        return formatter.format(date);
+    public static String get24TimeFrom12(String timeStr){
+        final Date date = parseAmStr(timeStr);
+        return  date == null ? "": formatHHmmTime(date);
     }
-
-    /**
-     * Gets date and converts it to HH:mm format
-     */
-    public static String formatTime(@NonNull Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return dateFormat.format(date);
-    }
-
     public static String getDay(String dateStr){
-        if(!TextUtils.isEmpty(dateStr)){
-            try {
-
-                final Date date = dateFormatter.parse(dateStr);
-                return dayFormatter.format(date);
-
-            } catch (ParseException e) {
-                return "";
-            }
-        }
-
-        return "";
+        final Date date = parseYYYYMMddStr(dateStr);
+        return date != null ? getDayFormatter().format(date):"";
     }
 
     public static String getDayNumMonth(String dateStr){
-        if(!TextUtils.isEmpty(dateStr)){
-            try {
-                final Date date = dateFormatter.parse(dateStr);
-                return dayMonth3LettersFormatter.format(date);
-            } catch (ParseException e) {
-                return "";
-            }
-        }
-
-        return "";
+        final Date date = parseYYYYMMddStr(dateStr);
+        return date != null ? getDayMonth3Formatter().format(date):"";
     }
-
-    public static String get(String dateStr){
-        if(!TextUtils.isEmpty(dateStr)){
-            try {
-                final Date date = dateFormatter.parse(dateStr);
-                return dayFormatter.format(date);
-            } catch (ParseException e) {
-                return "";
-            }
-        }
-
-        return "";
-    }
-
-    public static String getHour(String dateStr){
-        if(!TextUtils.isEmpty(dateStr)){
-            Timber.d("getHour() called with: dateStr = [" + dateStr + "]");
-            try {
-           //     final Date date = hourFormatter.parse(dateStr);
-                //final String format = hourFormatter.format(date);
-                //Timber.d("getHour: " + format);
-                //return format;
-                SimpleDateFormat parseFormat = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
-                final String format = parseFormat.format(dateStr);
-                Timber.d("getHour: " + format);
-                return "";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "error";
-            }
-        }
-
-        return "empty";
-    }
-
-
-    public static Calendar convertHourStrToCalendar(String hour){
-        try {
-            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-            Date date = simpleDateFormat.parse(hour);
-
-            final Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);//we set the date we created, however it starts from 1970
-            calendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
-            calendar.set(Calendar.DATE,Calendar.getInstance().get(Calendar.DATE));
-            calendar.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH));
-
-            return calendar;
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
 
     /**
-     * Returns the given in a format
-     *         Day, 01 November
+     * Given something like this
+     *      EEE MMM dd HH:mm:ss zzz yyyy
+     * formats it into
+     *      HH:mm
      */
-    public static String getFormalDate(String dateStr){
+    public static String getTimeFromFull(@NonNull String dateStr) {
         if(!TextUtils.isEmpty(dateStr)){
             try {
-                final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                final Date date = simpleDateFormat.parse(dateStr);
+                final Date date = getFullDateFormatter().parse(dateStr);
                 if(date != null){
-                    return formalDateFormatter.format(date);
+                    return  getHHmmFormatter().format(date);
                 }
             } catch (ParseException e) {
                 Timber.e(e);
             }
         }
+        return "";
+    }
+
+    /**
+     * input: 2021-11-10 15:28
+     *
+     * Returns the given in a format
+     *         Day, 01 November
+     */
+    public static String getFormalDateFromStandard(String dateStr){
+        final Date date = parseStandardStr(dateStr);
+        return date != null ? formatFormalDate(date) : null;
+    }
+
+
+    //merge dates
+    public static Date mergeAmDate(Date date1, String date2){
+        if (date1 != null && !TextUtils.isEmpty(date2)){
+            return mergeDates(date1, parseAmStr(date2));
+        }
         return null;
     }
+
+    public static Date mergeHHmmDates(Date date1, String date2){
+        if (date1 != null && !TextUtils.isEmpty(date2)){
+            return mergeDates(date1, parseHHmmStr(date2));
+        }
+        return null;
+    }
+
+    public static Date mergeDates(Date date1, Date date2){
+        if (date1 != null && date2 != null){
+            Calendar date1Calendar = Calendar.getInstance();
+            date1Calendar.setTime(date1);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date2);
+
+            calendar.set(Calendar.YEAR, date1Calendar.get(Calendar.YEAR));
+            calendar.set(Calendar.DATE, date1Calendar.get(Calendar.DATE));
+            calendar.set(Calendar.MONTH, date1Calendar.get(Calendar.MONTH));
+
+            return calendar.getTime();
+        }
+        return null;
+    }
+
+    //parse
+    @Nullable
+    public static Date parseFullStr(String dateTimeStr){
+        try {
+            return TextUtils.isEmpty(dateTimeStr) ? null: getFullDateFormatter().parse(dateTimeStr);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    public static Date parseStandardStr(String dateTimeStr){
+        try {
+            return TextUtils.isEmpty(dateTimeStr) ? null: getStandardDateFormat().parse(dateTimeStr);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    public static Date parseHHmmStr(String date){
+        try {
+            return TextUtils.isEmpty(date) ? null : getHHmmFormatter().parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+    public static Date parseYYYYMMddStr(String date){
+        try {
+            return TextUtils.isEmpty(date) ? null : getYYYYMMddFormatter().parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+    public static Date parseAmStr(String date) {
+        try {
+            return TextUtils.isEmpty(date) ? null : getAmTimeFormatter().parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static String formatStandardDate(Date date){
+        return date == null ? "" : getStandardDateFormat().format(date);
+    }
+    public static String formatFullDate(Date date){
+        return date == null ? "" : getFullDateFormatter().format(date);
+    }
+    public static String formatFormalDate(Date date){
+        return date == null ? "" : getFormalDateFormatter().format(date);
+    }
+    public static String formatHHmmTime(Date date){
+        Timber.d("formatHHmmTime() called with: date = [" + date + "]");
+        return date == null? "": getHHmmFormatter().format(date);
+    }
+
+//formatters
+
+    @NonNull
+    public static SimpleDateFormat getStandardDateFormat(){
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+    }
+    @NonNull
+    public static SimpleDateFormat getFormalDateFormatter(){
+        return new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.ENGLISH);
+    }
+    @NonNull
+    public static SimpleDateFormat getYYYYMMddSlashFormatter(){
+        return new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    }
+    @NonNull
+    public static SimpleDateFormat getYYYYMMddFormatter(){
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    }
+    @NonNull
+    public static SimpleDateFormat getHHmmFormatter(){
+        return new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+    }
+    @NonNull static SimpleDateFormat getDayFormatter(){
+        return new SimpleDateFormat("EEE", Locale.ENGLISH);
+    }
+    @NonNull
+    public static SimpleDateFormat getFullDateFormatter() {
+        //return new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.ENGLISH);
+    }
+    @NonNull
+    public static SimpleDateFormat getDayMonth3Formatter(){
+        return new SimpleDateFormat("dd MMM", Locale.ENGLISH);
+    }
+    @NonNull
+    public static SimpleDateFormat getAmTimeFormatter(){
+        return new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+    }
+
+
     /**
      * Finds a drawable and rotates it using the degrees argument provided
      */
@@ -179,4 +236,35 @@ public class Utils {
 
         return null;
     }
+
+    /**
+     * Gets as an argument a list of HourEntities and traverses it
+     * and finds the closest day from the specified time (long) given as a second arg
+     * and returns it
+     */
+    @WorkerThread
+    public static WeatherDayHourEntity getClosestWeatherDayHourEntity(@NonNull List<WeatherDayHourEntity> hours, long time) {
+        Map<Date, WeatherDayHourEntity> hoursMap = new HashMap<>(hours.size());
+
+        for (WeatherDayHourEntity hour : hours) {
+            if (TextUtils.isEmpty(hour.getTime()))
+                continue;
+            try {
+                if(TextUtils.equals(hour.getWeatherCode(), WeatherHourItemsAdapter.DAY_SUNRISE) ||
+                        TextUtils.equals(hour.getWeatherCode(), WeatherHourItemsAdapter.DAY_SUNSET)
+                || TextUtils.equals(hour.getWeatherCode(), WeatherHourItemsAdapter.DAY_STR))
+                    continue;
+
+                final Date date = Utils.getFullDateFormatter().parse(hour.getTime());
+                if (date != null) {
+                    hoursMap.put(date, hour);
+                }
+            } catch (ParseException e) { Timber.e(e); }
+        }
+        Date closestDate = Collections.min(hoursMap.keySet(), (d1, d2) -> {
+            return Long.compare(Math.abs(d1.getTime() - time), Math.abs(d2.getTime() - time));
+        });
+        return hoursMap.get(closestDate);
+    }
+
 }

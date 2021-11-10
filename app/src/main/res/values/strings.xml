@@ -42,6 +42,8 @@
     <string name="weather_cloud">Cloud</string>
     <string name="weather_feels">Feels %1$s</string>
     <string name="sunrise">Sunrise</string>
+    <string name="sunrise_hour">Sunrise: %1$s</string>
+    <string name="sunset_hour">Sunset: %1$s</string>
     <string name="weather_humidity">Humidity</string>
     <string name="moonset">Moonset</string>
     <string name="moonrise">Moonrise</string>
@@ -57,4 +59,5 @@
     <string name="weather_condition_snow">Snow chance</string>
     <string name="weather_condition_uv_index">UV Index</string>
     <string name="hours">%1$s hours</string>
+    <string name="no_weather_hourly_data_found">No data provided!</string>
 </resources>

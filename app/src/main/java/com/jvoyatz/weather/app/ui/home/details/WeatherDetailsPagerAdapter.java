@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.jvoyatz.weather.app.ui.home.details.pager.WeatherDetailsFullFragment;
+import com.jvoyatz.weather.app.ui.home.details.pager.WeatherDetailsHourlyListFragment;
 
 /**
  * Holds child fragment representing each screen
@@ -21,11 +22,11 @@ public class WeatherDetailsPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position){
-            case 0:
-            case 1:
             default:
-                //return HomeFragment.newInstance();
+            case 0:
                 return new WeatherDetailsFullFragment();
+            case 1:
+                return new WeatherDetailsHourlyListFragment();
         }
     }
 

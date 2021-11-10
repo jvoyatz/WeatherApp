@@ -1,6 +1,7 @@
 package com.jvoyatz.weather.app.models.converters.weather;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -70,7 +71,7 @@ public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, Weather
                 .withChanceofremdry(from.getChanceofremdry());
 
         if(!TextUtils.isEmpty(from.getTime())){
-            final String time = transformApiTimeStr(from.getTime());
+            final String time = transformApiTimeStr(parentDate, from.getTime());
             builder.withTime(time);
         }
         if(!Objects.isEmpty(from.getWeatherIconUrl())){
@@ -91,22 +92,13 @@ public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, Weather
      *
      * @param time api's field
      */
-    private String transformApiTimeStr(@NonNull String time){
+    public static String transformApiTimeStr(Date parentDate, @NonNull String time){
         try {
-            if(TextUtils.equals(time, "0")){
-                time = time + ":00";
-            }else {
-                time = time.replace("00", ":00");
-            }
-
+            time = replaceTimeValue(time);
             if(parentDate != null) {
-                final Calendar hourCalendar = Utils.convertHourStrToCalendar(time);
-                if(hourCalendar != null) {
-                    Calendar parentCalendar = Calendar.getInstance();
-                    parentCalendar.setTime(parentDate);
-                    parentCalendar.set(Calendar.HOUR_OF_DAY, hourCalendar.get(Calendar.HOUR_OF_DAY));
-
-                    return Utils.fullDateFormatter.format(parentCalendar.getTime());
+                final Date date = Utils.mergeHHmmDates(parentDate, time);
+                if(date != null) {
+                    return Utils.formatFullDate(date);
                 }
             }
         } catch (Exception e) {
@@ -114,6 +106,16 @@ public class WeatherDayHourEntityConverter extends TypeConverter<Hourly, Weather
         }
         return "";
     }
+
+    public static String replaceTimeValue(String time) {
+        if(TextUtils.equals(time, "0")){
+            time = time + ":00";
+        }else {
+            time = time.replace("00", ":00");
+        }
+        return time;
+    }
+
     public void setParentDate(Date parentDate) {
         this.parentDate = parentDate;
     }

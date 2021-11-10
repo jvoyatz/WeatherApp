@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:text="@{Utils.getFormalDate(viewmodel.weatherResponseLiveData.data.timezone.localtime)}"
+            android:text="@{Utils.getFormalDateFromStandard(viewmodel.weatherResponseLiveData.data.timezone.localtime)}"
             android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

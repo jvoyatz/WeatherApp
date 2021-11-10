@@ -31,7 +31,7 @@ public class WeatherDayEntityConverter extends TypeConverter<Weather, WeatherDay
         }
 
         try {
-            dayHourEntityConverter.setParentDate(Utils.dateFormatter.parse(from.getDate()));
+            dayHourEntityConverter.setParentDate(Utils.getYYYYMMddFormatter().parse(from.getDate()));
         } catch (ParseException e) {
             Timber.e(e);
         }

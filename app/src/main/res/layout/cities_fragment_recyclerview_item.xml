@@ -162,7 +162,7 @@
                 android:padding="1dp"
                 android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="@{Utils.formatDate(Utils.getDateTimeByZone(city.timezone.zone))}"
+                android:text="@{Utils.formatStandardDate(Utils.getDateTimeByZone(city.timezone.zone))}"
                 app:layout_constraintTop_toBottomOf="@+id/cityIcon"
                 tools:text="17:32" />
 
@@ -176,7 +176,7 @@
                 android:textStyle="italic"
                 android:padding="1dp"
                 android:gravity="center"
-                android:text="@{Utils.formatTime(Utils.getDateTimeByZone(city.timezone.zone))}"
+                android:text="@{Utils.formatHHmmTime(Utils.getDateTimeByZone(city.timezone.zone))}"
                 app:layout_constraintEnd_toEndOf="@+id/date"
                 app:layout_constraintStart_toStartOf="@+id/date"
                 app:layout_constraintTop_toBottomOf="@+id/date"

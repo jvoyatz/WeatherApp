@@ -17,6 +17,7 @@ import com.jvoyatz.weather.app.databinding.CitiesFragmentRecyclerviewItemBinding
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.ui.base.DataBoundListAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,7 +76,7 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
 
         switch (viewType){
             case EMPTY_ID:
-                return DataBindingUtil.inflate(inflater, R.layout.cities_fragment_recyclerview_exhausted, parent, false);
+                return DataBindingUtil.inflate(inflater, R.layout.recyclerview_exhausted_item, parent, false);
             case HEADER_ID:
                 return DataBindingUtil.inflate(inflater, R.layout.cities_fragment_recyclerview_header, parent, false);
         }
@@ -126,6 +127,9 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
     @Override
     public void submitList(@Nullable List<CityEntity> list) {
         if(list == null || list.isEmpty()){
+            if(list == null){
+                list = new ArrayList<>(1);
+            }
             list.add(CityEntity.builder().withName(EMPTY_NAME).build());
         }else{
             list.add(0, CityEntity.builder().withName(HEADER_NAME).build());

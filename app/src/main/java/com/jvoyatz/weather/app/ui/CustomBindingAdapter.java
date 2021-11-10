@@ -24,6 +24,7 @@ import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.ui.cities.CitiesHandler;
+import com.jvoyatz.weather.app.util.Objects;
 import com.jvoyatz.weather.app.util.Utils;
 
 import java.text.ParseException;
@@ -72,31 +73,9 @@ public class CustomBindingAdapter {
 
     @BindingAdapter({"imageUrl", "appExecutors"})
     public static void loadImage(ImageView view, List<WeatherDayHourEntity> hours, AppExecutors appExecutors) {
-        if(hours != null){
+        if(!Objects.isEmpty(hours)){
             appExecutors.networkIO().execute(() -> {
-                Map<Date, WeatherDayHourEntity> hoursMap = new HashMap<>(hours.size());
-                final long now = System.currentTimeMillis();
-
-                for (WeatherDayHourEntity hour : hours) {
-                    if(TextUtils.isEmpty(hour.getTime()))
-                        continue;
-                    try {
-                        final Date date = Utils.fullDateFormatter.parse(hour.getTime());
-                        if(date != null) {
-                            hoursMap.put(date, hour);
-                        }
-
-                    } catch (ParseException e) {
-                        Timber.e(e);
-                    }
-                }
-                Date closestDate = Collections.min(hoursMap.keySet(), (d1, d2) -> {
-                    long diff1 = Math.abs(d1.getTime() - now);
-                    long diff2 = Math.abs(d2.getTime() - now);
-
-                    return Long.compare(diff1, diff2);
-                });
-                final WeatherDayHourEntity hourEntity = hoursMap.get(closestDate);
+                final WeatherDayHourEntity hourEntity = Utils.getClosestWeatherDayHourEntity(hours, System.currentTimeMillis());
                 if(hourEntity != null && !TextUtils.isEmpty(hourEntity.getWeatherIconUrl())){
                     appExecutors.ui().execute(() -> Glide.with(view.getContext())
                             .load(hourEntity.getWeatherIconUrl())
