@@ -1,6 +1,7 @@
 package com.jvoyatz.weather.app.ui.cities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,8 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
 
         recyclerView.setAdapter(adapter);
 
+
+        mViewModel.setTriggerRefreshFavoriteCities(mWeatherViewModel.getTriggerRefreshFavoriteCities());
         mViewModel.getFavoritesCitiesLiveData().observe(getViewLifecycleOwner(), new Observer<List<CityEntity>>() {
             @Override
             public void onChanged(List<CityEntity> cityEntities) {
@@ -64,15 +67,6 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
             }
         });
 
-        mWeatherViewModel.getFavoriteCityResultLiveData().observe(getViewLifecycleOwner(), new Observer<Pair<Boolean, Boolean>>() {
-            @Override
-            public void onChanged(Pair<Boolean, Boolean> pair) {
-                Timber.d("onChanged() called with: pair = [" + pair + "]");
-                if(pair != null){
-                    mViewModel.refreshFavoriteCitiesList();
-                }
-            }
-        });
         mViewModel.refreshFavoriteCitiesList();
     }
 

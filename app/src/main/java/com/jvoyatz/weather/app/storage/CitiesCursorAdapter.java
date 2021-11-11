@@ -60,7 +60,7 @@ public class CitiesCursorAdapter extends CursorAdapter {
             String region = cursor.getString(cursor.getColumnIndexOrThrow("region"));
             String country = cursor.getString(cursor.getColumnIndexOrThrow("country"));
             boolean isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow("isFavorite")) > 0;
-            String regionCountryStr = new StringBuffer().append(region).append(",").append(country).toString();
+            String regionCountryStr = region + ", " + country;
 
             mBinding.cityName.setText(name);
             mBinding.cityRegionCountry.setText(regionCountryStr);
@@ -70,13 +70,13 @@ public class CitiesCursorAdapter extends CursorAdapter {
             }
             mBinding.cityAddIcon.setOnClickListener(v -> mListener.onSuggestedCitySelected(name, region, country, true));
 
-//            mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Timber.d("onClick() called with: v = [" + v + "]");
-//                    mListener.onCitySelected(name, false);
-//                }
-//            });
+            mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Timber.d("onClick() called with: v = [" + v + "]");
+                   // mListener.on(name, false);
+                }
+            });
         }catch (Exception e){
             Timber.e(e);
         }

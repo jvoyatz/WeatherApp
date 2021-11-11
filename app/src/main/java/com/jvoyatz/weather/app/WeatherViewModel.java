@@ -2,6 +2,7 @@ package com.jvoyatz.weather.app;
 
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
 import com.jvoyatz.weather.app.repository.WeatherRepository;
 import com.jvoyatz.weather.app.util.AbsentLiveData;
+import com.jvoyatz.weather.app.util.Event;
 
 import javax.inject.Inject;
 
@@ -34,8 +36,9 @@ public class WeatherViewModel extends ViewModel {
     private final WeatherRepository weatherRepository;
     private final MutableLiveData<String> searchCityLiveData;
     private MutableLiveData<CityEntity> selectedCityEntityLiveData;
-    private final MutableLiveData<Triple<String, String, String>> favoriteCityLiveData;
+    private final MutableLiveData<Event<Triple<String, String, String>>> favoriteCityLiveData;
     private LiveData<Resource<WeatherEntity>> weatherEntityLiveData;
+    private final MutableLiveData<Event<Boolean>> triggerRefreshFavoriteCities;
 
     @Inject
     public WeatherViewModel(CityRepository cityRepository, WeatherRepository weatherRepository) {
@@ -43,6 +46,7 @@ public class WeatherViewModel extends ViewModel {
         this.weatherRepository = weatherRepository;
         searchCityLiveData = new MutableLiveData<>();
         favoriteCityLiveData = new MutableLiveData<>();
+        triggerRefreshFavoriteCities = new MutableLiveData<>();
     }
 
     /**
@@ -53,6 +57,7 @@ public class WeatherViewModel extends ViewModel {
         return Transformations.switchMap(searchCityLiveData, new Function<String, LiveData<Resource<Cursor>>>() {
             @Override
             public LiveData<Resource<Cursor>> apply(String input) {
+                Timber.d("getCitiesSuggestions() called with: input = [" + input + "]");
                 if(!TextUtils.isEmpty(input)) {
                     return cityRepository.searchForCitySuggestions(input);
                 }
@@ -74,7 +79,8 @@ public class WeatherViewModel extends ViewModel {
      * String (name, region, country) params to find city through a query
      */
     public void updateFavoriteCity(@NonNull String cityName, @NonNull String region, @NonNull String country){
-        favoriteCityLiveData.postValue(new Triple<>(cityName, region, country));
+        Timber.d("updateFavoriteCity() called with: cityName = [" + cityName + "], region = [" + region + "], country = [" + country + "]");
+        favoriteCityLiveData.postValue(new Event<>(new Triple<>(cityName, region, country)));
     }
 
     /**
@@ -84,14 +90,15 @@ public class WeatherViewModel extends ViewModel {
      * from the suggestions list.
      */
     public LiveData<Pair<Boolean, Boolean>> getFavoriteCityResultLiveData() {
-        return Transformations.switchMap(favoriteCityLiveData, new Function<Triple<String, String, String>, LiveData<Pair<Boolean, Boolean>>>() {
-            @Override
-            public LiveData<Pair<Boolean, Boolean>> apply(Triple<String, String, String> input) {
-                if(input != null){
+        return Transformations.switchMap(favoriteCityLiveData, event -> {
+            Timber.d("apply: event " + event);
+            if(event != null){
+                final Triple<String, String, String> input = event.getContentIfNotHandled();
+                Timber.d("apply: input " + input);
+                if(input != null)
                     return cityRepository.updateFavoriteCity(input.component1(), input.component2(), input.component3());
-                }
-                return AbsentLiveData.create();
             }
+            return AbsentLiveData.create();
         });
     }
 
@@ -132,4 +139,10 @@ public class WeatherViewModel extends ViewModel {
         return weatherEntityLiveData;
     }
 
+    public void setTriggerRefreshFavoriteCities(){
+        triggerRefreshFavoriteCities.postValue(new Event<>(true));
+    }
+    public MutableLiveData<Event<Boolean>> getTriggerRefreshFavoriteCities() {
+        return triggerRefreshFavoriteCities;
+    }
 }

@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -85,6 +86,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         mWeatherViewModel.getFavoriteCityResultLiveData().observe(this, pair -> {
             if(pair != null && pair.first){
                 mWeatherViewModel.searchForCitiesSuggestions(mBinding.searchview.getQuery().toString());
+                mWeatherViewModel.setTriggerRefreshFavoriteCities();
                 if(pair.second != null && pair.second)
                     Toast.makeText(WeatherActivity.this, R.string.city_favorite_success, Toast.LENGTH_SHORT).show();
                 else if(pair.second != null)
@@ -108,11 +110,12 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
      * this city to the local db.
      * @param cityName name of the city
      * @param region the region where it belongs
-     * @param country the coutrny where city belongs
+     * @param country the country where city belongs
      * @param storeAsFavorite declaring whether this city will be added or removed from the db (if already added)
      */
     @Override
     public void onSuggestedCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite){
+        Timber.d("onSuggestedCitySelected() called with: cityName = [" + cityName + "], region = [" + region + "], country = [" + country + "], storeAsFavorite = [" + storeAsFavorite + "]");
         mWeatherViewModel.updateFavoriteCity(cityName, region, country);
     }
 

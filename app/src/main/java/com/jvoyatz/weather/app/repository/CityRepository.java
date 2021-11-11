@@ -1,6 +1,7 @@
 package com.jvoyatz.weather.app.repository;
 
 import android.database.Cursor;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -138,6 +139,7 @@ public class CityRepository {
                 appExecutors.diskIO().execute(() -> {
                     try {
                         List<CityEntity> favoriteCities = cityDao.getFavoriteCities();
+                        Timber.d("onActive: " + favoriteCities);
                         postValue(favoriteCities);
                     } catch (Exception e) {
                         Timber.e(e);

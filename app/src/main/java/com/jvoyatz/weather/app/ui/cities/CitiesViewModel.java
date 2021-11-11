@@ -1,5 +1,6 @@
 package com.jvoyatz.weather.app.ui.cities;
 
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -7,6 +8,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
+import com.jvoyatz.weather.app.util.AbsentLiveData;
+import com.jvoyatz.weather.app.util.Event;
 
 import java.util.List;
 
@@ -16,21 +19,32 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class CitiesViewModel extends ViewModel {
+
     private final CityRepository cityRepository;
-    private final MutableLiveData<Boolean> triggerRefreshFavoriteCities;
+    private MutableLiveData<Event<Boolean>> triggerRefreshFavoriteCities;
     public MutableLiveData<CityEntity> currentCityLiveData;
 
     @Inject
     public CitiesViewModel(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
-        triggerRefreshFavoriteCities = new MutableLiveData<>();
     }
 
     /**
      * Returns a livedata instance containing a list of CityEntity objects
      */
     public LiveData<List<CityEntity>> getFavoritesCitiesLiveData(){
-        return Transformations.switchMap(triggerRefreshFavoriteCities, input -> cityRepository.getFavoriteCities());
+        return Transformations.switchMap(triggerRefreshFavoriteCities, new Function<Event<Boolean>, LiveData<List<CityEntity>>>() {
+            @Override
+            public LiveData<List<CityEntity>> apply(Event<Boolean> event) {
+                if(event != null){
+                    final Boolean data = event.getContentIfNotHandled();
+                    if(data != null){
+                        return cityRepository.getFavoriteCities();
+                    }
+                }
+                return AbsentLiveData.create();
+            }
+        });
     }
 
     /**
@@ -38,7 +52,7 @@ public class CitiesViewModel extends ViewModel {
      * used in the getFavoritesCitiesLiveData() method
      */
     public void refreshFavoriteCitiesList(){
-        triggerRefreshFavoriteCities.postValue(true);
+        triggerRefreshFavoriteCities.postValue(new Event<>(true));
     }
 
     /**
@@ -58,5 +72,16 @@ public class CitiesViewModel extends ViewModel {
             currentCityLiveData = new MutableLiveData<>();
         }
         return currentCityLiveData;
+    }
+
+    /**
+     * Invoked by the WeatherViewModel, when CityFragment is created
+     * Activity sets a value to this LiveData when a certain event like selecting
+     * as favorite or the opposite has happened
+     *
+     * @param triggerRefreshFavoriteCities the Activity's livedata
+     */
+    public void setTriggerRefreshFavoriteCities(MutableLiveData<Event<Boolean>> triggerRefreshFavoriteCities) {
+        this.triggerRefreshFavoriteCities = triggerRefreshFavoriteCities;
     }
 }

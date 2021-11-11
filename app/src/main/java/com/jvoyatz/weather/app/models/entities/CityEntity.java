@@ -120,21 +120,17 @@ public class CityEntity {
         isFavorite = favorite;
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "CityEntity{" +
-                "_id=" + _id +
                 ", name='" + name + '\'' +
                 ", country='" + country + '\'' +
                 ", region='" + region + '\'' +
-                ", latitude='" + latitude + '\'' +
-                ", longitude='" + longitude + '\'' +
-                ", population='" + population + '\'' +
-                ", weatherUrl='" + weatherUrl + '\'' +
-                ", timezone=" + timezone +
+                ", isFavorite=" + isFavorite +
                 '}';
     }
+
+    @NonNull
 
     @Override
     public boolean equals(Object o) {

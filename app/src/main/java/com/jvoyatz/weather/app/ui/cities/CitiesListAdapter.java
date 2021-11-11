@@ -85,22 +85,6 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
 
     @Override
     protected void bind(ViewDataBinding binding, CityEntity item) {
-//        binding.getRoot().setOnClickListener(v -> {
-//            //quick way to handle selection in recyclerview
-//            //diff callback helps a lot
-//            CityEntity currentSelectedCity = handler.getCurrentSelectedCity();
-//            if(currentSelectedCity != null){
-//                boolean areItemsTheSame = DIFF_CALLBACK.areItemsTheSame(currentSelectedCity, item);
-//                binding.getRoot().setSelected(!areItemsTheSame);
-//            }else{
-//                binding.getRoot().setSelected(true);
-//            }
-//            handler.onViewClicked(item, !binding.getRoot().isSelected());
-//        });
-//        binding.cityFavorite.setOnClickListener(v -> {
-//            handler.onFavoriteIconClick(item);
-//        });
-
         switch (viewType){
             case HEADER_ID:
                 binding.setVariable(BR.text, binding.getRoot().getContext().getString(R.string.cities_favorites_header));
