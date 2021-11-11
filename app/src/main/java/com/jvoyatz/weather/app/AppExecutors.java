@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 
 import javax.inject.Inject;
@@ -34,6 +35,7 @@ public class AppExecutors {
     private final ExecutorService networkIO;
     //executes runnables on the UI thread
     private final UiThreadExecutor ui;
+    private final ScheduledExecutorService periodicIO;
 
     @Inject
     public AppExecutors() {
@@ -42,6 +44,7 @@ public class AppExecutors {
         diskIO = Executors.newSingleThreadExecutor(priorityThreadFactory);
         networkIO = Executors.newFixedThreadPool(2, priorityThreadFactory);
         ui = new UiThreadExecutor();
+        periodicIO = Executors.newSingleThreadScheduledExecutor();
     }
 
     public ExecutorService diskIO() {
@@ -56,10 +59,15 @@ public class AppExecutors {
         return ui;
     }
 
+    public ScheduledExecutorService periodicIO() {
+        return periodicIO;
+    }
+
     public void destroy(){
         try{
             diskIO.shutdown();
             networkIO.shutdown();
+            periodicIO.shutdown();
         }catch (Exception e){
             Timber.e(e);
         }
@@ -70,6 +78,10 @@ public class AppExecutors {
 
             if(!networkIO.isShutdown()){
                 networkIO.shutdownNow();
+            }
+
+            if(!periodicIO.isShutdown()){
+                periodicIO.shutdownNow();
             }
         }
     }
