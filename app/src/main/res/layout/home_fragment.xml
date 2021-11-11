@@ -10,7 +10,7 @@
 
         <variable
             name="handler"
-            type="com.jvoyatz.weather.app.ui.base.BaseHandler" />
+            type="com.jvoyatz.weather.app.ui.home.HomeHandler" />
 
         <import type="com.jvoyatz.weather.app.Constants"/>
         <import type="com.jvoyatz.weather.app.R"/>
@@ -342,6 +342,6 @@
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_1"
             app:layout_constraintTop_toBottomOf="@+id/flow2"
             app:layout_constraintHorizontal_weight="0.6"
-            android:onClick="@{v -> handler.onViewClicked(v)}"/>
+            android:onClick="@{(v) -> handler.onViewClicked(v, 0)}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
