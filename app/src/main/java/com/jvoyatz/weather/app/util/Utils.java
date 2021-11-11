@@ -173,7 +173,6 @@ public class Utils {
         return date == null ? "" : getFormalDateFormatter().format(date);
     }
     public static String formatHHmmTime(Date date){
-        Timber.d("formatHHmmTime() called with: date = [" + date + "]");
         return date == null? "": getHHmmFormatter().format(date);
     }
 

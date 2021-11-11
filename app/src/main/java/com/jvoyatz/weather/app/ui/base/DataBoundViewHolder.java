@@ -48,7 +48,6 @@ public class DataBoundViewHolder<T extends ViewDataBinding> extends RecyclerView
     }
 
     public void markAttach() {
-        Timber.d("markAttach() called : paused " + wasPaused);
         if (wasPaused) {
             lifecycleRegistry.setCurrentState(Lifecycle.State.RESUMED);
             wasPaused = false;
