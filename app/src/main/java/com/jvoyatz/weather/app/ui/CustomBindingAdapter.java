@@ -42,7 +42,7 @@ import java.util.Random;
 import timber.log.Timber;
 
 public class CustomBindingAdapter {
-    @BindingAdapter(value = {"bind:isFavorite"})
+    @BindingAdapter(value = {"isFavorite"})
     public static void favoriteCityImageView(@NonNull ImageView imgView, Boolean isFavorite) {
         if(isFavorite){
             imgView.setImageDrawable(ContextCompat.getDrawable(imgView.getContext(), R.drawable.baseline_favorite_black_24dp));
