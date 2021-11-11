@@ -18,7 +18,14 @@
         tools:layout="@layout/weather_details_pager_fragment" >
         <action
             android:id="@+id/action_homeFragment_to_weatherDetailsFragment"
-            app:destination="@id/weatherDetailsFragment" />
+            app:destination="@id/weatherDetailsFragment" >
+
+            <argument
+                android:name="dayIndex"
+                app:argType="integer" />
+        </action>
+
+
     </fragment>
 
     <fragment
