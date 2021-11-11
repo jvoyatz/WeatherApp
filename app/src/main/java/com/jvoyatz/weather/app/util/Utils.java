@@ -78,6 +78,35 @@ public class Utils {
     }
 
     /**
+     * Receives a date string and formats it
+     *
+     * Returns the given in a format
+     *         Day, 01 November
+     */
+    public static String getFormalDate(String date){
+        Timber.d("getFormalDate() called with: date = [" + date + "]");
+        String dateFormatted = getFormalDateFromStandard(date);
+
+        if(TextUtils.isEmpty(dateFormatted)){
+            dateFormatted = getFormalDateFromYYYYMMdd(date);
+        }
+
+        return dateFormatted;
+    }
+    /**
+     * input: 2021-11-10
+     *
+     * Returns the given in a format
+     *         Day, 01 November
+     */
+    public static String getFormalDateFromYYYYMMdd(String dateStr){
+        final Date date = parseYYYYMMddStr(dateStr);
+        return date != null ? formatFormalDate(date) : null;
+    }
+
+
+
+    /**
      * input: 2021-11-10 15:28
      *
      * Returns the given in a format
@@ -174,6 +203,9 @@ public class Utils {
     }
     public static String formatHHmmTime(Date date){
         return date == null? "": getHHmmFormatter().format(date);
+    }
+    private static String formatYYYYMMddDate(Date date) {
+        return date == null ? "": getYYYYMMddFormatter().format(date);
     }
 
 //formatters
