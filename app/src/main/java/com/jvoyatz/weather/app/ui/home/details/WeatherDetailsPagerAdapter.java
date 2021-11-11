@@ -14,8 +14,11 @@ import com.jvoyatz.weather.app.ui.home.details.pager.WeatherDetailsHourlyListFra
  */
 public class WeatherDetailsPagerAdapter extends FragmentStateAdapter {
 
-    public WeatherDetailsPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+    private final int dayIndex;
+
+    public WeatherDetailsPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, int dayIndex) {
         super(fragmentManager, lifecycle);
+        this.dayIndex = dayIndex;
     }
 
     @NonNull

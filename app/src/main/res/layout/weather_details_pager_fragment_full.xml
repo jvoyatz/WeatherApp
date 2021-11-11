@@ -49,7 +49,7 @@
                 android:layout_margin="8dp"
                 android:layout_marginTop="8dp"
                 android:contentDescription="@null"
-                imageUrl="@{viewmodel.weatherEntityLiveData.currentCondition.weatherIconUrl}"
+                imageUrl="@{viewmodel.weatherEntityLiveData.data.currentCondition.weatherIconUrl}"
                 android:src="@drawable/baseline_wb_sunny_black_24dp"
                 app:layout_constrainedHeight="true"
                 app:layout_constrainedWidth="true"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@color/material_on_background_emphasis_high_type"
-                android:text="@{viewmodel.weatherEntityLiveData.currentCondition.tempC + Constants.CELSIUS}"
+                android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.tempC != null ? viewmodel.weatherEntityLiveData.data.currentCondition.tempC + Constants.CELSIUS : ""}'
                 app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_weight="0.5"
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="48dp"
-                android:text="@{viewmodel.weatherEntityLiveData.currentCondition.weatherDesc}"
+                android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.weatherDesc != null ? viewmodel.weatherEntityLiveData.data.currentCondition.weatherDesc: ""}'
                 app:layout_constraintEnd_toEndOf="@+id/temperature"
                 app:layout_constraintStart_toStartOf="@+id/weather_icon"
                 app:layout_constraintTop_toBottomOf="@id/weather_icon"
@@ -110,7 +110,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5"/>
 
-        
+
         <androidx.constraintlayout.helper.widget.Flow
             android:id="@+id/weather_info_sun_flow"
             android:layout_width="0dp"
@@ -139,7 +139,7 @@
             android:id="@+id/weather_info_sun_duration"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@{@string/hours(viewmodel.weatherCurrentDayEntityLiveData.sunHour)}"
+            android:text='@{viewmodel.weatherCurrentDayEntityLiveData.sunHour != null ? @string/hours(viewmodel.weatherCurrentDayEntityLiveData.sunHour):""}'
             android:padding="6dp"
             android:gravity="end"
             />
@@ -156,7 +156,7 @@
             android:id="@+id/weather_info_sunrise_time"
             android:layout_width="wrap_content"
             android:gravity="end"
-            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunrise}"
+            tools:text='@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunrise != null ? viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunrise:""}'
             android:layout_height="wrap_content"
             android:padding="6dp"
             android:background="@drawable/underline"/>
@@ -173,7 +173,7 @@
             android:id="@+id/weather_info_sunset_time"
             android:layout_width="wrap_content"
             android:gravity="end"
-            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunset}"
+            tools:text='@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunset != null ? viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).sunset:""}'
             android:layout_height="wrap_content"
             android:padding="6dp"
             android:background="@drawable/underline"/>
@@ -217,7 +217,7 @@
             android:id="@+id/weather_info_moon_duration"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonPhase}"
+            tools:text='@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonPhase ?? ""}'
             android:padding="6dp"
             android:gravity="end"
             />
@@ -234,7 +234,7 @@
             android:id="@+id/weather_info_moonrise_time"
             android:layout_width="wrap_content"
             android:gravity="end"
-            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonrise}"
+            tools:text='@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonrise ?? ""}'
             android:layout_height="wrap_content"
             android:padding="6dp"
             android:background="@drawable/underline"/>
@@ -251,7 +251,7 @@
             android:id="@+id/weather_info_moonset_time"
             android:layout_width="wrap_content"
             android:gravity="end"
-            tools:text="@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonset}"
+            tools:text='@{viewmodel.weatherCurrentDayEntityLiveData.astronomy.get(0).moonset ?? ""}'
             android:layout_height="wrap_content"
             android:padding="6dp"
             android:background="@drawable/underline"/>
@@ -294,7 +294,7 @@
             android:id="@+id/weather_condition_real_feel_value"
             android:layout_width="wrap_content"
             android:gravity="end"
-            tools:text="@{viewmodel.weatherEntityLiveData.currentCondition.tempC + ` ` + Constants.CELSIUS}"
+            android:text= '@{viewmodel.weatherEntityLiveData.data.currentCondition.tempC != null ? viewmodel.weatherEntityLiveData.data.currentCondition.tempC + ` ` + Constants.CELSIUS:""}'
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
@@ -313,7 +313,7 @@
             android:id="@+id/weather_condition_wind_value"
             android:layout_width="wrap_content"
             android:gravity="end"
-            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.windspeedKmph + Constants.KM_H + viewmodel.weatherEntityLiveData.currentCondition.winddir16Point}"
+            android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.windspeedKmph != null ? viewmodel.weatherEntityLiveData.data.currentCondition.windspeedKmph + ` ` + Constants.KM_H + ` ` + viewmodel.weatherEntityLiveData.data.currentCondition.winddir16Point:""}'
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
@@ -331,7 +331,7 @@
             android:id="@+id/weather_condition_rain_value"
             android:layout_width="wrap_content"
             android:gravity="end"
-            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.precipMM + ` ` + Constants.MM}"
+            android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.precipMM != null ? viewmodel.weatherEntityLiveData.data.currentCondition.precipMM + ` ` + Constants.MM:""}'
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
@@ -349,7 +349,7 @@
             android:id="@+id/weather_condition_cloud_value"
             android:layout_width="wrap_content"
             android:gravity="end"
-            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.cloudcover + ` ` + Constants.PERCENT}"
+            android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.cloudcover != null ? viewmodel.weatherEntityLiveData.data.currentCondition.cloudcover + ` ` + Constants.PERCENT:""}'
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
@@ -368,7 +368,7 @@
             android:id="@+id/weather_condition_humidity_value"
             android:layout_width="wrap_content"
             android:gravity="end"
-            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.humidity + ` ` + Constants.PERCENT}"
+            android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.humidity != null ? viewmodel.weatherEntityLiveData.data.currentCondition.humidity + ` ` + Constants.PERCENT:""}'
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
@@ -386,7 +386,7 @@
             android:id="@+id/weather_condition_uv_value"
             android:layout_width="wrap_content"
             android:gravity="end"
-            android:text="@{viewmodel.weatherEntityLiveData.currentCondition.uvIndex}"
+            android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.uvIndex ?? ""}'
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
@@ -405,7 +405,7 @@
             android:layout_width="wrap_content"
             android:gravity="end"
             android:textColor="@color/material_on_background_emphasis_high_type"
-            android:text="@{viewmodel.weatherCurrentDayEntityLiveData.totalSnowCm + ` ` + Constants.CM}"
+            android:text='@{viewmodel.weatherCurrentDayEntityLiveData.totalSnowCm != null ? viewmodel.weatherCurrentDayEntityLiveData.totalSnowCm + ` ` + Constants.CM:""}'
             android:layout_height="wrap_content"
             android:padding="6dp"
             android:background="@drawable/underline"/>

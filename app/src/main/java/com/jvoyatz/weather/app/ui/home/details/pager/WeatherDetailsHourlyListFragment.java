@@ -36,12 +36,13 @@ import timber.log.Timber;
  */
 @AndroidEntryPoint
 public class WeatherDetailsHourlyListFragment extends Fragment {
-
+    private static String DAY_INDEX_TAG = "DAY_INDEX_TAG";
     @Inject
     AppExecutors appExecutors;
     private WeatherDetailsPagerFragmentHourlyListBinding mBinding;
-    private WeatherDetailsHourlyListViewModel mViewModel;
+
     public WeatherDetailsHourlyListFragment() { }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,17 +53,14 @@ public class WeatherDetailsHourlyListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         WeatherHourItemsAdapter adapter = new WeatherHourItemsAdapter(WeatherHourItemsAdapter.DIFF_CALLBACK, appExecutors);
         mBinding.weatherDayDetailsRecyclerview.setAdapter(adapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
         mBinding.weatherDayDetailsRecyclerview.addItemDecoration(dividerItemDecoration);
 
-        mViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsHourlyListViewModel.class);
-        WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
+        WeatherDetailsViewModel mViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
 
-        mViewModel.getWeatherDayHourEntityLiveData(weatherViewModel.getWeatherResponseLiveData()).observe(getViewLifecycleOwner(), weatherDayHourEntities -> {
-            Timber.d("onChanged() called with: weatherDayHourEntities = [" + weatherDayHourEntities + "]");
+        mViewModel.getWeatherDayHourEntityLiveData().observe(getViewLifecycleOwner(), weatherDayHourEntities -> {
             adapter.submitList(weatherDayHourEntities);
         });
     }

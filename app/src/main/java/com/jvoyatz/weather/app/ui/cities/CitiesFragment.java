@@ -51,21 +51,13 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
         mViewModel.setCurrentCitySelectedLiveData(mWeatherViewModel.getSelectedCityEntityLiveData());
 
         RecyclerView recyclerView = mBinding.citiesRecyclerview;
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         CitiesListAdapter adapter = new CitiesListAdapter(CitiesListAdapter.DIFF_CALLBACK, this, mViewModel);
-
         recyclerView.setAdapter(adapter);
 
 
         mViewModel.setTriggerRefreshFavoriteCities(mWeatherViewModel.getTriggerRefreshFavoriteCities());
-        mViewModel.getFavoritesCitiesLiveData().observe(getViewLifecycleOwner(), new Observer<List<CityEntity>>() {
-            @Override
-            public void onChanged(List<CityEntity> cityEntities) {
-                Timber.d("onChanged() called with: cityEntities = [" + cityEntities + "]");
-                adapter.submitList(cityEntities);
-            }
-        });
+        mViewModel.getFavoritesCitiesLiveData().observe(getViewLifecycleOwner(), adapter::submitList);
 
         mViewModel.refreshFavoriteCitiesList();
     }

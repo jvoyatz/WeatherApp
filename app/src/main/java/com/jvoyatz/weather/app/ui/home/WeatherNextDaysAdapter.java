@@ -1,5 +1,6 @@
 package com.jvoyatz.weather.app.ui.home;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -11,12 +12,19 @@ import androidx.recyclerview.widget.DiffUtil;
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.databinding.HomeFragmentNextDayItemBinding;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
+import com.jvoyatz.weather.app.ui.base.BaseHandler;
 import com.jvoyatz.weather.app.ui.base.DataBoundListAdapter;
 
+import timber.log.Timber;
+
 public class WeatherNextDaysAdapter extends DataBoundListAdapter<WeatherDayEntity, ViewDataBinding> {
-    public AppExecutors appExecutors;
-    protected WeatherNextDaysAdapter(@NonNull DiffUtil.ItemCallback<WeatherDayEntity> diffCallback) {
+    private final HomeHandler handler;
+    private AppExecutors appExecutors;
+
+    protected WeatherNextDaysAdapter(@NonNull DiffUtil.ItemCallback<WeatherDayEntity> diffCallback, HomeHandler handler) {
         super(diffCallback);
+        this.handler = handler;
+        setHasStableIds(true);
     }
 
     @Override
@@ -26,9 +34,16 @@ public class WeatherNextDaysAdapter extends DataBoundListAdapter<WeatherDayEntit
     }
 
     @Override
-    protected void bind(ViewDataBinding binding, WeatherDayEntity item) {
+    protected void bind(ViewDataBinding binding, WeatherDayEntity item, int position) {
         binding.setVariable(BR.day, item);
         binding.setVariable(BR.appExecutors, appExecutors);
+        binding.setVariable(BR.position, position);
+        binding.setVariable(BR.handler, handler);
+
+    }
+
+    public void setAppExecutors(AppExecutors appExecutors) {
+        this.appExecutors = appExecutors;
     }
 
     public static  DiffUtil.ItemCallback<WeatherDayEntity> DAYS_DIFF_CALLBACK = new DiffUtil.ItemCallback<WeatherDayEntity>() {

@@ -76,27 +76,28 @@
                 <ImageView
                     android:id="@+id/weather_icon"
                     imageUrl="@{viewmodel.weatherResponseLiveData.data.currentCondition.weatherIconUrl}"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/ic_wind_direction"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_margin="2dp"
+                    android:src="@drawable/ic_wind_dir"
                     app:layout_constrainedHeight="true"
                     app:layout_constrainedWidth="true"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintBottom_toTopOf="@+id/weather_descr"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    app:layout_constraintBottom_toTopOf="@+id/g"
                     app:layout_constraintEnd_toStartOf="@id/temperature"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintHorizontal_weight="0.5"
                     app:layout_constraintHorizontal_chainStyle="spread"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHorizontal_weight="0.6"
+                    app:layout_constraintHeight_percent="0.6"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/temperature"
                     style="?attr/textAppearanceHeadline4"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.tempC + ` ` + Constants.CELSIUS}"
+                    android:layout_height="0dp"
+                    android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.tempC != null ? viewmodel.weatherResponseLiveData.data.currentCondition.tempC + ` ` + Constants.CELSIUS:""}'
                     android:textColor="@color/material_on_background_emphasis_high_type"
                     android:gravity="center"
                     app:layout_constraintHorizontal_weight="0.5"
@@ -108,12 +109,19 @@
                     tools:text="19" />
 
 
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.6"/>
+
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/temperature_feel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@{@string/weather_feels(viewmodel.weatherResponseLiveData.data.currentCondition.feelsLikeC + ` ` + Constants.CELSIUS)}"
+                    android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.feelsLikeC != null ? @string/weather_feels(viewmodel.weatherResponseLiveData.data.currentCondition.feelsLikeC + ` ` + Constants.CELSIUS):""}'
                     app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
                     app:layout_constraintEnd_toEndOf="@+id/temperature"
                     app:layout_constraintStart_toStartOf="@+id/temperature"
@@ -125,7 +133,7 @@
                     style="?attr/textAppearanceHeadline5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.weatherDesc}"
+                    android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.weatherDesc ?? ""}'
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/temperature"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -172,7 +180,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.52"/>
+            app:layout_constraintGuide_percent="0.55"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/current_weather_conditions"
@@ -223,7 +231,7 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:background="@drawable/underline"
             android:padding="7dp"
-            android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.tempC}"
+            android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.tempC != null ? viewmodel.weatherResponseLiveData.data.currentCondition.tempC + Constants.CELSIUS : ""}'
             />
 
         <com.google.android.material.textview.MaterialTextView
@@ -253,7 +261,9 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/underline"
                 android:gravity="center_vertical"
-                android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.windspeedKmph + ` km/h ` + viewmodel.weatherResponseLiveData.data.currentCondition.winddir16Point}"
+                android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.windspeedKmph != null ? viewmodel.weatherResponseLiveData.data.currentCondition.windspeedKmph + ` km/h ` + viewmodel.weatherResponseLiveData.data.currentCondition.winddir16Point:""}'
+                degrees='@{viewmodel.weatherResponseLiveData.data.currentCondition.winddirDegree ?? ""}'
+                android:drawableEnd="@drawable/ic_wind_direction"
                 app:layout_constrainedWidth="true"
                 android:padding="7dp"
                 tools:text="19" />
@@ -261,9 +271,9 @@
                 android:id="@+id/cond_wind_img"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_wind_direction"
-                degrees="@{viewmodel.weatherResponseLiveData.data.currentCondition.winddirDegree}"
-                app:srcCompat="@drawable/ic_wind_direction"/>
+                android:src="@drawable/ic_wind_dir"
+                degrees='@{viewmodel.weatherResponseLiveData.data.currentCondition.winddirDegree ?? ""}'
+                app:srcCompat="@drawable/ic_wind_dir"/>
         </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
@@ -285,7 +295,7 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:background="@drawable/underline"
             android:padding="7dp"
-            tools:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.precipMM + ` mm`}" />
+            tools:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.precipMM != null ? viewmodel.weatherResponseLiveData.data.currentCondition.precipMM + ` mm`:""}' />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/cond_cloud"
@@ -306,7 +316,7 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:background="@drawable/underline"
             android:padding="7dp"
-            android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.cloudcover + ` ` + Constants.PERCENT}" />
+            android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.cloudcover != null ? viewmodel.weatherResponseLiveData.data.currentCondition.cloudcover + ` ` + Constants.PERCENT:""}' />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/cond_humidity"
@@ -327,7 +337,7 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:background="@drawable/underline"
             android:padding="7dp"
-            android:text="@{viewmodel.weatherResponseLiveData.data.currentCondition.humidity + ` ` + Constants.PERCENT}"
+            android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.humidity != null ? viewmodel.weatherResponseLiveData.data.currentCondition.humidity + ` ` + Constants.PERCENT:""}'
             tools:text="19" />
 
         <com.google.android.material.button.MaterialButton

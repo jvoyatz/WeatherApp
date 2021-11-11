@@ -30,7 +30,6 @@ import timber.log.Timber;
 @AndroidEntryPoint
 public class WeatherDetailsFullFragment extends Fragment {
 
-    private WeatherDetailsViewModel weatherDetailsViewModel;
     private WeatherDetailsPagerFragmentFullBinding mBinding;
 
     public WeatherDetailsFullFragment() {}
@@ -45,13 +44,8 @@ public class WeatherDetailsFullFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        WeatherDetailsViewModel weatherDetailsViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
 
-        WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
-
-        weatherDetailsViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
-        weatherDetailsViewModel
-                .getWeatherEntityLiveData(weatherViewModel.getWeatherResponseLiveData())
-                .observe(getViewLifecycleOwner(), AbsentObserver.create());
         weatherDetailsViewModel.getWeatherCurrentDayEntityLiveData()
                 .observe(getViewLifecycleOwner(), weatherDayEntity -> AbsentObserver.create());
 

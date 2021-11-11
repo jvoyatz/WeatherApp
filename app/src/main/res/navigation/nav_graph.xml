@@ -19,10 +19,6 @@
         <action
             android:id="@+id/action_homeFragment_to_weatherDetailsFragment"
             app:destination="@id/weatherDetailsFragment" >
-
-            <argument
-                android:name="dayIndex"
-                app:argType="integer" />
         </action>
 
 
@@ -35,7 +31,12 @@
 
     <fragment
         android:id="@+id/weatherDetailsFragment"
-        android:name="com.jvoyatz.weather.app.ui.home.details.WeatherDetailsPagerFragment"
-        />
+        android:name="com.jvoyatz.weather.app.ui.home.details.WeatherDetailsPagerFragment">
+
+        <argument
+            android:name="dayIndex"
+            app:argType="integer" />
+
+    </fragment>
 
 </navigation>

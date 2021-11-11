@@ -84,7 +84,7 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
     }
 
     @Override
-    protected void bind(ViewDataBinding binding, CityEntity item) {
+    protected void bind(ViewDataBinding binding, CityEntity item, int position) {
         switch (viewType){
             case HEADER_ID:
                 binding.setVariable(BR.text, binding.getRoot().getContext().getString(R.string.cities_favorites_header));

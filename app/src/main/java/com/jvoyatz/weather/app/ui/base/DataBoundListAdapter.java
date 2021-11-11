@@ -73,7 +73,7 @@ public abstract class DataBoundListAdapter<T, V extends ViewDataBinding> extends
 
     @Override
     public final void onBindViewHolder(DataBoundViewHolder<ViewDataBinding> holder, int position) {
-        bind(holder.binding, getItem(position));
+        bind(holder.binding, getItem(position), position);
         holder.binding.executePendingBindings();
     }
 
@@ -81,7 +81,7 @@ public abstract class DataBoundListAdapter<T, V extends ViewDataBinding> extends
      * Each screen adapter might have different fields set, or
      * may need to set more than one variables in its layout.
      */
-    protected abstract void bind(ViewDataBinding binding, T item);
+    protected abstract void bind(ViewDataBinding binding, T item, int position);
 
     @Override
     public void onViewAttachedToWindow(@NonNull DataBoundViewHolder<ViewDataBinding> holder) {

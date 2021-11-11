@@ -1,6 +1,8 @@
 package com.jvoyatz.weather.app.ui.home;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,23 +21,26 @@ import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.WeatherViewModel;
 import com.jvoyatz.weather.app.databinding.HomeFragmentBinding;
 import com.jvoyatz.weather.app.models.Resource;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.ui.base.BaseHandler;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 /**
  * Fragment which shows a screen containing
  * details for the current forecast.
  */
 @AndroidEntryPoint
-public class HomeFragment extends Fragment implements BaseHandler {
+public class HomeFragment extends Fragment implements HomeHandler {
     @Inject
     AppExecutors appExecutors;
     private HomeFragmentBinding mBinding;
     private WeatherViewModel mWeatherViewModel;
+    private WeatherNextDaysAdapter adapter;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -54,8 +59,8 @@ public class HomeFragment extends Fragment implements BaseHandler {
         mBinding.setViewmodel(mWeatherViewModel);
         mBinding.setHandler(this);
 
-        final WeatherNextDaysAdapter adapter = new WeatherNextDaysAdapter(WeatherNextDaysAdapter.DAYS_DIFF_CALLBACK);
-        adapter.appExecutors = appExecutors;
+        adapter = new WeatherNextDaysAdapter(WeatherNextDaysAdapter.DAYS_DIFF_CALLBACK, this);
+        adapter.setAppExecutors(appExecutors);
         mBinding.recyclerView.setAdapter(adapter);
 
         mWeatherViewModel.getWeatherResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Resource<WeatherEntity>>() {
@@ -73,13 +78,18 @@ public class HomeFragment extends Fragment implements BaseHandler {
         mBinding = null;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
-    public void onViewClicked(View view) {
+    public void onViewClicked(View view, int position) {
+        final NavController navController = Navigation.findNavController(requireView());
         switch (view.getId()){
             case R.id.weather_more_btn:
-                final NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(HomeFragmentDirections.actionHomeFragmentToWeatherDetailsFragment());
+                navController.navigate(HomeFragmentDirections.actionHomeFragmentToWeatherDetailsFragment(0));
+                break;
+            case R.id.weather_day_cardview:
+                navController.navigate(HomeFragmentDirections.actionHomeFragmentToWeatherDetailsFragment(position));
                 break;
         }
     }
+
 }

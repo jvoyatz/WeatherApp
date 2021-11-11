@@ -7,15 +7,19 @@ import com.jvoyatz.weather.app.models.api.weather.WeatherData;
 import com.jvoyatz.weather.app.models.api.config.ApiResponse;
 import com.jvoyatz.weather.app.models.api.weather.WeatherResponse;
 
+import java.util.Map;
+
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface WorldWeatherAPI {
 
     @Headers({"Accept: application/json", "Content-Type: application/json"})
     @GET("weather.ashx")
-    LiveData<ApiResponse<WeatherResponse>> getWeatherForecast(@Query("q") String query, @Query("num_of_days") int numOfDays, @Query("showlocaltime") String showLocalTimeValue, @Query("format")  String format);
+    //LiveData<ApiResponse<WeatherResponse>> getWeatherForecast(@Query("q") String query, @Query("num_of_days") int numOfDays, @Query("showlocaltime") String showLocalTimeValue, @Query("format")  String format);
+    LiveData<ApiResponse<WeatherResponse>> getWeatherForecast(@QueryMap Map<String, String> queryMap);
 
     @Headers({"Accept: application/json", "Content-Type: application/json"})
     @GET("search.ashx")

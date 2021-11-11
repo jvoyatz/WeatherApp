@@ -20,14 +20,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@{Utils.getTimeFromFull(hour.time)}"
+            android:padding="4dp"
+            android:text='@{hour.time != null ? Utils.formatHHmmTime(Utils.parseFullStr(hour.time)):""}'
             app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
             app:layout_constraintEnd_toStartOf="@+id/weather_icon"
             app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="0.15"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/weather_icon"
-            app:layout_constraintHorizontal_weight="0.15"
-            android:padding="4dp"
             tools:text="11:00" />
 
 
@@ -50,19 +50,19 @@
 
         <ImageView
             android:id="@+id/weather_icon"
+            imageUrl="@{hour.weatherIconUrl}"
             android:layout_width="0dp"
             android:layout_height="?actionBarSize"
-            android:padding="4dp"
             android:contentDescription="@null"
+            android:padding="4dp"
             android:src="@drawable/baseline_wb_sunny_black_24dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/hour_weather_descr"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/hour"
-            app:srcCompat="@drawable/baseline_wb_sunny_black_24dp"
-            imageUrl="@{hour.weatherIconUrl}"
             app:layout_constraintHorizontal_weight="0.1"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/hour"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/baseline_wb_sunny_black_24dp"
             tools:layout_editor_absoluteY="4dp" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -72,27 +72,28 @@
             android:layout_marginStart="8dp"
             android:gravity="start"
             android:maxLines="2"
-            android:padding="4dp"
-            android:text="@{hour.weatherDesc}"
-            app:layout_constraintTop_toTopOf="@+id/weather_icon"
-            app:layout_constraintStart_toEndOf="@+id/weather_icon"
-            app:layout_constraintEnd_toStartOf="@+id/hour_wind_dir"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:text='@{hour.weatherDesc ?? ""}'
             app:layout_constraintBottom_toTopOf="@id/hour_temperature"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/hour_wind_dir"
             app:layout_constraintHorizontal_weight="0.25"
+            app:layout_constraintStart_toEndOf="@+id/weather_icon"
+            app:layout_constraintTop_toTopOf="@+id/weather_icon"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="test" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_wind_dir"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_wind_direction"
             android:gravity="center"
             android:padding="4dp"
-            android:text="@{hour.chanceofwindy + Constants.PERCENT}"
+            android:text='@{hour.chanceofwindy != null ? hour.chanceofwindy + Constants.PERCENT: ""}'
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
             app:layout_constraintEnd_toStartOf="@+id/hour_precip"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="0.1"
             app:layout_constraintStart_toEndOf="@+id/hour_weather_descr"
             app:layout_constraintTop_toTopOf="@+id/weather_icon"
@@ -102,30 +103,29 @@
             android:id="@+id/hour_precip"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@{hour.chanceofrain + Constants.PERCENT}"
-            android:visibility="visible"
+            android:drawableStart="@drawable/ic_humid"
+            android:gravity="center"
             android:padding="4dp"
+            android:text='@{hour.chanceofrain != null ? hour.chanceofrain + Constants.PERCENT:""}'
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/hour_wind_dir"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="0.1"
             app:layout_constraintStart_toEndOf="@+id/hour_wind_dir"
             app:layout_constraintTop_toTopOf="@+id/hour_wind_dir"
-            app:layout_constraintHorizontal_weight="0.1"
-            android:gravity="center"
             tools:text="15c" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_temperature"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:padding="4dp"
-            android:text="@{hour.tempC + ` ` + Constants.CELSIUS}"
+            android:text='@{hour.tempC != null ? hour.tempC + ` ` + Constants.CELSIUS:""}'
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
             app:layout_constraintEnd_toEndOf="@+id/hour_weather_descr"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/hour_weather_descr"
             app:layout_constraintTop_toBottomOf="@+id/hour_weather_descr"
             tools:text="15c" />

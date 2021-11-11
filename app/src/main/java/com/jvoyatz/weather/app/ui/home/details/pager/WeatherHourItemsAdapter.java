@@ -63,7 +63,6 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
 
     @Override
     protected ViewDataBinding createBinding(ViewGroup parent, int viewType) {
-        Timber.d("no items" + viewType);
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType){
             case DAY_ID:
@@ -80,7 +79,7 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
     }
 
     @Override
-    protected void bind(ViewDataBinding binding, WeatherDayHourEntity item) {
+    protected void bind(ViewDataBinding binding, WeatherDayHourEntity item, int position) {
         final Context context = binding.getRoot().getContext();
         switch (viewType){
             case SUNRISE_ID:

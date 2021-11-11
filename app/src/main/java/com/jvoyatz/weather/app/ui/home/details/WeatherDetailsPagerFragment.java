@@ -1,6 +1,7 @@
 package com.jvoyatz.weather.app.ui.home.details;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.WeatherViewModel;
-import com.jvoyatz.weather.app.databinding.HomeFragmentBinding;
 import com.jvoyatz.weather.app.databinding.WeatherDetailsPagerFragmentBinding;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 /**
  * Home Screen of the Weather App.
@@ -27,7 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class WeatherDetailsPagerFragment extends Fragment {
 
-    private WeatherDetailsViewModel mViewModel;
     private WeatherDetailsPagerFragmentBinding mBinding;
     private TabLayoutMediator tabLayoutMediator;
 
@@ -41,11 +41,12 @@ public class WeatherDetailsPagerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(WeatherDetailsViewModel.class);
-        WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
-        mBinding.setViewmodel(weatherViewModel);
+        int dayIndex = WeatherDetailsPagerFragmentArgs.fromBundle(getArguments()).getDayIndex();
 
-        WeatherDetailsPagerAdapter adapter = new WeatherDetailsPagerAdapter(getChildFragmentManager(), getViewLifecycleOwner().getLifecycle());
+        WeatherDetailsViewModel mViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
+        WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
+
+        WeatherDetailsPagerAdapter adapter = new WeatherDetailsPagerAdapter(getChildFragmentManager(), getViewLifecycleOwner().getLifecycle(), dayIndex);
         mBinding.weatherDetailsPager.setAdapter(adapter);
         tabLayoutMediator = new TabLayoutMediator(mBinding.weatherDetailsTabLayout, mBinding.weatherDetailsPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
@@ -64,6 +65,12 @@ public class WeatherDetailsPagerFragment extends Fragment {
             }
         });
         tabLayoutMediator.attach();
+
+        mBinding.setLifecycleOwner(getViewLifecycleOwner());
+        mBinding.setViewmodel(mViewModel);
+
+        mViewModel.getWeatherEntityLiveData(weatherViewModel.getWeatherResponseLiveData(), dayIndex)
+                .observe(getViewLifecycleOwner(), weatherEntity -> {});
     }
 
     @Override

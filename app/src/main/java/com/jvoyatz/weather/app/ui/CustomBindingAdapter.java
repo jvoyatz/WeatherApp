@@ -18,6 +18,7 @@ import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
@@ -67,7 +68,13 @@ public class CustomBindingAdapter {
     @BindingAdapter("imageUrl")
     public static void loadImage(ImageView view, String url) {
         if(!TextUtils.isEmpty(url)){
-            Glide.with(view.getContext()).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).into(view);
+            Glide.with(view.getContext())
+                    .load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .apply(RequestOptions
+                            .placeholderOf(R.drawable.baseline_wb_sunny_black_24dp)
+                            .error(R.drawable.baseline_wb_sunny_black_24dp))
+                    .into(view);
         }
     }
 
@@ -90,12 +97,12 @@ public class CustomBindingAdapter {
     public static void rotateDrawable(View view, String degrees){
         if(view instanceof TextView){
             final TextView textView = (TextView) view;
-            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_direction, degrees);
+            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_dir, degrees);
             if(bitmap != null){
                 textView.setCompoundDrawablesWithIntrinsicBounds(null, null, bitmap, null);
             }
         }else{
-            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_direction, degrees);
+            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_dir, degrees);
             final ImageView imageView = (ImageView) view;
             imageView.setImageDrawable(bitmap);
         }

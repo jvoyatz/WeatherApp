@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start|center_vertical"
-        android:text="@{@string/sunrise_hour(hour.time)}"
+        android:text='@{hour.time != null ? @string/sunrise_hour(hour.time):""}'
         android:drawableStart="@drawable/baseline_wb_sunny_black_24dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:drawablePadding="4dp"

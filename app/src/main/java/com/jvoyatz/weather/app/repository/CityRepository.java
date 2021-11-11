@@ -139,7 +139,6 @@ public class CityRepository {
                 appExecutors.diskIO().execute(() -> {
                     try {
                         List<CityEntity> favoriteCities = cityDao.getFavoriteCities();
-                        Timber.d("onActive: " + favoriteCities);
                         postValue(favoriteCities);
                     } catch (Exception e) {
                         Timber.e(e);

@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.api.WorldWeatherAPI;
@@ -16,11 +18,16 @@ import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.storage.db.WeatherDao;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import retrofit2.http.Query;
 import timber.log.Timber;
 
 /**
@@ -30,6 +37,7 @@ import timber.log.Timber;
 
 @Singleton
 public class WeatherRepository {
+
     WorldWeatherAPI worldWeatherService;
     private final AppExecutors appExecutors;
     private final WeatherConverter weatherConverter;
@@ -82,12 +90,12 @@ public class WeatherRepository {
             @Override
             protected LiveData<ApiResponse<WeatherResponse>> createCall() {
                 final StringBuilder query = new StringBuilder();
-                if(TextUtils.isEmpty(city.getLatitude()) && !TextUtils.isEmpty(city.getLongitude())) {
+              /*  if(!TextUtils.isEmpty(city.getLatitude()) && !TextUtils.isEmpty(city.getLongitude())) {
                     query
                         .append(city.getLatitude())
                         .append(", ")
                         .append(city.getLongitude());
-                }else if(!TextUtils.isEmpty(city.getName())){
+                }else*/ if(!TextUtils.isEmpty(city.getName())){
                     query.append(city.getName());
                     if(!TextUtils.isEmpty(city.getRegion())){
                         query.append(", ").append(city.getRegion());
@@ -96,8 +104,53 @@ public class WeatherRepository {
                         query.append(", ").append(city.getCountry());
                     }
                 }
-                return worldWeatherService.getWeatherForecast(query.toString(), 5, "yes", "json");
+
+                Map<String, String> map = new HashMap<String, String>(){{
+                        put("format", "json");
+                        put("q", query.toString());
+                        put("num_of_days", Integer.toString(5));
+                        put("showLocalTime", "yes");
+                    }
+                };
+                return worldWeatherService.getWeatherForecast(map);
             }
         }.asLiveData();
+    }
+
+
+    /**
+     * Gets the weather for a specified date given as an argument.
+     * Does not save the response in the db.
+     */
+    public LiveData<Resource<WeatherEntity>> getCityWeatherForecastForDate(@NonNull String query, @NonNull String date){
+        MediatorLiveData<Resource<WeatherEntity>> liveData = new MediatorLiveData<>();
+
+        Map<String, String> map = new LinkedHashMap<String, String>(){{
+                put("format", "json");
+                put("date", date);
+                put("q", query);
+               // put("showlocaltime", "yes");
+            }
+        };
+        final LiveData<ApiResponse<WeatherResponse>> weatherForecastCall = worldWeatherService.getWeatherForecast(map);
+        liveData.addSource(weatherForecastCall, new Observer<ApiResponse<WeatherResponse>>() {
+            @Override
+            public void onChanged(ApiResponse<WeatherResponse> apiResponse) {
+                liveData.removeSource(weatherForecastCall);
+                if(apiResponse instanceof ApiResponse.ApiSuccessResponse){
+                    try {
+                        final WeatherResponse body = ((ApiResponse.ApiSuccessResponse<WeatherResponse>) apiResponse).getBody();
+                        final WeatherEntity weatherEntity = weatherConverter.toEntity(body.getData());
+                        liveData.postValue(Resource.success(weatherEntity));
+                    } catch (Exception e) {
+                        liveData.postValue(Resource.error(e.getMessage(), null, null));
+                    }
+                }else if(apiResponse instanceof ApiResponse.ApiErrorResponse){
+                    final ApiResponse.ApiErrorResponse<WeatherResponse> errorResponse = (ApiResponse.ApiErrorResponse<WeatherResponse>) apiResponse;
+                    liveData.postValue(Resource.error(errorResponse.getErrorMessage(), null, errorResponse.getException()));
+                }
+            }
+        });
+        return liveData;
     }
 }

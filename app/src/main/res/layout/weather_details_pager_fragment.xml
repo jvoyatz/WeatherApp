@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.jvoyatz.weather.app.WeatherViewModel" />
+            type="com.jvoyatz.weather.app.ui.home.details.WeatherDetailsViewModel" />
 
         <import type="com.jvoyatz.weather.app.util.Utils"/>
     </data>
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:text="@{Utils.getFormalDateFromStandard(viewmodel.weatherResponseLiveData.data.timezone.localtime)}"
+            android:text="@{Utils.getFormalDate(viewmodel.weatherEntityLiveData.data.weather.get(0).date)}"
             android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -8,6 +8,8 @@
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/baseline_search_black_24dp.xml" value="0.2015625" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/ic_baseline_format_list_bulleted_24.xml" value="0.2015625" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.41875" />
+        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/ic_humid.xml" value="0.225" />
+        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/ic_humidity.xml" value="0.225" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/ic_wind_direction.xml" value="0.2644736842105263" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/underline.xml" value="0.2644736842105263" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/activity_weather.xml" value="0.4005208333333333" />
@@ -22,14 +24,14 @@
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/fragment_weather_details_pager_hourly_list.xml" value="0.2542763157894737" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/fragment_weather_summary.xml" value="0.22" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/home_fragment.xml" value="0.33" />
-        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/home_fragment_next_day_item.xml" value="0.2542763157894737" />
+        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/home_fragment_next_day_item.xml" value="0.25" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/searchview_layout.xml" value="0.40260416666666665" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_fragment.xml" value="0.14309210526315788" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment.xml" value="0.2542763157894737" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment_full.xml" value="0.2" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment_hourly_list.xml" value="0.12763157894736843" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment_hourly_list_day.xml" value="0.2542763157894737" />
-        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment_hourly_list_item.xml" value="0.22" />
+        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment_hourly_list_item.xml" value="0.33" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment_hourly_list_sunrise.xml" value="0.2542763157894737" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_details_pager_fragment_hourly_list_sunset.xml" value="0.2618421052631579" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/layout/weather_forecast_day_quick_summary_item.xml" value="0.1" />

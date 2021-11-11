@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end|center_vertical"
-        android:text="@{@string/sunset_hour(hour.time)}"
+        android:text='@{hour.time != null ? @string/sunset_hour(hour.time):""}'
         android:drawableEnd="@drawable/ic_moon"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:drawablePadding="4dp"
