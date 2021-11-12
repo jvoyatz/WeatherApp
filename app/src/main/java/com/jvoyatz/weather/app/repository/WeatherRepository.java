@@ -20,14 +20,11 @@ import com.jvoyatz.weather.app.storage.db.WeatherDao;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import retrofit2.http.Query;
 import timber.log.Timber;
 
 /**
@@ -123,8 +120,6 @@ public class WeatherRepository {
      * Does not save the response in the db.
      */
     public LiveData<Resource<WeatherEntity>> getCityWeatherForecastForDate(@NonNull String query, @NonNull String date){
-        MediatorLiveData<Resource<WeatherEntity>> liveData = new MediatorLiveData<>();
-
         Map<String, String> map = new LinkedHashMap<String, String>(){{
                 put("format", "json");
                 put("date", date);
@@ -132,23 +127,45 @@ public class WeatherRepository {
                // put("showlocaltime", "yes");
             }
         };
-        final LiveData<ApiResponse<WeatherResponse>> weatherForecastCall = worldWeatherService.getWeatherForecast(map);
-        liveData.addSource(weatherForecastCall, new Observer<ApiResponse<WeatherResponse>>() {
-            @Override
-            public void onChanged(ApiResponse<WeatherResponse> apiResponse) {
-                liveData.removeSource(weatherForecastCall);
-                if(apiResponse instanceof ApiResponse.ApiSuccessResponse){
-                    try {
-                        final WeatherResponse body = ((ApiResponse.ApiSuccessResponse<WeatherResponse>) apiResponse).getBody();
-                        final WeatherEntity weatherEntity = weatherConverter.toEntity(body.getData());
-                        liveData.postValue(Resource.success(weatherEntity));
-                    } catch (Exception e) {
-                        liveData.postValue(Resource.error(e.getMessage(), null, null));
-                    }
-                }else if(apiResponse instanceof ApiResponse.ApiErrorResponse){
-                    final ApiResponse.ApiErrorResponse<WeatherResponse> errorResponse = (ApiResponse.ApiErrorResponse<WeatherResponse>) apiResponse;
-                    liveData.postValue(Resource.error(errorResponse.getErrorMessage(), null, errorResponse.getException()));
+        return getWeatherForecast(map);
+    }
+
+    /**
+     * Fetches the weather forecast for the given coordinates
+     */
+    public LiveData<Resource<WeatherEntity>> getWeatherForecastLatLon(double lat, double lon){
+        Map<String, String> map = new LinkedHashMap<String, String>() {
+            {
+                put("format", "json");
+                put("q", lat + "," + lon);
+                put("num_of_days", Integer.toString(5));
+                put("showlocaltime", "yes");
+            }
+        };
+
+        return getWeatherForecast(map);
+    }
+    /**
+     * Gets the weather for a specified date given as an argument.
+     * Does not save the response in the db.
+     */
+    public LiveData<Resource<WeatherEntity>> getWeatherForecast(@NonNull Map<String, String> queryMap) {
+        MediatorLiveData<Resource<WeatherEntity>> liveData = new MediatorLiveData<>();
+
+        final LiveData<ApiResponse<WeatherResponse>> weatherForecastCall = worldWeatherService.getWeatherForecast(queryMap);
+        liveData.addSource(weatherForecastCall, apiResponse -> {
+            liveData.removeSource(weatherForecastCall);
+            if (apiResponse instanceof ApiResponse.ApiSuccessResponse) {
+                try {
+                    final WeatherResponse body = ((ApiResponse.ApiSuccessResponse<WeatherResponse>) apiResponse).getBody();
+                    final WeatherEntity weatherEntity = weatherConverter.toEntity(body.getData());
+                    liveData.postValue(Resource.success(weatherEntity));
+                } catch (Exception e) {
+                    liveData.postValue(Resource.error(e.getMessage(), null, null));
                 }
+            } else if (apiResponse instanceof ApiResponse.ApiErrorResponse) {
+                final ApiResponse.ApiErrorResponse<WeatherResponse> errorResponse = (ApiResponse.ApiErrorResponse<WeatherResponse>) apiResponse;
+                liveData.postValue(Resource.error(errorResponse.getErrorMessage(), null, errorResponse.getException()));
             }
         });
         return liveData;

@@ -24,7 +24,7 @@ public class WeatherNextDaysAdapter extends DataBoundListAdapter<WeatherDayEntit
     protected WeatherNextDaysAdapter(@NonNull DiffUtil.ItemCallback<WeatherDayEntity> diffCallback, HomeHandler handler) {
         super(diffCallback);
         this.handler = handler;
-        setHasStableIds(true);
+       // setHasStableIds(true);
     }
 
     @Override

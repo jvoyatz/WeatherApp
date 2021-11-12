@@ -403,4 +403,32 @@ public class WeatherCurrentConditionEntity {
             return new WeatherCurrentConditionEntity(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "WeatherCurrentConditionEntity{" +
+                "precipMM='" + precipMM + '\'' +
+                ", observationTime='" + observationTime + '\'' +
+                ", weatherDesc='" + weatherDesc + '\'' +
+                ", weatherDescEl='" + weatherDescEl + '\'' +
+                ", weatherIconUrl='" + weatherIconUrl + '\'' +
+                ", visibility='" + visibility + '\'' +
+                ", weatherCode='" + weatherCode + '\'' +
+                ", feelsLikeF='" + feelsLikeF + '\'' +
+                ", pressure='" + pressure + '\'' +
+                ", tempC='" + tempC + '\'' +
+                ", tempF='" + tempF + '\'' +
+                ", cloudcover='" + cloudcover + '\'' +
+                ", windspeedMiles='" + windspeedMiles + '\'' +
+                ", winddirDegree='" + winddirDegree + '\'' +
+                ", feelsLikeC='" + feelsLikeC + '\'' +
+                ", windspeedKmph='" + windspeedKmph + '\'' +
+                ", humidity='" + humidity + '\'' +
+                ", visibilityMiles='" + visibilityMiles + '\'' +
+                ", precipInches='" + precipInches + '\'' +
+                ", uvIndex='" + uvIndex + '\'' +
+                ", winddir16Point='" + winddir16Point + '\'' +
+                ", pressureInches='" + pressureInches + '\'' +
+                '}';
+    }
 }

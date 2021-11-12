@@ -1,17 +1,26 @@
 package com.jvoyatz.weather.app;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -19,8 +28,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
+import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
 import com.jvoyatz.weather.app.util.AbsentObserver;
+import com.jvoyatz.weather.app.util.LocationLiveData;
+import com.jvoyatz.weather.app.util.Utils;
 
 import java.util.Objects;
 
@@ -45,6 +57,20 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
     private NavController navController;
     private WeatherViewModel mWeatherViewModel;
     private CitiesCursorAdapter mAdapter;
+
+    ActivityResultLauncher<String[]> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                        Timber.d("check %s", result);
+
+                        Boolean isFineLocationGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                        Boolean isCoarseLocationGranted = result.get(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+                        if ((isFineLocationGranted != null && isFineLocationGranted)  ||
+                                (isCoarseLocationGranted != null && isCoarseLocationGranted)) {
+                            mWeatherViewModel.startListeningLocationUpdates();
+                        }
+                    }
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +119,29 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                     Toast.makeText(WeatherActivity.this, R.string.city_not_favorite_success, Toast.LENGTH_SHORT).show();
             }else if(pair != null){
                 Toast.makeText(WeatherActivity.this, R.string.city_favorite_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mWeatherViewModel.getLocationLiveData().observe(this, new Observer<Resource<Location>>() {
+            @Override
+            public void onChanged(Resource<Location> resource) {
+                Timber.d("onChanged() called with: resource = [" + resource + "]");
+                if(resource != null){
+                    switch (resource.status){
+                        case SUCCESS:
+                            break;
+                        case ERROR:
+                            final String message = resource.message;
+                            if(TextUtils.equals(message, LocationLiveData.PERM_FINE_LOC_ERROR)){
+                                acquirePermissions();
+                            }else if(TextUtils.equals(message, LocationLiveData.PROVIDERS_DISABLED)){
+                                Toast.makeText(getApplicationContext(), R.string.location_providers_not_enabled, Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        case LOADING:
+                            break;
+                    }
+                }
             }
         });
 
@@ -159,5 +208,66 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                 return true;
             }
         });
+    }
+
+//    private void acquirePermissions() {
+//        Context applicationContext = getApplicationContext();
+//        if (Utils.hasPermission(applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
+//                || PermissionUtils.isPermissionAcquired(applicationContext, Manifest.permission.CAMERA)) {
+//            Log.d(TAG, "acquirePermissions() called#granted");
+//            // You can use the API that requires the permission.
+//            // performAction(...);
+//        } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+//            Log.d(TAG, "acquirePermissions() called#should");
+//            permissionsDialog = DialogUtils.getDialog(this, R.string.msg_warning,
+//                    R.string.msg_permission, R.string.msg_ok,
+//                    R.string.msg_cancel,
+//                    getString(R.string.msg_no_thanks), new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            launchers.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA});
+//                        }
+//                    }, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//
+//                        }
+//                    });
+//            permissionsDialog.show();
+//
+//        } else {
+//            Log.d(TAG, "acquirePermissions() called#requestpermissions");
+//            // You can directly ask for the permission.
+//            //ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, REQUEST_CODE);
+//            launchers.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA});
+//        }
+//    }
+
+    private void acquirePermissions() {
+        Context applicationContext = getApplicationContext();
+        if (Utils.hasPermission(applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            Timber.d("acquirePermissions() called#granted");
+            mWeatherViewModel.startListeningLocationUpdates();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Timber.d("acquirePermissions() called#should");
+    //            permissionsDialog = DialogUtils.getDialog(this, R.string.msg_warning,
+    //                    R.string.msg_permission, R.string.msg_ok,
+    //                    R.string.msg_cancel,
+    //                    getString(R.string.msg_no_thanks), new DialogInterface.OnClickListener() {
+    //                        @Override
+    //                        public void onClick(DialogInterface dialog, int which) {
+    //                            launchers.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA});
+    //                        }
+    //                    }, new DialogInterface.OnClickListener() {
+    //                        @Override
+    //                        public void onClick(DialogInterface dialog, int which) {
+    //
+    //                        }
+    //                    });
+    //            permissionsDialog.show();
+
+        } else {
+            locationPermissionRequest.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+        }
     }
 }

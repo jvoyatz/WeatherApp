@@ -46,9 +46,7 @@ public class WeatherDetailsFullFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         WeatherDetailsViewModel weatherDetailsViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
-
-        weatherDetailsViewModel.getWeatherCurrentDayEntityLiveData()
-                .observe(getViewLifecycleOwner(), weatherDayEntity -> AbsentObserver.create());
+        weatherDetailsViewModel.getWeatherCurrentDayEntityLiveData().observe(getViewLifecycleOwner(), weatherDayEntity -> AbsentObserver.create());
 
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
         mBinding.setViewmodel(weatherDetailsViewModel);

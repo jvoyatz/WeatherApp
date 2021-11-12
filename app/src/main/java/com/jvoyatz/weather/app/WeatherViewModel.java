@@ -1,12 +1,16 @@
 package com.jvoyatz.weather.app;
 
+import android.app.Application;
+import android.content.Context;
 import android.database.Cursor;
+import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -19,6 +23,8 @@ import com.jvoyatz.weather.app.repository.CityRepository;
 import com.jvoyatz.weather.app.repository.WeatherRepository;
 import com.jvoyatz.weather.app.util.AbsentLiveData;
 import com.jvoyatz.weather.app.util.Event;
+import com.jvoyatz.weather.app.util.LocationLiveData;
+import com.jvoyatz.weather.app.util.PairSourcesLiveData;
 
 import javax.inject.Inject;
 
@@ -30,10 +36,11 @@ import timber.log.Timber;
  * Viewmodel used in WeatherActivity
  */
 @HiltViewModel
-public class WeatherViewModel extends ViewModel {
+public class WeatherViewModel extends AndroidViewModel {
 
     private final CityRepository cityRepository;
     private final WeatherRepository weatherRepository;
+    private LocationLiveData locationLiveData;
     private final MutableLiveData<String> searchCityLiveData;
     private MutableLiveData<CityEntity> selectedCityEntityLiveData;
     private final MutableLiveData<Event<Triple<String, String, String>>> favoriteCityLiveData;
@@ -41,12 +48,14 @@ public class WeatherViewModel extends ViewModel {
     private final MutableLiveData<Event<Boolean>> triggerRefreshFavoriteCities;
 
     @Inject
-    public WeatherViewModel(CityRepository cityRepository, WeatherRepository weatherRepository) {
+    public WeatherViewModel(@NonNull Application application, CityRepository cityRepository, WeatherRepository weatherRepository) {
+        super(application);
         this.cityRepository = cityRepository;
         this.weatherRepository = weatherRepository;
         searchCityLiveData = new MutableLiveData<>();
         favoriteCityLiveData = new MutableLiveData<>();
         triggerRefreshFavoriteCities = new MutableLiveData<>();
+        locationLiveData = new LocationLiveData(getApplication().getApplicationContext());
     }
 
     /**
@@ -91,10 +100,8 @@ public class WeatherViewModel extends ViewModel {
      */
     public LiveData<Pair<Boolean, Boolean>> getFavoriteCityResultLiveData() {
         return Transformations.switchMap(favoriteCityLiveData, event -> {
-            Timber.d("apply: event " + event);
             if(event != null){
                 final Triple<String, String, String> input = event.getContentIfNotHandled();
-                Timber.d("apply: input " + input);
                 if(input != null)
                     return cityRepository.updateFavoriteCity(input.component1(), input.component2(), input.component3());
             }
@@ -125,12 +132,16 @@ public class WeatherViewModel extends ViewModel {
      */
     public LiveData<Resource<WeatherEntity>> getWeatherResponseLiveData(){
         if(weatherEntityLiveData == null) {
-            weatherEntityLiveData = Transformations.switchMap(getSelectedCityEntityLiveData(), new Function<CityEntity, LiveData<Resource<WeatherEntity>>>() {
+            final LiveData<Resource<Location>> locationLiveData = getLocationLiveData();
+            final PairSourcesLiveData<CityEntity, Resource<Location>> twoSourcesLiveData = new PairSourcesLiveData<CityEntity, Resource<Location>>
+                    (getSelectedCityEntityLiveData(), locationLiveData);
+            weatherEntityLiveData = Transformations.switchMap(twoSourcesLiveData, new Function<Pair<CityEntity, Resource<Location>>, LiveData<Resource<WeatherEntity>>>() {
                 @Override
-                public LiveData<Resource<WeatherEntity>> apply(CityEntity input) {
-                    Timber.d("apply() called with: input = [" + input + "]");
-                    if (input != null) {
-                        return weatherRepository.getCityWeatherForecast(input);
+                public LiveData<Resource<WeatherEntity>> apply(Pair<CityEntity, Resource<Location>> input) {
+                    if (input != null && input.first != null) {
+                        return weatherRepository.getCityWeatherForecast(input.first);
+                    }else if(input != null && input.second != null && input.second.data != null){
+                        return weatherRepository.getWeatherForecastLatLon(input.second.data.getLatitude(), input.second.data.getLongitude());
                     }
                     return AbsentLiveData.create();
                 }
@@ -139,10 +150,33 @@ public class WeatherViewModel extends ViewModel {
         return weatherEntityLiveData;
     }
 
+    /**
+     * posts an Event wrapped value to triggerRefreshFavoriteCities instance.
+     * This value is observed by Cities fragment, when users adds/removes a city to/from his list,
+     * in order to refresh the content
+     */
     public void setTriggerRefreshFavoriteCities(){
         triggerRefreshFavoriteCities.postValue(new Event<>(true));
     }
+
+    /**
+     * Observes the current Event wrapped value, posted when user interacted with the insertion/delection of a city
+     */
     public MutableLiveData<Event<Boolean>> getTriggerRefreshFavoriteCities() {
         return triggerRefreshFavoriteCities;
+    }
+
+    /**
+     * Returns the current location wrapped in a livedata instace
+     */
+    public LiveData<Resource<Location>> getLocationLiveData() {
+        return locationLiveData;
+    }
+
+    /**
+     * start listening for location updates
+     */
+    public void startListeningLocationUpdates(){
+        locationLiveData.start();
     }
 }

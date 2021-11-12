@@ -66,4 +66,5 @@
     <string name="weather_dew">Dew Point</string>
     <string name="weather_windchill">Wind Chill</string>
     <string name="weather_windgust">Wind Gust</string>
+    <string name="location_providers_not_enabled">Location provider of your device are not enabled!</string>
 </resources>

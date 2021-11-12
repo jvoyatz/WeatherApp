@@ -66,12 +66,10 @@ public class WeatherDetailsHourlyListFragment extends Fragment implements Weathe
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                Timber.d("onStateChanged() called with: bottomSheet = [" + bottomSheet + "], newState = [" + newState + "]");
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                Timber.d("onSlide() called with: bottomSheet = [" + bottomSheet + "], slideOffset = [" + slideOffset + "]");
             }
         };
         sheetBehavior.addBottomSheetCallback(bottomSheetCallback);

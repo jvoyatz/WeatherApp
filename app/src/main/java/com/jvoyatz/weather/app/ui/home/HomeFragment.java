@@ -57,6 +57,7 @@ public class HomeFragment extends Fragment implements HomeHandler {
         super.onViewCreated(view, savedInstanceState);
         mWeatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
         mBinding.setViewmodel(mWeatherViewModel);
+        mBinding.setLifecycleOwner(getViewLifecycleOwner());
         mBinding.setHandler(this);
 
         adapter = new WeatherNextDaysAdapter(WeatherNextDaysAdapter.DAYS_DIFF_CALLBACK, this);
@@ -66,8 +67,9 @@ public class HomeFragment extends Fragment implements HomeHandler {
         mWeatherViewModel.getWeatherResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Resource<WeatherEntity>>() {
             @Override
             public void onChanged(Resource<WeatherEntity> weatherEntityResource) {
-                if(weatherEntityResource != null)
+                if(weatherEntityResource != null && weatherEntityResource.data != null) {
                     adapter.submitList(weatherEntityResource.data.getWeather());
+                }
             }
         });
     }
