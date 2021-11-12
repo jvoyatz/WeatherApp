@@ -36,10 +36,13 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
     public static final String NO_ITEMS= "NO_ITEMS";
 
     private final AppExecutors appExecutors;
+    private final WeatherHourItemsHandler handler;
 
-    protected WeatherHourItemsAdapter(@NonNull DiffUtil.ItemCallback<WeatherDayHourEntity> diffCallback, AppExecutors appExecutors) {
+
+    protected WeatherHourItemsAdapter(@NonNull DiffUtil.ItemCallback<WeatherDayHourEntity> diffCallback, AppExecutors appExecutors, WeatherHourItemsHandler handler) {
         super(diffCallback);
         this.appExecutors = appExecutors;
+        this.handler = handler;
     }
 
     @Override
@@ -85,8 +88,11 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
             case SUNRISE_ID:
             case SUNSET_ID:
             case DAY_ID:
+                binding.setVariable(BR.hour, item);
+                break;
             default:
                 binding.setVariable(BR.hour, item);
+                binding.setVariable(BR.handler, handler);
                 break;
             case NO_ITEMS_ID:
                 binding.setVariable(BR.text, context.getString(R.string.no_weather_hourly_data_found));

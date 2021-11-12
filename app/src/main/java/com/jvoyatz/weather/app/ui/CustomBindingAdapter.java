@@ -97,12 +97,12 @@ public class CustomBindingAdapter {
     public static void rotateDrawable(View view, String degrees){
         if(view instanceof TextView){
             final TextView textView = (TextView) view;
-            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_dir, degrees);
+            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_dir_2, degrees);
             if(bitmap != null){
                 textView.setCompoundDrawablesWithIntrinsicBounds(null, null, bitmap, null);
             }
         }else{
-            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_dir, degrees);
+            final BitmapDrawable bitmap = Utils.rotateDrawable(view.getContext(), R.drawable.ic_wind_dir_2, degrees);
             final ImageView imageView = (ImageView) view;
             imageView.setImageDrawable(bitmap);
         }

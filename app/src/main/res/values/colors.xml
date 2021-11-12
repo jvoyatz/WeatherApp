@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red_400">#e84853</color>
     <color name="selector">#bad8e6</color>
+
+    <color name="grey_light">#6c6c6c</color>
+    <color name="grey_darker">#484848</color>
 </resources>

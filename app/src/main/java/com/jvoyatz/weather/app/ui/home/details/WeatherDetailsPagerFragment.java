@@ -64,6 +64,7 @@ public class WeatherDetailsPagerFragment extends Fragment {
                 tab.setText(text);
             }
         });
+        mBinding.weatherDetailsPager.setUserInputEnabled(false);
         tabLayoutMediator.attach();
 
         mBinding.setLifecycleOwner(getViewLifecycleOwner());

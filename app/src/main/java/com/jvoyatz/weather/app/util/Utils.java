@@ -204,6 +204,9 @@ public class Utils {
     public static String formatHHmmTime(Date date){
         return date == null? "": getHHmmFormatter().format(date);
     }
+    public static String formatHourDateTime(Date date){
+        return date == null ? "":getHourDayFormatter().format(date);
+    }
     private static String formatYYYYMMddDate(Date date) {
         return date == null ? "": getYYYYMMddFormatter().format(date);
     }
@@ -245,6 +248,11 @@ public class Utils {
     @NonNull
     public static SimpleDateFormat getAmTimeFormatter(){
         return new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+    }
+
+    @NonNull
+    public static SimpleDateFormat getHourDayFormatter(){
+        return new SimpleDateFormat("HH:mm, EEEE", Locale.ENGLISH);
     }
 
 

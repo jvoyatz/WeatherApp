@@ -225,7 +225,7 @@ public class WeatherDetailsViewModel extends ViewModel {
                                             //get sunset date
                                             Date sunsetDate = Utils.mergeAmDate(yMdDate, astronomy.getSunset());
                                             WeatherDayHourEntity closeToSunsetEntity;
-                                            if (sunsetDate != null && sunsetDate.compareTo(nowDate) < 0) {
+                                            if (sunsetDate != null && sunsetDate.compareTo(nowDate) > 0) {
                                                 //get the closet date from weather hour items compared to sunset
                                                 closeToSunsetEntity = Utils.getClosestWeatherDayHourEntity(hours, sunsetDate.getTime());
                                                 if (closeToSunsetEntity != null) {

@@ -60,4 +60,10 @@
     <string name="weather_condition_uv_index">UV Index</string>
     <string name="hours">%1$s hours</string>
     <string name="no_weather_hourly_data_found">No data provided!</string>
+    <string name="weather_precipitation">Precipitation</string>
+    <string name="weather_pressure">Pressure</string>
+    <string name="weather_heat">Heat</string>
+    <string name="weather_dew">Dew Point</string>
+    <string name="weather_windchill">Wind Chill</string>
+    <string name="weather_windgust">Wind Gust</string>
 </resources>
