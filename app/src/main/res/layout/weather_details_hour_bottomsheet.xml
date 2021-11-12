@@ -155,7 +155,7 @@
             app:constraint_referenced_ids="hour_ch_overcast,hour_ch_rain,hour_ch_fog,hour_ch_windy,hour_ch_frost,hour_ch_snow,hour_ch_thunder,hour_ch_uv"
             app:flow_horizontalStyle="spread"
             app:flow_maxElementsWrap="4"
-            app:flow_wrapMode="chain"
+            app:flow_wrapMode="aligned"
             android:visibility="visible"
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
@@ -174,7 +174,7 @@
             android:gravity="center"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.chanceofovercast != null ? hour.chanceofovercast + ` ` + Constants.PERCENT:""}'
+            android:text='@{hour.chanceofovercast != null ? hour.chanceofovercast + `` + Constants.PERCENT:""}'
             tools:text="20"/>
 
         <com.google.android.material.textview.MaterialTextView
@@ -185,17 +185,17 @@
             android:gravity="center"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.chanceofrain != null ? hour.chanceofrain + ` ` + Constants.PERCENT:""}'
+            android:text='@{hour.chanceofrain != null ? hour.chanceofrain + `` + Constants.PERCENT:""}'
             tools:text="20"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_ch_windy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_wind_dir"
+            android:drawableStart="@drawable/ic_wind_dir_2"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.chanceofwindy != null ? hour.chanceofwindy + ` ` + Constants.PERCENT:""}'
+            android:text='@{hour.chanceofwindy != null ? hour.chanceofwindy + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"/>
 
@@ -207,7 +207,7 @@
             android:drawableStart="@drawable/ic_frost"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.chanceoffrost != null ? hour.chanceoffrost + ` ` + Constants.PERCENT:""}'
+            android:text='@{hour.chanceoffrost != null ? hour.chanceoffrost + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"/>
 
@@ -218,7 +218,7 @@
             android:drawableStart="@drawable/ic_fog"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.chanceoffog != null ? hour.chanceoffog + ` ` + Constants.PERCENT:""}'
+            android:text='@{hour.chanceoffog != null ? hour.chanceoffog + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"/>
 
@@ -229,7 +229,7 @@
             android:drawableStart="@drawable/ic_snow"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.chanceofsnow != null ? hour.chanceofsnow + ` ` + Constants.PERCENT:""}'
+            android:text='@{hour.chanceofsnow != null ? hour.chanceofsnow + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"/>
 
@@ -240,7 +240,7 @@
             android:drawableStart="@drawable/ic_thunder"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.chanceofthunder != null ? hour.chanceofthunder + ` ` + Constants.PERCENT:""}'
+            android:text='@{hour.chanceofthunder != null ? hour.chanceofthunder + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"
             />
@@ -249,10 +249,10 @@
             android:id="@+id/hour_ch_uv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_uv_index"
+            android:drawableStart="@drawable/ic_uv_index_2"
             android:drawablePadding="2dp"
             android:padding="2dp"
-            android:text='@{hour.uvIndex ?? ""}'
+            android:text='@{hour.uvIndex + ` ` ?? ""}'
             android:gravity="center"
             tools:text="20"/>
 
