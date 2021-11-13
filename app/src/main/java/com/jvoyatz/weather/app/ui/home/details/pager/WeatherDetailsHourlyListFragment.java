@@ -2,6 +2,7 @@ package com.jvoyatz.weather.app.ui.home.details.pager;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -91,7 +92,11 @@ public class WeatherDetailsHourlyListFragment extends Fragment implements Weathe
                     }else{
 
                         handler.postDelayed(() -> {
-                            onViewClicked(null, adapter.getCurrentList().get(4));
+                            try {
+                                onViewClicked(null, adapter.getCurrentList().get(4));
+                            } catch (Exception e) {
+                                Timber.e(e);
+                            }
                         }, 500);
                         mBinding.hourCoordinatorLayout.setVisibility(View.VISIBLE);
                     }
@@ -108,6 +113,7 @@ public class WeatherDetailsHourlyListFragment extends Fragment implements Weathe
         super.onDestroyView();
         mBinding = null;
         adapter.setLifecycleDestroyed();
+        adapter = null;
     }
 
     @Override

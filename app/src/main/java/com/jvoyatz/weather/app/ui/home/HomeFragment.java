@@ -80,37 +80,21 @@ public class HomeFragment extends Fragment implements HomeHandler {
         mBinding.recyclerView.setAdapter(adapter);
 
         adapter.showLoading();
-        mWeatherViewModel.getWeatherResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Resource<WeatherEntity>>() {
-            @Override
-            public void onChanged(Resource<WeatherEntity> resource) {
-                if(resource != null ) {
-                    switch (resource.status){
-                        case LOADING:
-                            adapter.showLoading();
-                            break;
-                        case ERROR:
-                            Toast.makeText(requireContext(), R.string.next_days_list_error, Toast.LENGTH_SHORT).show();
+        mWeatherViewModel.getWeatherResponseLiveData().observe(getViewLifecycleOwner(), resource -> {
+            if(resource != null ) {
+                switch (resource.status){
+                    case LOADING:
+                        adapter.showLoading();
+                        break;
+                    case ERROR:
+                        Toast.makeText(requireContext(), R.string.next_days_list_error, Toast.LENGTH_SHORT).show();
 //                              break;
-                        case SUCCESS:
-                            handler.postDelayed(() -> {
-                                try {
-                                    adapter.submitList(resource.data.getWeather());
-                                } catch (Exception e) {
-                                    Timber.e(e);
-                                }
-                            }, 600);
-                            break;
-                    }
-                }else{
-                    handler.postDelayed(() -> {
-                        try {
-                            adapter.submitList(null);
-                        } catch (Exception e) {
-                            Timber.e(e);
-                        }
-                    }, 600);
-
+                    case SUCCESS:
+                        adapter.submitList(resource.data.getWeather());
+                        break;
                 }
+            }else{
+                adapter.submitList(null);
             }
         });
     }
@@ -120,6 +104,7 @@ public class HomeFragment extends Fragment implements HomeHandler {
         super.onDestroyView();
         mBinding = null;
         adapter.setLifecycleDestroyed();
+        adapter = null;
     }
 
     @SuppressLint("NonConstantResourceId")

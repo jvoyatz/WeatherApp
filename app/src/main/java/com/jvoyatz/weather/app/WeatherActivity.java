@@ -59,6 +59,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
     @Inject
     SearchRecentSuggestions suggestions;
     //private AppBarConfiguration appBarConfiguration;
+    private ActivityWeatherBinding mBinding;
     private NavController navController;
     private WeatherViewModel mWeatherViewModel;
     private CitiesCursorAdapter mAdapter;
@@ -81,10 +82,11 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                     }
             );
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        @NonNull ActivityWeatherBinding mBinding = ActivityWeatherBinding.inflate(getLayoutInflater());
+        mBinding = ActivityWeatherBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
         //setSupportActionBar(mBinding.toolbar);
         initSearchView(mBinding.searchview);
@@ -120,16 +122,18 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         //cities suggestions provided by the api
         mWeatherViewModel.getCitiesSuggestions().observe(this, cursorResource -> {
             try{
-                switch (cursorResource.status){
-                    case SUCCESS:
-                        mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, WeatherActivity.this);
-                        mBinding.searchview.setSuggestionsAdapter(mAdapter);
-                        break;
-                    case ERROR:
-                        Toast.makeText(WeatherActivity.this, R.string.cities_suggestions_no_results_found, Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        break;
+                if(cursorResource != null) {
+                    switch (cursorResource.status) {
+                        case SUCCESS:
+                            mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, WeatherActivity.this);
+                            mBinding.searchview.setSuggestionsAdapter(mAdapter);
+                            break;
+                        case ERROR:
+                            Toast.makeText(WeatherActivity.this, R.string.cities_suggestions_no_results_found, Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }catch (Exception e){
                 Timber.e(e);
@@ -201,10 +205,16 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
      */
     @Override
     public void onSuggestedCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite){
+        mBinding.searchview.clearFocus();
+        //mBinding.searchview.setQuery("", false);
         if(storeAsFavorite)
             mWeatherViewModel.updateFavoriteCity(cityName, region, country);
         else{
             mWeatherViewModel.setNonFavoriteCity(cityName, region, country);
+        }
+
+        if(navController.getCurrentDestination().getId() != R.id.homeFragment){
+            navController.navigate(R.id.homeFragment);
         }
     }
 
@@ -236,6 +246,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchView.setQuery("", false);
                 return false;
             }
 
@@ -255,6 +266,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             public void onClick(View v) {
                 mWeatherViewModel.setSelectedCityEntityLiveData(null);
                 searchView.setQuery("", false);
+                searchView.onActionViewCollapsed();
             }
         });
     }

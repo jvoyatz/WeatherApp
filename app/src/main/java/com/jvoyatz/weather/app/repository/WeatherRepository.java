@@ -108,6 +108,7 @@ public class WeatherRepository {
                         put("q", query.toString());
                         put("num_of_days", Integer.toString(5));
                         put("showLocalTime", "yes");
+                        put("tp", "1");
                     }
                 };
                 return worldWeatherService.getWeatherForecast(map);
@@ -125,6 +126,7 @@ public class WeatherRepository {
                 put("format", "json");
                 put("date", date);
                 put("q", query);
+                put("tp", "1");
                // put("showlocaltime", "yes");
             }
         };
@@ -141,6 +143,8 @@ public class WeatherRepository {
                 put("q", lat + "," + lon);
                 put("num_of_days", Integer.toString(5));
                 put("showlocaltime", "yes");
+                put("tp", "1");
+
             }
         };
 

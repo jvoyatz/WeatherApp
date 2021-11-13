@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -65,7 +66,9 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
 
         RecyclerView recyclerView = mBinding.citiesRecyclerview;
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
         adapter = new CitiesListAdapter(CitiesListAdapter.DIFF_CALLBACK, this, mViewModel);
+
         recyclerView.setAdapter(adapter);
 
         adapter.showLoading();
@@ -92,6 +95,7 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
         super.onDestroyView();
         mBinding = null;
         adapter.setLifecycleDestroyed();
+        adapter = null;
     }
 
     @Override
