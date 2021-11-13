@@ -66,7 +66,8 @@
     <string name="weather_dew">Dew Point</string>
     <string name="weather_windchill">Wind Chill</string>
     <string name="weather_windgust">Wind Gust</string>
-    <string name="location_providers_not_enabled">Location provider of your device are not enabled!</string>
+    <string name="location_providers_not_enabled">Location providers of your device are not enabled!</string>
+    <string name="location_permission_not_allowed">You will not get weather forecast for your current location. Please open this app\'s settings to allow.</string>
     <string name="loading">Loading…</string>
     <string name="next_days_list_error">Error while loading next days quick overview data</string>
     <string name="list_items_error">An error occured while loading items!</string>
@@ -75,4 +76,10 @@
     <string name="weather_wind_direction">Wind Direction</string>
     <string name="weather_last_update">Last Update</string>
     <string name="weather_visibility">Visibility</string>
+    <string name="msg_warning">Warning</string>
+    <string name="msg_permission">This app need your Location permission, in order to fetch weather forecast for your current location</string>
+    <string name="msg_ok">OK</string>
+    <string name="msg_cancel">Cancel</string>
+    <string name="msg_no_thanks">No, Thanks</string>
+    <string name="prompt">Please select a city or enable the location permission for this app to view details regarding weather forecast</string>
 </resources>

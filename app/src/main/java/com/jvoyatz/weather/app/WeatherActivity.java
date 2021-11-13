@@ -19,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -62,6 +63,8 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
     private NavController navController;
     private WeatherViewModel mWeatherViewModel;
     private CitiesCursorAdapter mAdapter;
+    private AlertDialog permissionsDialog;
+    private CrossFader crossFader;
 
     ActivityResultLauncher<String[]> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
@@ -73,6 +76,8 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                         if ((isFineLocationGranted != null && isFineLocationGranted)  ||
                                 (isCoarseLocationGranted != null && isCoarseLocationGranted)) {
                             mWeatherViewModel.startListeningLocationUpdates();
+                        }else{
+                            Toast.makeText(getApplicationContext(), R.string.location_permission_not_allowed, Toast.LENGTH_SHORT).show();
                         }
                     }
             );
@@ -85,7 +90,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         //setSupportActionBar(mBinding.toolbar);
         initSearchView(mBinding.searchview);
 
-        final CrossFader crossFader = new CrossFader(mBinding.crossfadeView, mBinding.getRoot(), 1000, this);
+        crossFader = new CrossFader(mBinding.crossfadeView, mBinding.getRoot(), 1000, this);
         crossFader.crossfade();
 
         mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
@@ -100,21 +105,20 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, navController);
 
 
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                switch (destination.getId()){
-                    case R.id.weatherDetailsFragment:
-                        mBinding.searchview.setVisibility(View.GONE);
-                        break;
-                    default:
-                        mBinding.searchview.setVisibility(View.VISIBLE);
-                        break;
-                }
+        //checking which destination has been selected for hiding the searchview
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            switch (destination.getId()){
+                case R.id.weatherDetailsFragment:
+                    mBinding.searchview.setVisibility(View.GONE);
+                    break;
+                default:
+                    mBinding.searchview.setVisibility(View.VISIBLE);
+                    break;
             }
         });
 
         //observations
+        //cities suggestions provided by the api
         mWeatherViewModel.getCitiesSuggestions().observe(this, cursorResource -> {
             try{
                 switch (cursorResource.status){
@@ -133,7 +137,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             }
         });
 
-        //observing adding city action result
+        //observing the city's additon task result
         mWeatherViewModel.getFavoriteCityResultLiveData().observe(this, pair -> {
             if(pair != null && pair.first){
                 mWeatherViewModel.searchForCitiesSuggestions(mBinding.searchview.getQuery().toString());
@@ -164,6 +168,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                             }
                             break;
                         case LOADING:
+                            crossFader.crossfade();
                             break;
                     }
                 }
@@ -184,6 +189,12 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        crossFader = null;
     }
 
     /**
@@ -242,38 +253,6 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         });
     }
 
-//    private void acquirePermissions() {
-//        Context applicationContext = getApplicationContext();
-//        if (Utils.hasPermission(applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
-//                || PermissionUtils.isPermissionAcquired(applicationContext, Manifest.permission.CAMERA)) {
-//            Log.d(TAG, "acquirePermissions() called#granted");
-//            // You can use the API that requires the permission.
-//            // performAction(...);
-//        } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-//            Log.d(TAG, "acquirePermissions() called#should");
-//            permissionsDialog = DialogUtils.getDialog(this, R.string.msg_warning,
-//                    R.string.msg_permission, R.string.msg_ok,
-//                    R.string.msg_cancel,
-//                    getString(R.string.msg_no_thanks), new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            launchers.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA});
-//                        }
-//                    }, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//
-//                        }
-//                    });
-//            permissionsDialog.show();
-//
-//        } else {
-//            Log.d(TAG, "acquirePermissions() called#requestpermissions");
-//            // You can directly ask for the permission.
-//            //ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, REQUEST_CODE);
-//            launchers.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA});
-//        }
-//    }
 
     private void acquirePermissions() {
         Context applicationContext = getApplicationContext();
@@ -281,22 +260,24 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             Timber.d("acquirePermissions() called#granted");
             mWeatherViewModel.startListeningLocationUpdates();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Timber.d("acquirePermissions() called#should");
-    //            permissionsDialog = DialogUtils.getDialog(this, R.string.msg_warning,
-    //                    R.string.msg_permission, R.string.msg_ok,
-    //                    R.string.msg_cancel,
-    //                    getString(R.string.msg_no_thanks), new DialogInterface.OnClickListener() {
-    //                        @Override
-    //                        public void onClick(DialogInterface dialog, int which) {
-    //                            launchers.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA});
-    //                        }
-    //                    }, new DialogInterface.OnClickListener() {
-    //                        @Override
-    //                        public void onClick(DialogInterface dialog, int which) {
-    //
-    //                        }
-    //                    });
-    //            permissionsDialog.show();
+            Timber.d("acquirePermissions() called#showdialog");
+            if(permissionsDialog != null && !permissionsDialog.isShowing()) {
+                permissionsDialog = Utils.getDialog(this, R.string.msg_warning,
+                        R.string.msg_permission, R.string.msg_ok,
+                        R.string.msg_cancel,
+                        getString(R.string.msg_no_thanks), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                locationPermissionRequest.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getApplicationContext(), R.string.location_permission_not_allowed, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                permissionsDialog.show();
+            }
 
         } else {
             locationPermissionRequest.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});

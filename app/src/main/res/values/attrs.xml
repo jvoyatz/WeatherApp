@@ -2,4 +2,5 @@
 <resources>
     <attr name="colorIcon" format="reference"/>
     <attr name="colorIconVariant" format="reference"/>
+    <attr name="colorSelection" format="reference"/>
 </resources>

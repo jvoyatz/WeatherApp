@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable-anydpi/ic_wind_direction.xml" value="0.2019736842105263" />
+        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable-night/background_selector.xml" value="0.14305555555555555" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable-night/card.xml" value="0.26188925081433223" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable-night/engage_bg_gradient.xml" value="0.26188925081433223" />
+        <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable-night/weather_bg_gradient.xml" value="0.14305555555555555" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/background_selector.xml" value="0.41875" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/baseline_search_black_24dp.xml" value="0.2015625" />
         <entry key="..\:/John/dev/workspace/WeatherApp/app/src/main/res/drawable/card.xml" value="0.26188925081433223" />

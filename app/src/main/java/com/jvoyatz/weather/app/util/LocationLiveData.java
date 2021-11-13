@@ -113,6 +113,7 @@ public class LocationLiveData extends LiveData<Resource<Location>> implements Lo
      * If permission is not allowed, then it posts an error message
      */
     public void start() {
+        postValue(Resource.loading(null));
         final boolean isLocationProviderEnabled = Utils.isLocationProviderEnabled(context);
         final boolean hasPermission = Utils.hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
         if (hasPermission && isLocationProviderEnabled) {

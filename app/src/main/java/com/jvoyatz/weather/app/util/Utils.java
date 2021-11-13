@@ -1,6 +1,7 @@
 package com.jvoyatz.weather.app.util;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -20,8 +21,10 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.ui.home.details.pager.WeatherHourItemsAdapter;
@@ -409,5 +412,29 @@ public class Utils {
             Timber.e("detect location error");
             return null;
         }
+    }
+
+    /**
+     * Returns an AlertDialog containing the given args in its content
+     *
+     * @param context App's context
+     * @param titleId Dialog's title
+     * @param messageId Dialog's main content
+     * @param okId Dialog's ok button text
+     * @param cancelId Dialog's cancel button text
+     * @param noThanksId Dialog's neutral button text
+     * @param okListener Listener for ok button click
+     * @param cancelListener Listener for cancel button
+     *
+     * @return an AlertDialog built with a Material Theme
+     */
+    public static AlertDialog getDialog(Context context, int titleId, int messageId, int okId, int cancelId, String noThanksId,
+                                        DialogInterface.OnClickListener okListener, DialogInterface.OnClickListener cancelListener){
+        return new MaterialAlertDialogBuilder(context)
+                .setPositiveButton(okId, okListener)
+                .setNegativeButton(cancelId, cancelListener)
+                .setTitle(context.getString(titleId))
+                .setMessage(context.getString(messageId))
+                .create();
     }
 }
