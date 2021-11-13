@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.MaterialThemeBuilder" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor" tools:ignore="NewApi">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">@color/weather_prim_500</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
         <item name="android:navigationBarColor" tools:ignore="NewApi">?android:attr/colorBackground</item>
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
@@ -11,20 +11,20 @@
 
     <style name="Theme.WeatherApp" parent="Base.Theme.MaterialThemeBuilder">
         <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/weather_prim_500</item>
         <!--A tonal variation of the primary color.-->
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimaryVariant">@color/weather_prim_900</item>
         <!--colorSecondary colors are most often used as accents on components, such as FABs and selection controls.-->
-        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondary">@color/weather_sec_200</item>
         <!--A tonal variation of the secondary color. -->
-        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorSecondaryVariant">@color/weather_sec_500</item>
         <!--colorBackground appears behind scrollable content and is used for the default window background. -->
-        <!--<item name="android:colorBackground">@color/white_50</item>-->
-        <!--<item name="android:windowBackground">@drawable/engage_bg_gradient</item>-->
+        <!--<item name="android:colorBackground">@color/weather_bg</item>-->
+        <item name="android:windowBackground">@drawable/weather_bg_gradient</item>
         <!-- colorSurface is mapped to the surface of components such as cards, sheets and menus.-->
-        <item name="colorSurface">@color/white</item>
+        <item name="colorSurface">@color/weather_prim_50</item>
         <!--colorError is used to indicate an error state for components such as text fields.-->
-        <item name="colorError">@color/red_400</item>
+        <item name="colorError">@color/weather_prim_error_600</item>
 
         <!--"On" colors define how text, icons and strokes are colored in relation to the surface on which they appear.-->
         <!-- A color that passes accessibility guidelines for text/iconography when drawn on top of the primary color. -->
@@ -34,18 +34,38 @@
         <item name="colorOnBackground">@color/black</item>
         <item name="colorOnSurface">@color/black</item>
         <item name="colorOnError">@color/white</item>
-        <item name="android:itemTextAppearance">@style/PopupMenuTextAppearance</item>
-        <item name="toolbarStyle">@style/ThemeOverlay.Toobar</item>
 
+        <item name="tabStyle">@style/TabLayout</item>
+        <item name="bottomNavigationStyle">@style/BottomNavigationView</item>
+        <!--<item name="android:navigationBarColor">@color/red_400</item>-->
 
+<!--        <item name="android:itemTextAppearance">@style/PopupMenuTextAppearance</item>
+        <item name="toolbarStyle">@style/ThemeOverlay.Toobar</item>-->
+
+        <item name="textAppearanceHeadline1">@style/TextAppearance.MaterialComponents.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.MaterialComponents.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.MaterialComponents.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.MaterialComponents.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.MaterialComponents.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.MaterialComponents.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.MaterialComponents.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.MaterialComponents.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.MaterialComponents.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.MaterialComponents.Body2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.MaterialComponents.Caption</item>
+        <item name="textAppearanceButton">@style/TextAppearance.MaterialComponents.Button</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
 </style>
+
+
+
+
     <style name="Widget.MaterialComponents.CardView.Colored" parent="Widget.MaterialComponents.CardView">
         <item name="enforceMaterialTheme">true</item>
 <!--
         <item name="android:stateListAnimator" ns1:ignore="NewApi">
             @animator/mtrl_card_state_list_anim
         </item>-->
-
         <item name="android:textColor">@color/white</item>
         <item name="cardBackgroundColor">?attr/colorPrimary</item>
         <item name="cardCornerRadius">8dp</item>
@@ -58,12 +78,13 @@
         <item name="rippleColor">@color/mtrl_card_view_ripple</item>
         <item name="shapeAppearance">?attr/shapeAppearanceMediumComponent</item>
     </style>
+<!--
 
     <style name="ThemeOverlay.Toobar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface">
 
-        <!-- Text color -->
+        &lt;!&ndash; Text color &ndash;&gt;
         <item name="android:editTextColor">?attr/colorOnPrimary</item>
-        <!-- Hint text color -->
+        &lt;!&ndash; Hint text color &ndash;&gt;
         <item name="android:textColorHint">?attr/colorOnPrimary</item>
     </style>
 
@@ -75,23 +96,5 @@
     <style name="PopupMenuTextAppearance" parent="TextAppearance.AppCompat.Menu">
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
-
-
-    <!-- <style name="ToolBarStyle" parent="Theme.AppCompat">
-         <item name="android:textColorPrimary">@android:color/white</item>
-         <item name="android:textColorSecondary">@android:color/white</item>
-         <item name="menuic">@android:color/white</item>
-         <item name="android:dropDownItemStyle">@style/myDropDownItemStyle</item>
-         <item name="android:dropDownListViewStyle">@style/myDropDownListViewStyle</item>
-     </style>
-
-
-     <style name="myDropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
-         <item name="android:textColor">@color/secondary_text_default_material_light</item>
-         <item name="android:textSize">14dp</item>
-     </style>
-
-     <style name="myDropDownListViewStyle" parent="Widget.AppCompat.ListView.DropDown">
-         <item name="android:background">#000</item>
-     </style>-->
+-->
 </resources>

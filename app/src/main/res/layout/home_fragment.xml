@@ -218,7 +218,7 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:textColor="?android:attr/textColorSecondary"
             app:layout_constrainedWidth="true"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:padding="7dp"
             app:layout_constraintHorizontal_weight="0.6"/>
 
@@ -229,7 +229,7 @@
             tools:text="19"
             android:gravity="end"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:padding="7dp"
             android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.tempC != null ? viewmodel.weatherResponseLiveData.data.currentCondition.tempC + Constants.CELSIUS : ""}'
             />
@@ -242,7 +242,7 @@
             android:textColor="?android:attr/textColorSecondary"
             android:gravity="start"
             app:layout_constrainedWidth="true"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:padding="7dp"
             android:text="@string/weather_wind" />
 
@@ -259,7 +259,7 @@
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/underline"
+                android:background="@drawable/weather_textview_underline"
                 android:gravity="center_vertical"
                 android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.windspeedKmph != null ? viewmodel.weatherResponseLiveData.data.currentCondition.windspeedKmph + ` km/h ` + viewmodel.weatherResponseLiveData.data.currentCondition.winddir16Point:""}'
                 degrees='@{viewmodel.weatherResponseLiveData.data.currentCondition.winddirDegree ?? ""}'
@@ -284,7 +284,7 @@
             android:textColor="?android:attr/textColorSecondary"
             android:gravity="start"
             app:layout_constrainedWidth="true"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:padding="7dp"
             android:text="@string/weather_rain"/>
 
@@ -293,7 +293,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:padding="7dp"
             tools:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.precipMM != null ? viewmodel.weatherResponseLiveData.data.currentCondition.precipMM + ` mm`:""}' />
 
@@ -304,7 +304,7 @@
             android:gravity="start"
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:textColor="?android:attr/textColorSecondary"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             app:layout_constrainedWidth="true"
             android:padding="7dp"
             android:text="@string/weather_cloud" />
@@ -314,7 +314,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:padding="7dp"
             android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.cloudcover != null ? viewmodel.weatherResponseLiveData.data.currentCondition.cloudcover + ` ` + Constants.PERCENT:""}' />
 
@@ -327,7 +327,7 @@
             android:textColor="?android:attr/textColorSecondary"
             app:layout_constrainedWidth="true"
             android:padding="7dp"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:text="@string/weather_humidity" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -335,7 +335,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
             android:padding="7dp"
             android:text='@{viewmodel.weatherResponseLiveData.data.currentCondition.humidity != null ? viewmodel.weatherResponseLiveData.data.currentCondition.humidity + ` ` + Constants.PERCENT:""}'
             tools:text="19" />

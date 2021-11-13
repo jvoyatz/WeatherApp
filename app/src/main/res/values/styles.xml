@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--https://stackoverflow.com/questions/63988606/how-to-make-android-bottomnavigationview-background-transparent-->
+    <style
+        name="BottomNavigationView" parent="@style/Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">#00ffffff</item><!--android:background="#00000000"-->
+        <!--app:elevation="0dp"
+        android:alpha="0.5"-->
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
+        <item name="android:background">#00ffffff</item><!--android:background="#00000000"-->
+        <!--app:elevation="0dp"
+        android:alpha="0.5"-->
+        <item name="android:alpha">0.5</item>
+        <item name="tabIndicatorColor">?attr/colorSecondary</item>
+        <item name="tabTextColor">@color/black</item>
+    </style>
+
+ <!--   <style name="BottomSheet" parent="Widget.MaterialCo">
+        <item name="android:background">#00ffffff</item>&lt;!&ndash;android:background="#00000000"&ndash;&gt;
+        &lt;!&ndash;app:elevation="0dp"
+        android:alpha="0.5"&ndash;&gt;
+        <item name="android:alpha">0.5</item>
+    </style>-->
+
+
+</resources>

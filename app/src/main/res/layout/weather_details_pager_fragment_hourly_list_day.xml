@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text='@{hour.time != null ? @string/sunrise_hour(hour.time):""}'
+        android:text='@{hour.time != null ? hour.time:""}'
         android:padding="16dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         tools:text="Monday, 9 Nov" />

@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent">
-            <include android:id="@+id/bottomsheet" layout="@layout/weather_details_hour_bottomsheet"/>
+            <include android:id="@+id/bottomsheet" layout="@layout/weather_details_pager_fragment_hourly_list_item_bottomsheet"/>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

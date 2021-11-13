@@ -8,5 +8,5 @@
         android:topLeftRadius="10dp"
         android:topRightRadius="10dp" />
 
-    <solid android:color="@color/grey_light" />
+    <solid android:color="@color/weather_prim_analogous_900" />
 </shape>

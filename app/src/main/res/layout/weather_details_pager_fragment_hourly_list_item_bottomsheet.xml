@@ -20,14 +20,15 @@
         android:id="@+id/bottom_sheet_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="4dp"
-        app:behavior_peekHeight="62dp"
+        app:cardCornerRadius="8dp"
+        app:behavior_peekHeight="52dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_sheet_layout_constr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/weather_day_hour_card_bg"
         app:behavior_hideable="false"
         android:filterTouchesWhenObscured="false"
         tools:ignore="MissingConstraints">
@@ -48,7 +49,7 @@
                     android:layout_width="30dp"
                     android:layout_height="5dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/swipe_up_handle" />
+                    android:background="@drawable/weather_bottomsheet_handle" />
             </FrameLayout>
 
             <TextView
@@ -68,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 app:layout_constraintTop_toBottomOf="@id/hour_time"
-                android:background="?attr/colorPrimary"/>
+                android:background="@color/weather_prim_analogous_900"/>
         </LinearLayout>
 
         <androidx.constraintlayout.widget.Guideline
@@ -119,7 +120,7 @@
             app:layout_constraintEnd_toStartOf="@+id/top_vertical_guideline_0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/hour_desc"
-            app:srcCompat="@drawable/baseline_wb_sunny_black_24dp" />
+            android:src="@drawable/baseline_wb_sunny_black_24dp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_desc"
@@ -170,6 +171,7 @@
             android:id="@+id/hour_ch_overcast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:drawableStart="@drawable/ic_cloudy"
             android:gravity="center"
             android:drawablePadding="2dp"
@@ -182,6 +184,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_rain"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:gravity="center"
             android:drawablePadding="2dp"
             android:padding="2dp"
@@ -192,7 +195,8 @@
             android:id="@+id/hour_ch_windy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_wind_dir_2"
+            android:drawableStart="@drawable/ic_arrow"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:drawablePadding="2dp"
             android:padding="2dp"
             android:text='@{hour.chanceofwindy != null ? hour.chanceofwindy + `` + Constants.PERCENT:""}'
@@ -207,6 +211,7 @@
             android:drawableStart="@drawable/ic_frost"
             android:drawablePadding="2dp"
             android:padding="2dp"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:text='@{hour.chanceoffrost != null ? hour.chanceoffrost + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"/>
@@ -218,6 +223,7 @@
             android:drawableStart="@drawable/ic_fog"
             android:drawablePadding="2dp"
             android:padding="2dp"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:text='@{hour.chanceoffog != null ? hour.chanceoffog + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"/>
@@ -229,6 +235,7 @@
             android:drawableStart="@drawable/ic_snow"
             android:drawablePadding="2dp"
             android:padding="2dp"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:text='@{hour.chanceofsnow != null ? hour.chanceofsnow + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"/>
@@ -240,6 +247,7 @@
             android:drawableStart="@drawable/ic_thunder"
             android:drawablePadding="2dp"
             android:padding="2dp"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:text='@{hour.chanceofthunder != null ? hour.chanceofthunder + `` + Constants.PERCENT:""}'
             android:gravity="center"
             tools:text="20"
@@ -252,11 +260,12 @@
             android:drawableStart="@drawable/ic_uv_index_2"
             android:drawablePadding="2dp"
             android:padding="2dp"
+            app:drawableTint="@color/weather_prim_analogous_900"
             android:text='@{hour.uvIndex + ` ` ?? ""}'
             android:gravity="center"
             tools:text="20"/>
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_information"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -291,7 +300,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_temp_feels"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_feels_value"
@@ -301,7 +310,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_wind"
@@ -309,7 +318,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_wind"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_wind_value"
@@ -321,7 +330,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_precip"
@@ -329,7 +338,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_precipitation"
             android:padding="6dp"
-            android:background="@drawable/underline" />
+            android:background="@drawable/weather_textview_underline" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_precip_value"
@@ -339,7 +348,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_humidity"
@@ -347,7 +356,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_humidity"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_himidity_value"
@@ -357,7 +366,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_visibility"
@@ -365,7 +374,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_rain"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_visibility_value"
@@ -375,7 +384,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_pressure"
@@ -383,7 +392,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_pressure"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_pressure_value"
@@ -393,7 +402,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_cloud"
@@ -401,7 +410,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_cloud"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_cloud_value"
@@ -411,7 +420,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_heat"
@@ -419,7 +428,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_heat"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_heat_value"
@@ -429,7 +438,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_dew"
@@ -437,7 +446,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_dew"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_dew_value"
@@ -447,7 +456,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_wind_chill"
@@ -455,7 +464,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_windchill"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_wind_chill_value"
@@ -465,7 +474,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"
+            android:background="@drawable/weather_textview_underline"
              />
 
         <com.google.android.material.textview.MaterialTextView
@@ -474,7 +483,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_windgust"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_wind_gust_value"
@@ -484,7 +493,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_uv"
@@ -492,7 +501,7 @@
             android:layout_height="wrap_content"
             android:text="@string/weather_condition_uv_index"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_uv_value"
@@ -502,7 +511,7 @@
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"
-            android:background="@drawable/underline"/>
+            android:background="@drawable/weather_textview_underline"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

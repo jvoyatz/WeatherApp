@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
+        <item name="android:background">#00ffffff</item><!--android:background="#00000000"-->
+        <!--app:elevation="0dp"
+        android:alpha="0.5"-->
+        <item name="android:alpha">0.5</item>
+        <item name="tabIndicatorColor">?attr/colorSecondary</item>
+        <item name="tabTextColor">?attr/colorOnSurface</item>
+    </style>
+
+ <!--   <style name="BottomSheet" parent="Widget.MaterialCo">
+        <item name="android:background">#00ffffff</item>&lt;!&ndash;android:background="#00000000"&ndash;&gt;
+        &lt;!&ndash;app:elevation="0dp"
+        android:alpha="0.5"&ndash;&gt;
+        <item name="android:alpha">0.5</item>
+    </style>-->
+
+
+</resources>

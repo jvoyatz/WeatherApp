@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
+    <color name="weather_prim_500">#3e52b9</color>
+    <color name="weather_prim_200">#9fa9dc</color>
+    <color name="weather_prim_50">#e8eaf7</color>
+    <color name="weather_prim_100">#c5cbea</color>
+    <color name="weather_prim_900">#182482</color>
+    <color name="weather_sec_200">#f4eea1</color>
+    <color name="weather_sec_500">#e5dc4b</color>
+
+    <color name="weather_prim_analogous_900">#CC2E6083</color>
+    <color name="weather_prim_analogous_700">#3e90b9</color>
+    <color name="weather_prim_error_600">#b93e53</color>
+    <color name="weather_prim_error_200">#e592a5</color>
+    <color name="weather_prim_error_300">#db6c83</color>
+
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -12,4 +29,13 @@
 
     <color name="grey_light">#6c6c6c</color>
     <color name="grey_darker">#484848</color>
+
+  <!--  <color name="weather_bg">#fcfcfc</color>-->
+    <color name="whitewash_ebony">#e2d1d0</color>
+    <color name="whitewash_ebony_saturated">#e4cfce</color>
+    <color name="whitewash_ebony_desaturated">#e0d3d2</color>
+    <color name="weather_prim">#1a2667</color>
+    <color name="weather_bg">#e7eaf3</color>
+    <color name="immersive_sys_ui">#33000000</color>
+    <color name="nav_bar">@color/immersive_sys_ui</color>
 </resources>

@@ -77,7 +77,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         super.onCreate(savedInstanceState);
         @NonNull ActivityWeatherBinding mBinding = ActivityWeatherBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-        setSupportActionBar(mBinding.toolbar);
+        //setSupportActionBar(mBinding.toolbar);
         initSearchView(mBinding.searchview);
 
         mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
@@ -88,7 +88,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         //When using <fragmentContainerView> we need get NavHostFragment using getSupportFragmentManager()
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = ((NavHostFragment) Objects.requireNonNull(fragment)).getNavController();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+       // NavigationUI.setupWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, navController);
 
         mWeatherViewModel.getCitiesSuggestions().observe(this, cursorResource -> {

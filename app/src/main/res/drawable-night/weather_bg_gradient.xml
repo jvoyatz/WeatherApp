@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!--
+    <gradient
+        android:angle="270"
+        android:startColor="@color/weather_prim_200"
+        android:centerColor="@color/black"
+        android:endColor="@color/black"
+        android:centerY="10%"
+        android:type="linear" />
+
+-->
+    <gradient
+        android:angle="270"
+        android:startColor="@color/weather_sec_200"
+        android:endColor="@color/black"
+        android:centerY="9%"
+        android:centerX="87%"
+        android:gradientRadius="144"
+        android:type="radial" />
+</shape>

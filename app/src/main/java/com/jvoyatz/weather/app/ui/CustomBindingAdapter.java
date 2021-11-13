@@ -107,4 +107,11 @@ public class CustomBindingAdapter {
             imageView.setImageDrawable(bitmap);
         }
     }
+
+    @BindingAdapter("onDayHourSelect")
+    public static void selectDayHour(View view, int i){
+        Timber.d("selectDayHour() called with: view = [" + view + "], i = [" + i + "]");
+        final Drawable drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.circular_txview);
+        view.setBackground(drawable);
+    }
 }

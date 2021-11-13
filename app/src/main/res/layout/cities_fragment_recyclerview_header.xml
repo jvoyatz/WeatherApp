@@ -25,7 +25,7 @@
             android:gravity="center"
             android:textColor="?attr/colorOnSurface"
             android:text="@{text}"
-            tools:text="Generic header text" />
+            tools:text="text" />
 
     </com.google.android.material.card.MaterialCardView>
 </layout>
