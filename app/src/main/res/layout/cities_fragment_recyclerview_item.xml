@@ -22,7 +22,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> handler.onViewClicked(city, viewmodel.currentCityLiveData)}"
+        android:onClick="@{(v) -> handler.onViewClicked(v, city, viewmodel.currentCityLiveData)}"
         item="@{city}"
         currentSelectedItem="@{viewmodel.currentCityLiveData}"
         android:layout_margin="8dp">

@@ -311,11 +311,9 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp">
 
-
             </FrameLayout>
 
         </LinearLayout>
-
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_precip"

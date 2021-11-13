@@ -35,8 +35,8 @@ import java.util.List;
 public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFragmentRecyclerviewItemBinding> {
     public static final int EMPTY_ID = 1;
     public static final int HEADER_ID = 2;
-    public static final String EMPTY_NAME = "EMPTY";
-    public static final String HEADER_NAME = "HEADER";
+    public static final String EMPTY_STR = "EMPTY";
+    public static final String HEADER_STR = "HEADER";
 
     private final CitiesHandler handler;
     private final CitiesViewModel citiesViewModel;
@@ -59,10 +59,12 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
     public int getItemViewType(int position) {
         CityEntity item = getItem(position);
 
-        if(TextUtils.equals(item.getName(), EMPTY_NAME)){
+        if(TextUtils.equals(item.getName(), EMPTY_STR)){
             viewType = EMPTY_ID;
-        }else if(TextUtils.equals(item.getName(), HEADER_NAME)){
+        }else if(TextUtils.equals(item.getName(), HEADER_STR)){
             viewType = HEADER_ID;
+        }else if(TextUtils.equals(item.getName(), LOADING_STR)){
+            viewType = LOADING_ID;
         }else{
             viewType = super.getItemViewType(position);
         }
@@ -75,6 +77,8 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         switch (viewType){
+            case LOADING_ID:
+                return DataBindingUtil.inflate(inflater, R.layout.recyclerview_loading_item, parent, false);
             case EMPTY_ID:
                 return DataBindingUtil.inflate(inflater, R.layout.recyclerview_exhausted_item, parent, false);
             case HEADER_ID:
@@ -96,9 +100,18 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
                 binding.setVariable(BR.city, item);
                 binding.setVariable(BR.handler, handler);
                 binding.setVariable(BR.viewmodel, citiesViewModel);
-               // binding.setVariable(BR.)
+                // binding.setVariable(BR.)
                 break;
         }
+    }
+
+    /**
+     * adds a loading item in the list for this recyclerview
+     */
+    public void showLoading() {
+        ArrayList<CityEntity> list = new ArrayList<>(1);
+        list.add(CityEntity.builder().withName(LOADING_STR).build());
+        submitList(list);
     }
 
     /**
@@ -114,10 +127,10 @@ public class CitiesListAdapter extends DataBoundListAdapter<CityEntity, CitiesFr
             if(list == null){
                 list = new ArrayList<>(1);
             }
-            list.add(CityEntity.builder().withName(EMPTY_NAME).build());
-        }else{
-            list.add(0, CityEntity.builder().withName(HEADER_NAME).build());
-        }
+            list.add(CityEntity.builder().withName(EMPTY_STR).build());
+        }/*else{
+            list.add(0, CityEntity.builder().withName(HEADER_STR).build());
+        }*/
         super.submitList(list);
     }
 

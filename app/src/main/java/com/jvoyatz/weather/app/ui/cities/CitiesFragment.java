@@ -1,6 +1,7 @@
 package com.jvoyatz.weather.app.ui.cities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -16,11 +17,16 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.WeatherViewModel;
 import com.jvoyatz.weather.app.databinding.CitiesFragmentBinding;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
+import com.jvoyatz.weather.app.models.entities.weather.WeatherCurrentConditionEntity;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
@@ -35,6 +41,10 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
     private WeatherViewModel mWeatherViewModel;
     private CitiesViewModel mViewModel;
     private CitiesFragmentBinding mBinding;
+    private CitiesListAdapter adapter;
+
+    @Inject
+    Handler handler;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,37 +57,55 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
         super.onViewCreated(view, savedInstanceState);
 
         mWeatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
-        mViewModel = new ViewModelProvider(this).get(CitiesViewModel.class);
+        mViewModel = new ViewModelProvider(requireActivity()).get(CitiesViewModel.class);
         mViewModel.setCurrentCitySelectedLiveData(mWeatherViewModel.getSelectedCityEntityLiveData());
 
         RecyclerView recyclerView = mBinding.citiesRecyclerview;
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        CitiesListAdapter adapter = new CitiesListAdapter(CitiesListAdapter.DIFF_CALLBACK, this, mViewModel);
+        adapter = new CitiesListAdapter(CitiesListAdapter.DIFF_CALLBACK, this, mViewModel);
         recyclerView.setAdapter(adapter);
 
-
+        adapter.showLoading();
         mViewModel.setTriggerRefreshFavoriteCities(mWeatherViewModel.getTriggerRefreshFavoriteCities());
-        mViewModel.getFavoritesCitiesLiveData().observe(getViewLifecycleOwner(), adapter::submitList);
+        mViewModel.getFavoritesCitiesLiveData().observe(getViewLifecycleOwner(), new Observer<List<CityEntity>>() {
+            @Override
+            public void onChanged(List<CityEntity> cityEntities) {
+                adapter.submitList(cityEntities);
+            }
+        });
 
-        mViewModel.refreshFavoriteCitiesList();
+//        mViewModel.getWeatherForecastForSavedCities().observe(getViewLifecycleOwner(), new Observer<Map<CityEntity, WeatherCurrentConditionEntity>>() {
+//            @Override
+//            public void onChanged(Map<CityEntity, WeatherCurrentConditionEntity> map) {
+//                Timber.d("onChanged() called with: map = [" + map + "]");
+//            }
+//        });
+
+        handler.postDelayed(() -> mViewModel.refreshFavoriteCitiesList(), 750);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mBinding = null;
+        adapter.setLifecycleDestroyed();
     }
 
     @Override
-    public void onViewClicked(@NonNull CityEntity item, @Nullable CityEntity selectedItem) {
-        boolean areItemsTheSame = CitiesListAdapter.DIFF_CALLBACK.areContentsTheSame(item, selectedItem);
-        if(!areItemsTheSame) {
-            mWeatherViewModel.setSelectedCityEntityLiveData(item);
-        }else{
-            mWeatherViewModel.setSelectedCityEntityLiveData(null);
+    public void onViewClicked(View view, @NonNull CityEntity item, @Nullable CityEntity selectedItem) {
+        switch (view.getId()){
+            case R.id.city_weather_forecast_btn:
+                break;
+            default:
+                boolean areItemsTheSame = CitiesListAdapter.DIFF_CALLBACK.areContentsTheSame(item, selectedItem);
+                if(!areItemsTheSame) {
+                    mWeatherViewModel.setSelectedCityEntityLiveData(item);
+                }else{
+                    mWeatherViewModel.setSelectedCityEntityLiveData(null);
+                }
+                break;
         }
     }
-
 
     @Override
     public void onFavoriteIconClick(@NonNull CityEntity item) {
