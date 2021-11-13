@@ -138,15 +138,18 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_descr"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
             android:text='@{hour.weatherDesc != null ? hour.weatherDesc:""}'
+            android:textAppearance="?attr/textAppearanceSubtitle1"
             app:layout_constraintBottom_toTopOf="@id/hour_temp_2"
+            app:layout_constraintEnd_toStartOf="@+id/top_vertical_guideline"
             app:layout_constraintStart_toStartOf="@id/hour_temp_2"
             app:layout_constraintTop_toBottomOf="@+id/hour_temp_2"
-            tools:text="sunny" />
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="suuuuuuuuuuuuuuuuuuuunnnnnnnnnnnnnnnnnnnnnnnnnnnyyyyyyyyyyyyyyyyyyyyyyyyyyy" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/hour_wind_dir"
