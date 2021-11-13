@@ -43,6 +43,9 @@ import timber.log.Timber;
  */
 public abstract class DataBoundListAdapter<T, V extends ViewDataBinding> extends ListAdapter<T, DataBoundViewHolder<ViewDataBinding>> {
 
+    protected static final int LOADING_ID = -1;
+    protected static final String LOADING_STR = "loading";
+
     //keeping the value of the ViewType in a field
     //so as to be able to pass different values
     //when executing binding

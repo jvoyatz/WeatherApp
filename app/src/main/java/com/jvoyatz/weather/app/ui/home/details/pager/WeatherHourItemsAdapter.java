@@ -100,6 +100,12 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
         }
     }
 
+
+    public void showLoading(){
+        ArrayList<WeatherDayHourEntity> list = new ArrayList<>(1);
+        list.add(WeatherDayHourEntity.builder().withWeatherCode(NO_ITEMS).build());
+        submitList(list);
+    }
     @Override
     public void submitList(@Nullable List<WeatherDayHourEntity> list) {
         if(Objects.isEmpty(list)){

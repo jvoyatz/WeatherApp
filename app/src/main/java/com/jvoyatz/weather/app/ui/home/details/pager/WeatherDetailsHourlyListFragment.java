@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
@@ -27,7 +29,10 @@ import com.jvoyatz.weather.app.databinding.WeatherDetailsPagerFragmentHourlyList
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.ui.home.details.WeatherDetailsViewModel;
+import com.jvoyatz.weather.app.util.Objects;
 import com.jvoyatz.weather.app.util.Utils;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -44,8 +49,13 @@ public class WeatherDetailsHourlyListFragment extends Fragment implements Weathe
 
     @Inject
     AppExecutors appExecutors;
+    @Inject
+    Handler handler;
+
     private WeatherDetailsPagerFragmentHourlyListBinding mBinding;
     private WeatherDetailsViewModel mViewModel;
+    private WeatherHourItemsAdapter adapter;
+
 
     public WeatherDetailsHourlyListFragment() { }
 
@@ -62,51 +72,45 @@ public class WeatherDetailsHourlyListFragment extends Fragment implements Weathe
 
         BottomSheetBehavior<View> sheetBehavior = BottomSheetBehavior.from(mBinding.bottomsheet.bottomSheetLayout);
 
-        WeatherHourItemsAdapter adapter = new WeatherHourItemsAdapter(WeatherHourItemsAdapter.DIFF_CALLBACK, appExecutors, this);
+        adapter = new WeatherHourItemsAdapter(WeatherHourItemsAdapter.DIFF_CALLBACK, appExecutors, this);
         mBinding.weatherDayDetailsRecyclerview.setAdapter(adapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL);
         mBinding.weatherDayDetailsRecyclerview.addItemDecoration(dividerItemDecoration);
 
         mViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
 
-        mViewModel.getWeatherDayHourEntityLiveData().observe(getViewLifecycleOwner(), adapter::submitList);
-
-
-//        public static final int STATE_EXPANDED = 3;
-//
-//        /** The bottom sheet is collapsed. */
-//        public static final int STATE_COLLAPSED = 4;
-        final BottomSheetBehavior.BottomSheetCallback bottomSheetCallback = new BottomSheetBehavior.BottomSheetCallback() {
-
+        adapter.showLoading();
+        mViewModel.getWeatherDayHourEntityLiveData().observe(getViewLifecycleOwner(), new Observer<List<WeatherDayHourEntity>>() {
             @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                Timber.d("onStateChanged() called with: bottomSheet = [" + bottomSheet + "], newState = [" + newState + "]");
-                switch (newState){
-                    case 3:
-                    case 6:
-//                        final Drawable drawable = ContextCompat.getDrawable(requireContext(), R.drawable.card);
-//                        TransitionDrawable crossfader = new TransitionDrawable(new Drawable[]{drawable, null});
-//                        mBinding.bottomsheet.bottomSheetLayoutConstr.setBackground(drawable);
-//                        crossfader.startTransition(1000);
-
-                        break;
-                    case 4:
-                        //mBinding.bottomsheet.bottomSheetLayoutConstr.setBackground(null);
-                        break;
-                }
+            public void onChanged(List<WeatherDayHourEntity> entities) {
+                adapter.submitList(entities, () -> {
+                    try {
+                        handler.postDelayed(() -> {
+                            try{
+                                if(Objects.isEmpty(entities)){
+                                    mBinding.hourCoordinatorLayout.setVisibility(View.GONE);
+                                }else{
+                                    onViewClicked(null, adapter.getCurrentList().get(0));
+                                    mBinding.hourCoordinatorLayout.setVisibility(View.VISIBLE);
+                                }
+                            }catch (Exception e){
+                                Timber.e(e);
+                            }
+                        }, 450);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                    }
+                });
             }
+        });
 
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-            }
-        };
-        sheetBehavior.addBottomSheetCallback(bottomSheetCallback);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mBinding = null;
+        adapter.setLifecycleDestroyed();
     }
 
     @Override
@@ -118,8 +122,33 @@ public class WeatherDetailsHourlyListFragment extends Fragment implements Weathe
             if (data != null && data.getTimezone() != null) {
                 String time = Utils.formatHourDateTime(Utils.parseFullStr(entity.getTime()));
                 mBinding.bottomsheet.setDay(time);
-
             }
         }
     }
+
+//    final BottomSheetBehavior.BottomSheetCallback bottomSheetCallback = new BottomSheetBehavior.BottomSheetCallback() {
+//
+//        @Override
+//        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+//            Timber.d("onStateChanged() called with: bottomSheet = [" + bottomSheet + "], newState = [" + newState + "]");
+//            switch (newState){
+//                case 3:
+//                case 6:
+////                        final Drawable drawable = ContextCompat.getDrawable(requireContext(), R.drawable.card);
+////                        TransitionDrawable crossfader = new TransitionDrawable(new Drawable[]{drawable, null});
+////                        mBinding.bottomsheet.bottomSheetLayoutConstr.setBackground(drawable);
+////                        crossfader.startTransition(1000);
+//
+//                    break;
+//                case 4:
+//                    //mBinding.bottomsheet.bottomSheetLayoutConstr.setBackground(null);
+//                    break;
+//            }
+//        }
+//
+//        @Override
+//        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+//        }
+//    };
+//        sheetBehavior.addBottomSheetCallback(bottomSheetCallback);
 }
