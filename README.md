@@ -32,6 +32,7 @@ the code used to fill UI elements in the xml layout files making Android Activit
 Finally, Dependency Injection is supported through Dagger Hilt library. This way, the creation of certain classes needed by the app to be singleton
 for exampled was not made by hand making code more cleaner and maintainable.
 
+Had a look into the samples provided [here](#https://github.com/android/architecture-components-samples).
 
 #### Why certain third-party libraries were used?
 
@@ -46,7 +47,7 @@ I would like to have some extra screens.
 For example one of them could provide a graph for the temperature on a particular date.
 In another one, we could see the temperatures etc for a given date in the past.
 
-Moreover a local map engine like [VTM](#) could be used to show user cities on the map making user able to click on the
+Moreover a local map engine like [VTM](#https://github.com/mapsforge/vtm) could be used to show user cities on the map making user able to click on the
 markers and have a quick view of the forecast. Additionally, the user would be able to select certain points on the map and
 get the weather forecast for that location.
 
