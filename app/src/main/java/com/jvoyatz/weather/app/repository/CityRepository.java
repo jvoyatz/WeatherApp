@@ -1,13 +1,13 @@
 package com.jvoyatz.weather.app.repository;
 
 import android.database.Cursor;
-import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.Constants;
@@ -147,6 +147,18 @@ public class CityRepository {
                 });
             }
         };
+    }
+
+    public LiveData<CityEntity> findCity(@NonNull String name, @NonNull String region, @NonNull String country) {
+        MediatorLiveData<CityEntity> mediatorLiveData = new MediatorLiveData<>();
+
+        final LiveData<CityEntity> cityLiveData = cityDao.findByMultipleCriteriaLimit1(name, region, country);
+        mediatorLiveData.addSource(cityLiveData, cityEntity -> {
+            mediatorLiveData.removeSource(cityLiveData);
+            mediatorLiveData.postValue(cityEntity);
+        });
+
+        return mediatorLiveData;
     }
 // used for suggestions, commented out block of code
 //    MediatorLiveData<Resource<Cursor>> result = new MediatorLiveData<>();

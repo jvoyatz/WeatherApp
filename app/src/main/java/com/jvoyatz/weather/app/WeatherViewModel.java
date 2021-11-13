@@ -4,16 +4,20 @@ import android.app.Application;
 import android.database.Cursor;
 import android.location.Location;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
 import com.jvoyatz.weather.app.models.Resource;
+import com.jvoyatz.weather.app.models.Status;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.repository.CityRepository;
@@ -22,6 +26,7 @@ import com.jvoyatz.weather.app.util.AbsentLiveData;
 import com.jvoyatz.weather.app.util.Event;
 import com.jvoyatz.weather.app.util.LocationLiveData;
 import com.jvoyatz.weather.app.util.PairSourcesLiveData;
+import com.jvoyatz.weather.app.util.TripleSourcesLiveData;
 import com.jvoyatz.weather.app.util.Utils;
 
 import javax.inject.Inject;
@@ -41,7 +46,9 @@ public class WeatherViewModel extends AndroidViewModel {
     private LocationLiveData locationLiveData;
     private final MutableLiveData<String> searchCityLiveData;
     private MutableLiveData<CityEntity> selectedCityEntityLiveData;
+    //used to show information in layouts for cities
     public MutableLiveData<CityEntity> currentCityEntityLiveData;
+    private MutableLiveData<Event<Triple<String, String, String>>> nonFavoriteCityLiveData;
     private final MutableLiveData<Event<Triple<String, String, String>>> favoriteCityLiveData;
     private LiveData<Resource<WeatherEntity>> weatherEntityLiveData;
     private final MutableLiveData<Event<Boolean>> triggerRefreshFavoriteCities;
@@ -55,6 +62,7 @@ public class WeatherViewModel extends AndroidViewModel {
         favoriteCityLiveData = new MutableLiveData<>();
         triggerRefreshFavoriteCities = new MutableLiveData<>();
         locationLiveData = new LocationLiveData(getApplication().getApplicationContext());
+        nonFavoriteCityLiveData = new MutableLiveData<>();
     }
 
     /**
@@ -113,7 +121,17 @@ public class WeatherViewModel extends AndroidViewModel {
      */
     public void setSelectedCityEntityLiveData(CityEntity cityEntity){
         selectedCityEntityLiveData.postValue(cityEntity);
+        locationLiveData.trigger();
     }
+
+    /**
+     * Invoked when user selects a city from suggestions view without
+     * marking it as favorite.
+     */
+    public void setNonFavoriteCity(@NonNull String cityName, @NonNull String region, @NonNull String country) {
+        nonFavoriteCityLiveData.postValue(new Event<>((new Triple<>(cityName, region, country))));
+    }
+
     /**
      * Returns the livedata holder holding the value of the selected city
      * at the moment.
@@ -132,19 +150,62 @@ public class WeatherViewModel extends AndroidViewModel {
     public LiveData<Resource<WeatherEntity>> getWeatherResponseLiveData(){
         if(weatherEntityLiveData == null) {
             final LiveData<Resource<Location>> locationLiveData = getLocationLiveData();
-            final PairSourcesLiveData<CityEntity, Resource<Location>> twoSourcesLiveData = new PairSourcesLiveData<CityEntity, Resource<Location>>
-                    (getSelectedCityEntityLiveData(), locationLiveData);
-            weatherEntityLiveData = Transformations.switchMap(twoSourcesLiveData, new Function<Pair<CityEntity, Resource<Location>>, LiveData<Resource<WeatherEntity>>>() {
-                @Override
-                public LiveData<Resource<WeatherEntity>> apply(Pair<CityEntity, Resource<Location>> input) {
-                    if (input != null && input.first != null) {
-                        return weatherRepository.getCityWeatherForecast(input.first);
-                    }else if(input != null && input.second != null && input.second.data != null){
-                        return weatherRepository.getWeatherForecastLatLon(input.second.data.getLatitude(), input.second.data.getLongitude());
-                    }
-                    return AbsentLiveData.create();
-                }
-            });
+//            final PairSourcesLiveData<CityEntity, Resource<Location>> twoSourcesLiveData = new PairSourcesLiveData<CityEntity, Resource<Location>>
+//                    (getSelectedCityEntityLiveData(), locationLiveData);
+//            weatherEntityLiveData = Transformations.switchMap(twoSourcesLiveData, new Function<Pair<CityEntity, Resource<Location>>, LiveData<Resource<WeatherEntity>>>() {
+//                @Override
+//                public LiveData<Resource<WeatherEntity>> apply(Pair<CityEntity, Resource<Location>> input) {
+//                    if (input != null && input.first != null) {
+//                        return weatherRepository.getCityWeatherForecast(input.first);
+//                    }else if(input != null && input.second != null && input.second.data != null){
+//                        return weatherRepository.getWeatherForecastLatLon(input.second.data.getLatitude(), input.second.data.getLongitude());
+//                    }
+//                    return AbsentLiveData.create();
+//                }
+//            });
+
+            final TripleSourcesLiveData<CityEntity, Resource<Location>, Event<Triple<String, String, String>>> threeSourcesLiveData =
+                    new TripleSourcesLiveData<>(getSelectedCityEntityLiveData(), locationLiveData, nonFavoriteCityLiveData);
+            weatherEntityLiveData = Transformations.switchMap(threeSourcesLiveData,
+                    input -> {
+
+                        if (input != null) {
+                            if(input.getThird() != null && !input.getThird().isHandled()){
+                                final Event<Triple<String, String, String>> event = input.getThird();
+                                if(event != null) {
+                                    final Triple<String, String, String> content = event.getContentIfNotHandled();
+                                    if(content != null) {
+                                        MediatorLiveData<Resource<WeatherEntity>> mediatorLiveData = new MediatorLiveData<>();
+                                        final LiveData<CityEntity> cityFindLiveData = cityRepository.findCity(content.component1(), content.component2(), content.component3());
+                                        mediatorLiveData.addSource(cityFindLiveData, cityEntity -> {
+                                            mediatorLiveData.removeSource(cityFindLiveData);
+                                            currentCityEntityLiveData.postValue(cityEntity);
+
+                                            final LiveData<Resource<WeatherEntity>> cityWeatherForecast = weatherRepository.getCityWeatherForecast(cityEntity);
+                                            mediatorLiveData.addSource(cityWeatherForecast, new Observer<Resource<WeatherEntity>>() {
+                                                @Override
+                                                public void onChanged(Resource<WeatherEntity> weatherEntityResource) {
+                                                    Timber.d("getWeatherResponseLiveDataonChanged() called with: weatherEntityResource = [" + weatherEntityResource + "]");
+                                                    if(weatherEntityResource == null || (weatherEntityResource.status == Status.SUCCESS || weatherEntityResource.status == Status.ERROR)){
+                                                        mediatorLiveData.removeSource(cityWeatherForecast);
+                                                    }
+                                                    mediatorLiveData.postValue(weatherEntityResource);
+                                                }
+                                            });
+                                        });
+
+                                        return mediatorLiveData;
+                                    }
+                                }
+                            } else if (input.getFirst() != null) {
+                                return weatherRepository.getCityWeatherForecast(input.getFirst());
+                            } else if (input.getSecond() != null && input.getSecond().data != null) {
+                                return weatherRepository.getWeatherForecastLatLon(input.getSecond().data.getLatitude(), input.getSecond().data.getLongitude());
+                            }
+                            return AbsentLiveData.create();
+                        }
+                        return AbsentLiveData.create();
+                    });
         }
         return weatherEntityLiveData;
     }
@@ -184,6 +245,10 @@ public class WeatherViewModel extends AndroidViewModel {
     public MutableLiveData<CityEntity> getCityEntityLiveData() {
         if(currentCityEntityLiveData == null) {
             final PairSourcesLiveData<CityEntity, Resource<Location>> twoSourcesLiveData = new PairSourcesLiveData<>(getSelectedCityEntityLiveData(), locationLiveData);
+            final TripleSourcesLiveData<CityEntity, Resource<Location>, Event<Triple<String, String, String>>> tripleSourcesLiveData =
+                    new TripleSourcesLiveData<>(getSelectedCityEntityLiveData(), locationLiveData, nonFavoriteCityLiveData);
+
+
             currentCityEntityLiveData = (MutableLiveData<CityEntity>)
                     Transformations.switchMap(twoSourcesLiveData, new Function<Pair<CityEntity, Resource<Location>>, LiveData<CityEntity>>() {
                         @Override
@@ -213,6 +278,43 @@ public class WeatherViewModel extends AndroidViewModel {
                             return AbsentLiveData.create();
                         }
                     });
+
+//            currentCityEntityLiveData = (MutableLiveData<CityEntity>) Transformations.switchMap(tripleSourcesLiveData,
+//                    new Function<Triple<CityEntity, Resource<Location>, Event<Triple<String, String, String>>>, LiveData<CityEntity>>() {
+//                @Override
+//                public LiveData<CityEntity> apply(Triple<CityEntity, Resource<Location>, Event<Triple<String, String, String>>> input) {
+//                    if(input != null){
+//                        Timber.d("apply: getCityEntityLiveData " + input);
+//                        if(input.getThird() != null){ //priority 1 when user selects a city for a quick overview of the forecast
+//                            final Event<Triple<String, String, String>> event = input.getThird();
+//                            final Triple<String, String, String> content = event.getContentIfNotHandled();
+//                            if(content != null){
+//                                return cityRepository.findCity(content.component1(), content.component2(), content.component3());
+//                            }
+//                        }else if(input.component1() != null){ //else priority 2 the current selected city
+//                            return new LiveData<CityEntity>() {
+//                                @Override
+//                                protected void onActive() {
+//                                    super.onActive();
+//                                    postValue(input.component1());
+//                                }
+//                            };
+//                        }else if(input.getSecond() != null && input.getSecond().data != null){//else the location if available
+//                            return new LiveData<CityEntity>() {
+//                                        @Override
+//                                        protected void onActive() {
+//                                            super.onActive();
+//                                            final CityEntity entity =
+//                                                    Utils.getCityEntityFromGeocoder(getApplication().getApplicationContext(),
+//                                                            input.getSecond().data.getLatitude(), input.getSecond().data.getLongitude());
+//                                            postValue(entity);
+//                                        }
+//                                    };
+//                        }
+//                    }
+//                    return AbsentLiveData.create();
+//                }
+//            });
         }
 
         return currentCityEntityLiveData;
@@ -224,4 +326,5 @@ public class WeatherViewModel extends AndroidViewModel {
     public void startListeningLocationUpdates(){
         locationLiveData.start();
     }
+
 }

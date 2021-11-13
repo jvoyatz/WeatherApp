@@ -1,48 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="4dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-        <ImageView
-            android:id="@+id/city_add_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="2dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:tint="@color/weather_sec_200"
-            android:src="@drawable/baseline_add_box_black_24dp" />
+        <data>
+                <variable
+                    name="city"
+                    type="String" />
+                <variable
+                    name="region"
+                    type="String" />
+                <variable
+                    name="country"
+                    type="String" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/city_name"
-            android:layout_width="0dp"
+                <variable
+                    name="handler"
+                    type="com.jvoyatz.weather.app.storage.CitiesCursorAdapter.CitySuggestionsHandler" />
+        </data>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:maxLines="1"
-            android:textColor="@color/white"
-            android:layout_marginStart="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            app:layout_constraintStart_toEndOf="@+id/city_add_icon"
-            app:layout_constraintTop_toTopOf="@+id/city_add_icon"
-            tools:text="city name" />
+            android:onClick="@{(v) -> handler.onSuggestedCitySelected(city, region, country, false)}"
+            android:padding="4dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/city_region_country"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAlignment="center"
-            android:visibility="visible"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/city_add_icon"
-            app:layout_constraintStart_toStartOf="@+id/city_name"
-            app:layout_constraintTop_toBottomOf="@+id/city_name"
-            tools:text="region, country" />
+                <ImageView
+                    android:id="@+id/city_add_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="2dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:tint="@color/weather_prim_200"
+                    android:onClick="@{(v) -> handler.onSuggestedCitySelected(city, region, country, true)}"
+                    android:src="@drawable/baseline_add_box_black_24dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/city_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/white"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:text="@{city}"
+                    app:layout_constraintStart_toEndOf="@+id/city_add_icon"
+                    app:layout_constraintTop_toTopOf="@+id/city_add_icon"
+                    tools:text="city name" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/city_region_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:visibility="visible"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/city_add_icon"
+                    app:layout_constraintStart_toStartOf="@+id/city_name"
+                    app:layout_constraintTop_toBottomOf="@+id/city_name"
+                    android:text="@{region + ` ` + country}"
+                    tools:text="region, country" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

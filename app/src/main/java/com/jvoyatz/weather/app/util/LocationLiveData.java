@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.location.LocationListenerCompat;
@@ -270,5 +271,10 @@ public class LocationLiveData extends LiveData<Resource<Location>> implements Lo
      */
     private void unregisterReceiver() {
         context.unregisterReceiver(gpsProviderReceiver);
+    }
+
+    public void trigger() {
+        Timber.d("trigger() called");
+        postValue(Resource.success(getLastKnownLocation()));
     }
 }

@@ -13,12 +13,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -26,7 +26,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -55,11 +54,11 @@ import timber.log.Timber;
  * in this activity. A hilt component will be generated for this class.
  */
 @AndroidEntryPoint
-public class WeatherActivity extends AppCompatActivity implements CitiesCursorAdapter.OnSuggestedCityClickListener {
+public class WeatherActivity extends AppCompatActivity implements CitiesCursorAdapter.CitySuggestionsHandler {
 
     @Inject
     SearchRecentSuggestions suggestions;
-    private AppBarConfiguration appBarConfiguration;
+    //private AppBarConfiguration appBarConfiguration;
     private NavController navController;
     private WeatherViewModel mWeatherViewModel;
     private CitiesCursorAdapter mAdapter;
@@ -97,7 +96,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
 
         // top level destinations
         // home, saved cities
-        appBarConfiguration = new AppBarConfiguration.Builder(R.id.homeFragment, R.id.citiesFragment).build();
+        //appBarConfiguration = new AppBarConfiguration.Builder(R.id.homeFragment, R.id.citiesFragment).build();
         //When using <fragmentContainerView> we need get NavHostFragment using getSupportFragmentManager()
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = ((NavHostFragment) Objects.requireNonNull(fragment)).getNavController();
@@ -123,7 +122,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             try{
                 switch (cursorResource.status){
                     case SUCCESS:
-                        mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, mBinding.searchview, WeatherActivity.this);
+                        mAdapter = new CitiesCursorAdapter(getApplicationContext(), cursorResource.data, WeatherActivity.this);
                         mBinding.searchview.setSuggestionsAdapter(mAdapter);
                         break;
                     case ERROR:
@@ -175,12 +174,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             }
         });
 
-        mWeatherViewModel.getCityEntityLiveData().observe(this, new Observer<CityEntity>() {
-            @Override
-            public void onChanged(CityEntity cityEntity) {
-                Timber.d("onChanged() called with: cityEntity = [" + cityEntity + "]");
-            }
-        });
+        mWeatherViewModel.getCityEntityLiveData().observe(this, AbsentObserver.create());
         mWeatherViewModel.getSelectedCityEntityLiveData().observe(this, AbsentObserver.create());
         mWeatherViewModel.getWeatherResponseLiveData().observe(this, AbsentObserver.create());
 
@@ -207,8 +201,11 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
      */
     @Override
     public void onSuggestedCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite){
-        Timber.d("onSuggestedCitySelected() called with: cityName = [" + cityName + "], region = [" + region + "], country = [" + country + "], storeAsFavorite = [" + storeAsFavorite + "]");
-        mWeatherViewModel.updateFavoriteCity(cityName, region, country);
+        if(storeAsFavorite)
+            mWeatherViewModel.updateFavoriteCity(cityName, region, country);
+        else{
+            mWeatherViewModel.setNonFavoriteCity(cityName, region, country);
+        }
     }
 
     public void initSearchView(SearchView searchView){
@@ -249,6 +246,15 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
                 }
                 mWeatherViewModel.searchForCitiesSuggestions(newText);
                 return true;
+            }
+        });
+
+        ImageView searchClose = searchView.findViewById(R.id.search_close_btn);
+        searchClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWeatherViewModel.setSelectedCityEntityLiveData(null);
+                searchView.setQuery("", false);
             }
         });
     }

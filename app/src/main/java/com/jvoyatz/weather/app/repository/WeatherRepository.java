@@ -92,7 +92,8 @@ public class WeatherRepository {
                         .append(city.getLatitude())
                         .append(", ")
                         .append(city.getLongitude());
-                }else*/ if(!TextUtils.isEmpty(city.getName())){
+                }else*/
+                if(!TextUtils.isEmpty(city.getName())){
                     query.append(city.getName());
                     if(!TextUtils.isEmpty(city.getRegion())){
                         query.append(", ").append(city.getRegion());

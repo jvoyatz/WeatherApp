@@ -129,4 +129,22 @@ public class CustomBindingAdapter {
         final Drawable drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.circular_txview);
         view.setBackground(drawable);
     }
+
+    @BindingAdapter("cityText")
+    public static void setCityText(TextView textView, CityEntity city){
+        //Timber.d("setCityText() called with city = [" + city + "]");
+        StringBuilder text = new StringBuilder();
+        if(city != null) {
+            if (!TextUtils.isEmpty(city.getName())) {
+                text.append(city.getName());
+                if (!TextUtils.isEmpty(city.getRegion())) {
+                    text.append(", ").append(city.getRegion());
+                }
+                if (!TextUtils.isEmpty(city.getCountry())) {
+                    text.append(", ").append(city.getCountry());
+                }
+            }
+        }
+        textView.setText(text.toString());
+    }
 }
