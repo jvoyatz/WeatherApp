@@ -1,11 +1,16 @@
 package com.jvoyatz.weather.app.ui.home;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +29,7 @@ import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.ui.base.BaseHandler;
+import com.jvoyatz.weather.app.util.CrossFader;
 
 import javax.inject.Inject;
 
@@ -36,11 +42,17 @@ import timber.log.Timber;
  */
 @AndroidEntryPoint
 public class HomeFragment extends Fragment implements HomeHandler {
+
     @Inject
     AppExecutors appExecutors;
+    @Inject
+    Handler handler;
+
     private HomeFragmentBinding mBinding;
     private WeatherViewModel mWeatherViewModel;
     private WeatherNextDaysAdapter adapter;
+
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -49,12 +61,15 @@ public class HomeFragment extends Fragment implements HomeHandler {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = HomeFragmentBinding.inflate(inflater, container, false);
+
         return mBinding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
         mWeatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
         mBinding.setViewmodel(mWeatherViewModel);
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
@@ -64,11 +79,37 @@ public class HomeFragment extends Fragment implements HomeHandler {
         adapter.setAppExecutors(appExecutors);
         mBinding.recyclerView.setAdapter(adapter);
 
+        adapter.showLoading();
         mWeatherViewModel.getWeatherResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Resource<WeatherEntity>>() {
             @Override
-            public void onChanged(Resource<WeatherEntity> weatherEntityResource) {
-                if(weatherEntityResource != null && weatherEntityResource.data != null) {
-                    adapter.submitList(weatherEntityResource.data.getWeather());
+            public void onChanged(Resource<WeatherEntity> resource) {
+                if(resource != null ) {
+                    switch (resource.status){
+                        case LOADING:
+                            adapter.showLoading();
+                            break;
+                        case ERROR:
+                            Toast.makeText(requireContext(), R.string.next_days_list_error, Toast.LENGTH_SHORT).show();
+//                              break;
+                        case SUCCESS:
+                            handler.postDelayed(() -> {
+                                try {
+                                    adapter.submitList(resource.data.getWeather());
+                                } catch (Exception e) {
+                                    Timber.e(e);
+                                }
+                            }, 600);
+                            break;
+                    }
+                }else{
+                    handler.postDelayed(() -> {
+                        try {
+                            adapter.submitList(null);
+                        } catch (Exception e) {
+                            Timber.e(e);
+                        }
+                    }, 600);
+
                 }
             }
         });
@@ -78,6 +119,7 @@ public class HomeFragment extends Fragment implements HomeHandler {
     public void onDestroyView() {
         super.onDestroyView();
         mBinding = null;
+        adapter.setLifecycleDestroyed();
     }
 
     @SuppressLint("NonConstantResourceId")

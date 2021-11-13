@@ -106,6 +106,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/date"
                 app:layout_constraintStart_toStartOf="@+id/date"
                 app:layout_constraintTop_toTopOf="parent"
+                android:tint="?attr/colorIcon"
                 app:srcCompat="@drawable/baseline_location_city_black_24dp" />
 
             <TextView
@@ -128,7 +129,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/timezone" />
 
-            <com.google.android.material.button.MaterialButton
+ <!--           <com.google.android.material.button.MaterialButton
                 android:id="@+id/city_mapview_btn"
                 style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
@@ -137,7 +138,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/map"
                 app:layout_constraintStart_toEndOf="@id/city_weather_forecast_btn"
-                app:layout_constraintTop_toBottomOf="@+id/timezone" />
+                app:layout_constraintTop_toBottomOf="@+id/timezone" />-->
 
             <ImageView
                 android:id="@+id/city_favorite"
@@ -149,6 +150,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/cityName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/cityName"
+                android:tint="?attr/colorIconVariant"
                 app:srcCompat="@drawable/baseline_favorite_border_black_24dp" />
 
             <TextView

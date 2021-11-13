@@ -1,11 +1,9 @@
 package com.jvoyatz.weather.app;
 
 import android.app.Application;
-import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 
 import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
@@ -25,6 +22,7 @@ import com.jvoyatz.weather.app.util.AbsentLiveData;
 import com.jvoyatz.weather.app.util.Event;
 import com.jvoyatz.weather.app.util.LocationLiveData;
 import com.jvoyatz.weather.app.util.PairSourcesLiveData;
+import com.jvoyatz.weather.app.util.Utils;
 
 import javax.inject.Inject;
 
@@ -43,6 +41,7 @@ public class WeatherViewModel extends AndroidViewModel {
     private LocationLiveData locationLiveData;
     private final MutableLiveData<String> searchCityLiveData;
     private MutableLiveData<CityEntity> selectedCityEntityLiveData;
+    public MutableLiveData<CityEntity> currentCityEntityLiveData;
     private final MutableLiveData<Event<Triple<String, String, String>>> favoriteCityLiveData;
     private LiveData<Resource<WeatherEntity>> weatherEntityLiveData;
     private final MutableLiveData<Event<Boolean>> triggerRefreshFavoriteCities;
@@ -171,6 +170,52 @@ public class WeatherViewModel extends AndroidViewModel {
      */
     public LiveData<Resource<Location>> getLocationLiveData() {
         return locationLiveData;
+    }
+
+    /**
+     *
+     * Creates a new LiveData object using Transformations.switchMap.
+     * The switchMap takes as source a PairSourcesLiveData of getSelectedCityEntityLiveData & getLocationLiveData
+     * then in the apply method, we check whether a city is selected otherwise we check the value
+     * dispatched by LocationLiveData. In this case we use the {@link android.location.Geocoder} to get info
+     * regarding the current Location.
+     *
+     */
+    public MutableLiveData<CityEntity> getCityEntityLiveData() {
+        if(currentCityEntityLiveData == null) {
+            final PairSourcesLiveData<CityEntity, Resource<Location>> twoSourcesLiveData = new PairSourcesLiveData<>(getSelectedCityEntityLiveData(), locationLiveData);
+            currentCityEntityLiveData = (MutableLiveData<CityEntity>)
+                    Transformations.switchMap(twoSourcesLiveData, new Function<Pair<CityEntity, Resource<Location>>, LiveData<CityEntity>>() {
+                        @Override
+                        public LiveData<CityEntity> apply(Pair<CityEntity, Resource<Location>> input) {
+                            Timber.d("apply() called with: input = [" + input + "]");
+                            if (input != null) {
+                                if (input.first != null) {
+                                    return new LiveData<CityEntity>() {
+                                        @Override
+                                        protected void onActive() {
+                                            super.onActive();
+                                            postValue(input.first);
+                                        }
+                                    };
+                                } else if (input.second != null && input.second.data != null) {
+                                    return new LiveData<CityEntity>() {
+                                        @Override
+                                        protected void onActive() {
+                                            super.onActive();
+                                            final CityEntity entity = Utils.getCityEntityFromGeocoder(getApplication().getApplicationContext(), input.second.data.getLatitude(), input.second.data.getLongitude());
+                                            Timber.d("onActive: " + entity);
+                                            postValue(entity);
+                                        }
+                                    };
+                                }
+                            }
+                            return AbsentLiveData.create();
+                        }
+                    });
+        }
+
+        return currentCityEntityLiveData;
     }
 
     /**

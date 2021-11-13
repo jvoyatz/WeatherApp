@@ -132,7 +132,7 @@
             android:layout_margin="16dp"
             android:contentDescription="@null"
             android:src="@drawable/baseline_wb_sunny_black_24dp"
-            android:tint="@color/weather_prim_analogous_900"
+            android:tint="?attr/colorIconVariant"
             android:padding="6dp"
             />
 
@@ -210,7 +210,7 @@
             android:layout_height="32dp"
             android:layout_margin="16dp"
             android:src="@drawable/ic_moon"
-            android:tint="@color/weather_prim_analogous_900"
+            android:tint="?attr/colorIconVariant"
             android:contentDescription="@null"
             android:padding="6dp"
             />
@@ -276,7 +276,7 @@
             android:layout_marginTop="16dp"
             android:layout_margin="4dp"
             android:padding="8dp"
-            app:constraint_referenced_ids="hour_wind, hour_wind_value, hour_precip, hour_precip_value, hour_visibility, hour_visibility_value, weather_condition_cloud, weather_condition_cloud_value, hour_humidity, hour_himidity_value, hour_uv, hour_uv_value, hour_snow, hour_snow_value"
+            app:constraint_referenced_ids="hour_feels, hour_feels_value, hour_wind, hour_wind_value, hour_precip, hour_precip_value, weather_condition_cloud, weather_condition_cloud_value, hour_humidity, hour_himidity_value,hour_visibility, hour_visibility_value,  hour_uv, hour_uv_value, hour_snow, hour_snow_value"
             app:flow_wrapMode="chain"
             app:flow_horizontalStyle="spread_inside"
             app:flow_maxElementsWrap="2"
@@ -285,38 +285,26 @@
             app:layout_constraintTop_toBottomOf="@id/weather_condition"/>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/hour_wind"
+            android:id="@+id/hour_feels"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/weather_temp_feels"
             android:padding="6dp"
             android:background="@drawable/weather_textview_underline"/>
 
-        <LinearLayout
-            android:id="@+id/hour_wind_value"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/hour_feels_value"
             android:layout_width="wrap_content"
-            android:background="@drawable/weather_textview_underline"
-            android:layout_height="wrap_content">
+            android:gravity="end"
+            android:text= '@{viewmodel.weatherEntityLiveData.data.currentCondition.tempC != null ? viewmodel.weatherEntityLiveData.data.currentCondition.tempC + ` ` + Constants.CELSIUS:""}'
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/weather_textview_underline"/>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:gravity="end"
-                android:text= '@{viewmodel.weatherEntityLiveData.data.currentCondition.tempC != null ? viewmodel.weatherEntityLiveData.data.currentCondition.tempC + ` ` + Constants.CELSIUS:""}'
-                android:textColor="@color/material_on_background_emphasis_high_type"
-                android:layout_height="wrap_content"
-                android:padding="6dp"
-                android:background="@drawable/weather_textview_underline"/>
-
-            <FrameLayout
-                android:layout_width="24dp"
-                android:layout_height="24dp">
-
-            </FrameLayout>
-
-        </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/hour_precip"
+            android:id="@+id/hour_wind"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/weather_wind"
@@ -325,7 +313,7 @@
             />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/hour_precip_value"
+            android:id="@+id/hour_wind_value"
             android:layout_width="wrap_content"
             android:gravity="end"
             android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.windspeedKmph != null ? viewmodel.weatherEntityLiveData.data.currentCondition.windspeedKmph + ` ` + Constants.KM_H + ` ` + viewmodel.weatherEntityLiveData.data.currentCondition.winddir16Point:""}'
@@ -335,15 +323,15 @@
             android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/hour_visibility"
+            android:id="@+id/hour_precip"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/weather_rain"
+            android:text="@string/weather_precipitation"
             android:padding="6dp"
             android:background="@drawable/weather_textview_underline"/>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/hour_visibility_value"
+            android:id="@+id/hour_precip_value"
             android:layout_width="wrap_content"
             android:gravity="end"
             android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.precipMM != null ? viewmodel.weatherEntityLiveData.data.currentCondition.precipMM + ` ` + Constants.MM:""}'
@@ -384,6 +372,24 @@
             android:layout_width="wrap_content"
             android:gravity="end"
             android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.humidity != null ? viewmodel.weatherEntityLiveData.data.currentCondition.humidity + ` ` + Constants.PERCENT:""}'
+            android:textColor="@color/material_on_background_emphasis_high_type"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:background="@drawable/weather_textview_underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/hour_visibility"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/weather_visibility"
+            android:padding="6dp"
+            android:background="@drawable/weather_textview_underline"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/hour_visibility_value"
+            android:layout_width="wrap_content"
+            android:gravity="end"
+            android:text='@{viewmodel.weatherEntityLiveData.data.currentCondition.visibility != null ? viewmodel.weatherEntityLiveData.data.currentCondition.visibility + ` ` + Constants.PERCENT:""}'
             android:textColor="@color/material_on_background_emphasis_high_type"
             android:layout_height="wrap_content"
             android:padding="6dp"

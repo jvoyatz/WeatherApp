@@ -10,6 +10,8 @@
     </style>
 
     <style name="Theme.WeatherApp" parent="Base.Theme.MaterialThemeBuilder">
+        <item name="colorIcon">@color/weather_prim_analogous_900</item>
+        <item name="colorIconVariant">@color/weather_sec_800</item>
         <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
         <item name="colorPrimary">@color/weather_prim_500</item>
         <!--A tonal variation of the primary color.-->

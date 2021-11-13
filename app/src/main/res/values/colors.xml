@@ -8,7 +8,8 @@
     <color name="weather_prim_100">#c5cbea</color>
     <color name="weather_prim_900">#182482</color>
     <color name="weather_sec_200">#f4eea1</color>
-    <color name="weather_sec_500">#e5dc4b</color>
+    <color name="weather_sec_500">#ccbb45</color>
+    <color name="weather_sec_800">#b8a440</color>
 
     <color name="weather_prim_analogous_900">#CC2E6083</color>
     <color name="weather_prim_analogous_700">#3e90b9</color>

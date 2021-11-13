@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
@@ -20,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.content.ContextCompat;
 
+import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.ui.home.details.pager.WeatherHourItemsAdapter;
 
@@ -93,7 +96,6 @@ public class Utils {
      * Day, 01 November
      */
     public static String getFormalDate(String date) {
-        Timber.d("getFormalDate() called with: date = [" + date + "]");
         String dateFormatted = getFormalDateFromStandard(date);
 
         if (TextUtils.isEmpty(dateFormatted)) {
@@ -377,5 +379,35 @@ public class Utils {
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(attrIdForColor, typedValue, true);
         return typedValue.data;
+    }
+
+    /**
+     * The coordinates of a specific point are being given as argument and using
+     * the {@link Geocoder} we find info for that specific point and we use to them
+     * to create a {@link CityEntity}
+     */
+    public static CityEntity getCityEntityFromGeocoder(Context context, double lat, double lon) {
+        try {
+            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+
+            if (!Geocoder.isPresent())
+                return null;
+
+            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
+            if (addresses == null || addresses.size() == 0)
+                return null;
+
+            Address geoAddress = addresses.get(0);
+
+            return CityEntity.builder()
+                    .withName(geoAddress.getLocality())
+                    .withCountry(geoAddress.getCountryName())
+                    .withRegion(geoAddress.getAdminArea())
+                    .build();
+
+        } catch (Exception e) {
+            Timber.e("detect location error");
+            return null;
+        }
     }
 }

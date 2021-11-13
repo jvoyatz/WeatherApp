@@ -49,12 +49,6 @@ public class WeatherDetailsViewModel extends ViewModel {
         this.weatherRepository = weatherRepository;
     }
 
-//    private LiveData<Resource<WeatherEntity>> getWeatherEntityLiveData() {
-//        if(weatherEntityLiveData == null){
-//            throw new IllegalStateException("not initialized livedata");
-//        }
-//        return weatherEntityLiveData;
-//    }
 
     /**
      * Takes as argument the Livedata instance provided by the {@link com.jvoyatz.weather.app.WeatherViewModel}
@@ -66,12 +60,6 @@ public class WeatherDetailsViewModel extends ViewModel {
     public LiveData<Resource<WeatherEntity>> getWeatherEntityLiveData(LiveData<Resource<WeatherEntity>> weatherEntityLiveData, int dayIndex) {
 
         if(dayIndex == 0) {
-//            this.weatherEntityLiveData = Transformations.map(weatherEntityLiveData, input -> {
-//                if (input != null) {
-//                    return input.data;
-//                }
-//                return null;
-//            });
             this.weatherEntityLiveData = weatherEntityLiveData;
         }else{
             this.weatherEntityLiveData = Transformations.switchMap(weatherEntityLiveData, new Function<Resource<WeatherEntity>, LiveData<Resource<WeatherEntity>>>() {

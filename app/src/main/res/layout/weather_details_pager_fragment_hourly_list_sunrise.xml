@@ -20,7 +20,7 @@
         android:gravity="start|center_vertical"
         android:text='@{hour.time != null ? @string/sunrise_hour(hour.time):""}'
         android:drawableStart="@drawable/baseline_wb_sunny_black_24dp"
-        app:drawableTint="@color/weather_prim_analogous_900"
+        app:drawableTint="?attr/colorIconVariant"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:drawablePadding="4dp"
         android:padding="8dp"

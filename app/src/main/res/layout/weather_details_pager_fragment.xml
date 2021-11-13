@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             app:layout_constraintTop_toBottomOf="@id/weather_details_date"
-            android:background="?attr/colorPrimary"/>
+            android:background="@color/weather_prim_analogous_900"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/weather_details_tab_layout"

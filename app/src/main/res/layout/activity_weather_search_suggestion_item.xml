@@ -15,10 +15,10 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:tint="@color/weather_prim_analogous_900"
+            android:tint="?attr/colorIconVariant"
             android:src="@drawable/baseline_add_box_black_24dp" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/city_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="@+id/city_add_icon"
             tools:text="city name" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/city_region_country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

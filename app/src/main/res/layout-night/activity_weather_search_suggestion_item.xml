@@ -15,29 +15,31 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:tint="@color/weather_prim_analogous_900"
+            android:tint="@color/weather_sec_200"
             android:src="@drawable/baseline_add_box_black_24dp" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/city_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
             android:maxLines="1"
+            android:textColor="@color/white"
             android:layout_marginStart="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             app:layout_constraintStart_toEndOf="@+id/city_add_icon"
             app:layout_constraintTop_toTopOf="@+id/city_add_icon"
             tools:text="city name" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/city_region_country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAlignment="center"
             android:visibility="visible"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/city_add_icon"
             app:layout_constraintStart_toStartOf="@+id/city_name"
             app:layout_constraintTop_toBottomOf="@+id/city_name"

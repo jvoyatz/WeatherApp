@@ -9,6 +9,8 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 
+import androidx.core.content.ContextCompat;
+
 import com.jvoyatz.weather.app.R;
 
 
@@ -47,8 +49,8 @@ public class HorizontalDottedProgress extends View {
         super.onDraw(canvas);
 
         //set the color for the dot that you want to draw
-        //paint.setColor(Color.parseColor("#fd583f"));
-        paint.setColor(Utils.getColorByAttributeId(getContext(), R.attr.colorSecondary));
+        //Utils.getColorByAttributeId(getContext(), R.attr.colorSecondary)
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.weather_prim_analogous_900));
         //function to create dot
         createDot(canvas,paint);
     }

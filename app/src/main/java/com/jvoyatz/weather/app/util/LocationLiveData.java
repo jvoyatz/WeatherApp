@@ -95,7 +95,7 @@ public class LocationLiveData extends LiveData<Resource<Location>> implements Lo
     }
 
     public void onLocationChanged(@NonNull Location location) {
-        Timber.v("onLocationChanged() called with: location = [" + location + "]");
+        Timber.d("onLocationChanged() called with: location = [" + location + "]");
         postValue(Resource.success(location));
     }
 

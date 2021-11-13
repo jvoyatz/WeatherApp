@@ -11,26 +11,31 @@ import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
 import com.jvoyatz.weather.app.models.Resource;
+import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
 import com.jvoyatz.weather.app.util.AbsentObserver;
+import com.jvoyatz.weather.app.util.CrossFader;
 import com.jvoyatz.weather.app.util.LocationLiveData;
 import com.jvoyatz.weather.app.util.Utils;
 
@@ -80,6 +85,9 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         //setSupportActionBar(mBinding.toolbar);
         initSearchView(mBinding.searchview);
 
+        final CrossFader crossFader = new CrossFader(mBinding.crossfadeView, mBinding.getRoot(), 1000, this);
+        crossFader.crossfade();
+
         mWeatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
 
         // top level destinations
@@ -91,6 +99,22 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
        // NavigationUI.setupWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, navController);
 
+
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                switch (destination.getId()){
+                    case R.id.weatherDetailsFragment:
+                        mBinding.searchview.setVisibility(View.GONE);
+                        break;
+                    default:
+                        mBinding.searchview.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+
+        //observations
         mWeatherViewModel.getCitiesSuggestions().observe(this, cursorResource -> {
             try{
                 switch (cursorResource.status){
@@ -109,6 +133,7 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             }
         });
 
+        //observing adding city action result
         mWeatherViewModel.getFavoriteCityResultLiveData().observe(this, pair -> {
             if(pair != null && pair.first){
                 mWeatherViewModel.searchForCitiesSuggestions(mBinding.searchview.getQuery().toString());
@@ -122,10 +147,10 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             }
         });
 
+        //location wrapped in a Resource instance
         mWeatherViewModel.getLocationLiveData().observe(this, new Observer<Resource<Location>>() {
             @Override
             public void onChanged(Resource<Location> resource) {
-                Timber.d("onChanged() called with: resource = [" + resource + "]");
                 if(resource != null){
                     switch (resource.status){
                         case SUCCESS:
@@ -145,8 +170,15 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
             }
         });
 
+        mWeatherViewModel.getCityEntityLiveData().observe(this, new Observer<CityEntity>() {
+            @Override
+            public void onChanged(CityEntity cityEntity) {
+                Timber.d("onChanged() called with: cityEntity = [" + cityEntity + "]");
+            }
+        });
         mWeatherViewModel.getSelectedCityEntityLiveData().observe(this, AbsentObserver.create());
         mWeatherViewModel.getWeatherResponseLiveData().observe(this, AbsentObserver.create());
+
     }
 
     @Override

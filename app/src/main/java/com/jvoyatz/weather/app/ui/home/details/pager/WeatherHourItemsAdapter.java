@@ -2,6 +2,7 @@ package com.jvoyatz.weather.app.ui.home.details.pager;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 

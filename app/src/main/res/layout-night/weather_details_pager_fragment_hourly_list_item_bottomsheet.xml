@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="hour"
+            type="com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity" />
+        <variable
+            name="day"
+            type="String" />
+
+
+        <variable
+            name="viewmodel"
+            type="com.jvoyatz.weather.app.ui.home.details.WeatherDetailsViewModel" />
+
+
+        <import type="com.jvoyatz.weather.app.Constants"/>
+        <import type="com.jvoyatz.weather.app.util.Utils"/>
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottom_sheet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="8dp"
+        app:behavior_peekHeight="52dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottom_sheet_layout_constr"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/weather_day_hour_card_bg"
+            app:behavior_hideable="false"
+            android:filterTouchesWhenObscured="false"
+            tools:ignore="MissingConstraints">
+
+            <LinearLayout
+                android:id="@+id/handle_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="5dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/weather_bottomsheet_handle" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/hour_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    tools:text="11:00, Savvato"
+                    android:text='@{day}'/>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    app:layout_constraintTop_toBottomOf="@id/hour_time"
+                    android:background="@color/weather_prim_analogous_900"/>
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/dash_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.06" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_vertical_guideline_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.2" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_vertical_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_horizontal_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.2" />
+
+            <ImageView
+                android:id="@+id/hour_icon"
+                imageUrl="@{hour.weatherIconUrl}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/top_horizontal_guideline"
+                app:layout_constraintEnd_toStartOf="@+id/top_vertical_guideline_0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/hour_temp_2"
+                android:src="@drawable/baseline_wb_sunny_black_24dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_temp_2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:padding="2dp"
+                android:text='@{hour.tempC != null ? hour.tempC + ` ` + Constants.CELSIUS :""}'
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                app:layout_constraintBottom_toTopOf="@+id/hour_descr"
+                app:layout_constraintEnd_toStartOf="@+id/top_vertical_guideline"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/top_vertical_guideline_0"
+                app:layout_constraintTop_toBottomOf="@id/handle_container"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="20c" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_descr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:text='@{hour.weatherDesc != null ? hour.weatherDesc:""}'
+                app:layout_constraintBottom_toTopOf="@id/hour_temp_2"
+                app:layout_constraintStart_toStartOf="@id/hour_temp_2"
+                app:layout_constraintTop_toBottomOf="@+id/hour_temp_2"
+                tools:text="sunny" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_wind_dir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text='@{hour.winddir16Point != null ? hour.winddir16Point:""}'
+                android:textAppearance="?attr/textAppearanceBody1"
+                app:layout_constraintStart_toStartOf="@+id/top_vertical_guideline_0"
+                app:layout_constraintTop_toBottomOf="@+id/hour_descr"
+                tools:text="NNE" />
+
+            <FrameLayout
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:layout_constraintBottom_toBottomOf="@+id/hour_wind_dir"
+                app:layout_constraintHorizontal_weight="0.1"
+                app:layout_constraintStart_toEndOf="@id/hour_wind_dir"
+                app:layout_constraintTop_toTopOf="@id/hour_wind_dir">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:tint="?attr/colorIcon"
+                    degrees="@{hour.winddirDegree}"
+                    android:src="@drawable/ic_wind_direction" />
+            </FrameLayout>
+
+            <!--        <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/hour_wind_dir"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="64dp"
+                        android:text='@{hour.winddir16Point ?? ""}'
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        app:layout_constraintStart_toStartOf="@+id/hour_descr"
+                        app:layout_constraintTop_toBottomOf="@+id/hour_descr"
+                        tools:text="test" />-->
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:constraint_referenced_ids="hour_ch_overcast,hour_ch_rain,hour_ch_fog,hour_ch_windy,hour_ch_frost,hour_ch_snow,hour_ch_thunder,hour_ch_uv"
+                app:flow_horizontalStyle="spread"
+                app:flow_maxElementsWrap="4"
+                app:flow_wrapMode="aligned"
+                android:visibility="visible"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toTopOf="@id/top_horizontal_guideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/top_vertical_guideline"
+                app:layout_constraintTop_toBottomOf="@id/handle_container" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_overcast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="?attr/colorIcon"
+                android:drawableStart="@drawable/ic_cloudy"
+                android:gravity="center"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                android:text='@{hour.chanceofovercast != null ? hour.chanceofovercast + `` + Constants.PERCENT:""}'
+                tools:text="20"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_rain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_rain"
+                app:drawableTint="?attr/colorIcon"
+                android:gravity="center"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                android:text='@{hour.chanceofrain != null ? hour.chanceofrain + `` + Constants.PERCENT:""}'
+                tools:text="20"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_windy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_arrow"
+                app:drawableTint="?attr/colorIcon"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                android:text='@{hour.chanceofwindy != null ? hour.chanceofwindy + `` + Constants.PERCENT:""}'
+                android:gravity="center"
+                tools:text="20"/>
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_frost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_frost"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                app:drawableTint="?attr/colorIcon"
+                android:text='@{hour.chanceoffrost != null ? hour.chanceoffrost + `` + Constants.PERCENT:""}'
+                android:gravity="center"
+                tools:text="20"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_fog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_fog"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                app:drawableTint="?attr/colorIcon"
+                android:text='@{hour.chanceoffog != null ? hour.chanceoffog + `` + Constants.PERCENT:""}'
+                android:gravity="center"
+                tools:text="20"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_snow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_snow"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                app:drawableTint="?attr/colorIcon"
+                android:text='@{hour.chanceofsnow != null ? hour.chanceofsnow + `` + Constants.PERCENT:""}'
+                android:gravity="center"
+                tools:text="20"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_thunder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_thunder"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                app:drawableTint="?attr/colorIcon"
+                android:text='@{hour.chanceofthunder != null ? hour.chanceofthunder + `` + Constants.PERCENT:""}'
+                android:gravity="center"
+                tools:text="20"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_ch_uv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_uv_index_2"
+                android:drawablePadding="2dp"
+                android:padding="2dp"
+                app:drawableTint="?attr/colorIcon"
+                android:text='@{hour.uvIndex + ` ` ?? ""}'
+                android:gravity="center"
+                tools:text="20"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_information"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/top_horizontal_guideline"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:textAppearance="?textAppearanceSubtitle2"
+                android:text="@string/information"
+                />
+
+            <!---->
+            <!-- -->
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/hour_condition_flow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_marginTop="16dp"
+                android:padding="8dp"
+                app:constraint_referenced_ids="hour_feels,hour_feels_value, hour_wind, hour_wind_value,hour_precip, hour_precip_value, hour_humidity, hour_himidity_value, hour_visibility, hour_visibility_value, hour_pressure, hour_pressure_value, hour_cloud, hour_cloud_value, hour_heat, hour_heat_value, hour_dew, hour_dew_value, hour_wind_gust, hour_wind_gust_value,  hour_uv, hour_uv_value,  hour_wind_chill, hour_wind_chill_value"
+                app:flow_horizontalStyle="spread_inside"
+                app:flow_maxElementsWrap="2"
+                app:flow_wrapMode="chain"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hour_information" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_feels"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_temp_feels"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_feels_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.feelsLikeC != null ? hour.feelsLikeC + ` ` + Constants.CELSIUS:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_wind"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_wind_speed"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_wind_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.windspeedKmph != null ? hour.windspeedKmph + ` ` + Constants.KM_H:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_precip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_precipitation"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_precip_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.precipMM != null ? hour.precipMM:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_humidity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_humidity"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_himidity_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.humidity != null ? hour.humidity + ` ` + Constants.PERCENT:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_visibility"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_rain"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_visibility_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.visibility != null ? hour.visibility + ` ` + Constants.MM:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_pressure"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_pressure"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_pressure_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.pressure != null ? hour.pressure + ` ` + Constants.MM:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_cloud"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_cloud"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_cloud_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.cloudcover != null ? hour.cloudcover + ` ` + Constants.PERCENT:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_heat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_heat"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_heat_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.heatIndexC != null ? hour.heatIndexC + ` ` + Constants.PERCENT:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_dew"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_dew"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_dew_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.dewPointC != null ? hour.dewPointC + ` ` + Constants.PERCENT:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_wind_chill"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_windchill"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_wind_chill_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.windChillC != null ? hour.windChillC + ` ` + Constants.PERCENT:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_wind_gust"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_windgust"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_wind_gust_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.windGustKmph != null ? hour.windGustKmph + ` ` + Constants.PERCENT:""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_uv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_condition_uv_index"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/hour_uv_value"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text='@{hour.uvIndex ?? ""}'
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:background="@drawable/weather_textview_underline"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

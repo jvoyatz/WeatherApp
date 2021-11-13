@@ -19,5 +19,7 @@
         <item name="android:windowTranslucentNavigation">true</item>-->
         <!--<item name="android:windowNoTitle">true</item>-->
         <!--<item name="android:windowFullscreen">true</item>-->
+        <item name="colorIcon">@color/weather_prim_200</item>
+        <item name="colorIconVariant">@color/weather_sec_200</item>
     </style>
 </resources>
