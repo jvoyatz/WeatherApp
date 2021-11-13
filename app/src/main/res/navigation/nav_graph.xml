@@ -29,11 +29,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/preferencesFragment"
-        android:name="com.jvoyatz.weather.app.ui.preferences.PreferencesFragment"
-        android:label="@string/settings" />
-
-    <fragment
         android:id="@+id/weatherDetailsFragment"
         android:name="com.jvoyatz.weather.app.ui.home.details.WeatherDetailsPagerFragment">
 

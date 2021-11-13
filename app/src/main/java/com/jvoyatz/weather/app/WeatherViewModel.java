@@ -43,6 +43,7 @@ public class WeatherViewModel extends AndroidViewModel {
 
     private final CityRepository cityRepository;
     private final WeatherRepository weatherRepository;
+    private final AppExecutors appExecutors;
     private LocationLiveData locationLiveData;
     private final MutableLiveData<String> searchCityLiveData;
     private MutableLiveData<CityEntity> selectedCityEntityLiveData;
@@ -54,10 +55,11 @@ public class WeatherViewModel extends AndroidViewModel {
     private final MutableLiveData<Event<Boolean>> triggerRefreshFavoriteCities;
 
     @Inject
-    public WeatherViewModel(@NonNull Application application, CityRepository cityRepository, WeatherRepository weatherRepository) {
+    public WeatherViewModel(@NonNull Application application, CityRepository cityRepository, WeatherRepository weatherRepository, AppExecutors appExecutors) {
         super(application);
         this.cityRepository = cityRepository;
         this.weatherRepository = weatherRepository;
+        this.appExecutors = appExecutors;
         searchCityLiveData = new MutableLiveData<>();
         favoriteCityLiveData = new MutableLiveData<>();
         triggerRefreshFavoriteCities = new MutableLiveData<>();
@@ -268,9 +270,14 @@ public class WeatherViewModel extends AndroidViewModel {
                                         @Override
                                         protected void onActive() {
                                             super.onActive();
-                                            final CityEntity entity = Utils.getCityEntityFromGeocoder(getApplication().getApplicationContext(), input.second.data.getLatitude(), input.second.data.getLongitude());
-                                            Timber.d("onActive: " + entity);
-                                            postValue(entity);
+                                            appExecutors.networkIO().execute(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    final CityEntity entity = Utils.getCityEntityFromGeocoder(getApplication().getApplicationContext(), input.second.data.getLatitude(), input.second.data.getLongitude());
+                                                    postValue(entity);
+                                                }
+                                            });
+
                                         }
                                     };
                                 }
