@@ -246,8 +246,9 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchView.setQuery("", false);
-                return false;
+                //searchView.setQuery("", false);
+                mWeatherViewModel.searchForCitiesSuggestions(query);
+                return true;
             }
 
             @Override

@@ -106,7 +106,7 @@ public class WeatherRepository {
                 Map<String, String> map = new HashMap<String, String>(){{
                         put("format", "json");
                         put("q", query.toString());
-                        put("num_of_days", Integer.toString(5));
+                        put("num_of_days", Integer.toString(6));
                         put("showLocalTime", "yes");
                         put("tp", "1");
                     }
@@ -141,7 +141,7 @@ public class WeatherRepository {
             {
                 put("format", "json");
                 put("q", lat + "," + lon);
-                put("num_of_days", Integer.toString(5));
+                put("num_of_days", Integer.toString(6));
                 put("showlocaltime", "yes");
                 put("tp", "1");
 

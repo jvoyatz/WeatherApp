@@ -76,7 +76,8 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
         mViewModel.getFavoritesCitiesLiveData().observe(getViewLifecycleOwner(), new Observer<List<CityEntity>>() {
             @Override
             public void onChanged(List<CityEntity> cityEntities) {
-                adapter.submitList(cityEntities);
+                if(cityEntities != null)
+                    adapter.submitList(cityEntities);
             }
         });
 
