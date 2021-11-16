@@ -7,13 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
 
-import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.databinding.ActivityWeatherSearchSuggestionItemBinding;
-
 
 import timber.log.Timber;
 
@@ -50,21 +46,10 @@ public class CitiesCursorAdapter extends CursorAdapter {
             mBinding.setRegion(region);
             mBinding.setCountry(country);
             mBinding.setHandler(mHandler);
+            mBinding.setIsFavorite(isFavorite);
 
             //mBinding.cityName.setText(name);
             //mBinding.cityRegionCountry.setText(regionCountryStr);
-
-            if(isFavorite){
-                mBinding.cityAddIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.baseline_favorite_black_24dp));
-            }
-            //mBinding.cityAddIcon.setOnClickListener(v -> );
-
-//            mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                   // mListener.on(name, false);
-//                }
-//            });
         }catch (Exception e){
             Timber.e(e);
         }

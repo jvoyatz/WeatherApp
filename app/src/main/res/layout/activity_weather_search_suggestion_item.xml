@@ -15,6 +15,10 @@
                     type="String" />
 
                 <variable
+                    name="isFavorite"
+                    type="boolean" />
+
+                <variable
                     name="handler"
                     type="com.jvoyatz.weather.app.storage.CitiesCursorAdapter.CitySuggestionsHandler" />
         </data>
@@ -35,6 +39,7 @@
                     android:padding="16dp"
                     android:src="@drawable/baseline_add_box_black_24dp"
                     android:tint="@color/weather_prim_analogous_900"
+                    isFavorite="@{isFavorite}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@+id/suggestion_guideline"

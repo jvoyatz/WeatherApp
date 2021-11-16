@@ -41,10 +41,11 @@ public class WeatherDetailsPagerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        int dayIndex = WeatherDetailsPagerFragmentArgs.fromBundle(getArguments()).getDayIndex();
-
         WeatherDetailsViewModel mViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
         WeatherViewModel weatherViewModel = new ViewModelProvider(requireActivity()).get(WeatherViewModel.class);
+        mBinding.setWeatherViewmodel(weatherViewModel);
+
+        int dayIndex = WeatherDetailsPagerFragmentArgs.fromBundle(getArguments()).getDayIndex();
 
         WeatherDetailsPagerAdapter adapter = new WeatherDetailsPagerAdapter(getChildFragmentManager(), getViewLifecycleOwner().getLifecycle(), dayIndex);
         mBinding.weatherDetailsPager.setAdapter(adapter);

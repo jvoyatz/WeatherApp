@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,12 +26,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.jvoyatz.weather.app.databinding.ActivityWeatherBinding;
 import com.jvoyatz.weather.app.models.Resource;
-import com.jvoyatz.weather.app.models.entities.CityEntity;
 import com.jvoyatz.weather.app.storage.CitiesCursorAdapter;
 import com.jvoyatz.weather.app.util.AbsentObserver;
 import com.jvoyatz.weather.app.util.CrossFader;
@@ -197,7 +194,12 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
 
     /**
      * Calls the insertCity method from {@link WeatherViewModel} in order to add
-     * this city to the local db.
+     * this city to the local db when storeAsFavorite is true, otherwise
+     * select city for a quick overview of the weather forecast.
+     *
+     * In the second case, we want our current screen to be the HomeFragment. In the first one,
+     * we will see city being added in our local db
+     *
      * @param cityName name of the city
      * @param region the region where it belongs
      * @param country the country where city belongs
@@ -205,15 +207,16 @@ public class WeatherActivity extends AppCompatActivity implements CitiesCursorAd
      */
     @Override
     public void onSuggestedCitySelected(@NonNull String cityName, @NonNull String region, @NonNull String country, boolean storeAsFavorite){
+
         mBinding.searchview.clearFocus();
-        //mBinding.searchview.setQuery("", false);
         if(storeAsFavorite)
             mWeatherViewModel.updateFavoriteCity(cityName, region, country);
         else{
             mWeatherViewModel.setNonFavoriteCity(cityName, region, country);
         }
 
-        if(navController.getCurrentDestination().getId() != R.id.homeFragment){
+
+        if(!storeAsFavorite && navController.getCurrentDestination().getId() != R.id.homeFragment){
             navController.navigate(R.id.homeFragment);
         }
     }

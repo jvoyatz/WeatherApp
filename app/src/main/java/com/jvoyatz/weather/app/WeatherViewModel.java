@@ -123,7 +123,6 @@ public class WeatherViewModel extends AndroidViewModel {
      */
     public void setSelectedCityEntityLiveData(CityEntity cityEntity){
         selectedCityEntityLiveData.postValue(cityEntity);
-        locationLiveData.trigger();
     }
 
     /**

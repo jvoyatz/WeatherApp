@@ -136,98 +136,101 @@ public class WeatherDetailsViewModel extends ViewModel {
      * 4) and trying to find the closest near to the provided sunshine and sunset time for each, and add this values as WeatherDayAstronomyEntity
      *    in the appropriate index of the list.
      */
-    public LiveData<List<WeatherDayHourEntity>> getWeatherDayHourEntityLiveData() {
-        return Transformations.switchMap(weatherEntityLiveData, new Function<Resource<WeatherEntity>, LiveData<List<WeatherDayHourEntity>>>() {
+    public LiveData<Resource<List<WeatherDayHourEntity>>> getWeatherDayHourEntityLiveData() {
+        return Transformations.switchMap(weatherEntityLiveData, new Function<Resource<WeatherEntity>, LiveData<Resource<List<WeatherDayHourEntity>>>>() {
             @Override
-            public LiveData<List<WeatherDayHourEntity>> apply(Resource<WeatherEntity> resource) {
+            public LiveData<Resource<List<WeatherDayHourEntity>>> apply(Resource<WeatherEntity> resource) {
                 if (resource != null && resource.data != null &&  !Objects.isEmpty(resource.data.getWeather())) {
-                    return new LiveData<List<WeatherDayHourEntity>>() {
+                    return new LiveData<Resource<List<WeatherDayHourEntity>>>() {
                         @Override
                         protected void onActive() {
                             super.onActive();
-
+                            setValue(Resource.loading(null));
                             final Date nowDate = Calendar.getInstance().getTime();
                             final WeatherEntity data = resource.data;
 
-                            appExecutors.diskIO().execute(() -> {
+                            appExecutors.periodicIO().schedule(new Runnable() {
+                                @Override
+                                public void run() {
+                                    List<WeatherDayHourEntity> hours = new ArrayList<>();
 
-                                List<WeatherDayHourEntity> hours = new ArrayList<>();
+                                    for (int i = 0; i < data.getWeather().size(); i++) {
+                                        String formalDate = "Not Provided Date";
+                                        final WeatherDayEntity day = data.getWeather().get(i);
 
-                                for (int i = 0; i < data.getWeather().size(); i++) {
-                                    String formalDate = "Not Provided Date";
-                                    final WeatherDayEntity day = data.getWeather().get(i);
+                                        //if no items, then forward to the next day
+                                        if(Objects.isEmpty(day.getHourly()))
+                                            continue;
 
-                                    //if no items, then forward to the next day
-                                    if(Objects.isEmpty(day.getHourly()))
-                                        continue;
+                                        ///////////////////////////////////////////////////////////////////////////////////////////
+                                        //filters the list of hourly field so as to remove items before the current date
+                                        final List<WeatherDayHourEntity> filteredHours = new ArrayList<>(day.getHourly().size());
+                                        for (WeatherDayHourEntity hour : day.getHourly()) {
+                                            try {
+                                                final Date date = Utils.getFullDateFormatter().parse(hour.getTime());
+                                                if (date == null || date.compareTo(nowDate) < 0)
+                                                    continue;
+                                                filteredHours.add(hour);
+                                            } catch (ParseException e) {
+                                                Timber.e(e);
+                                            }
+                                        }
+                                        day.setHourly(filteredHours);
+                                        ////////////////////////////////////////////////////////////////////////////////////////////
 
-                                    ///////////////////////////////////////////////////////////////////////////////////////////
-                                    //filters the list of hourly field so as to remove items before the current date
-                                    final List<WeatherDayHourEntity> filteredHours = new ArrayList<>(day.getHourly().size());
-                                    for (WeatherDayHourEntity hour : day.getHourly()) {
-                                        try {
-                                            final Date date = Utils.getFullDateFormatter().parse(hour.getTime());
-                                            if (date == null || date.compareTo(nowDate) < 0)
-                                                continue;
-                                            filteredHours.add(hour);
-                                        } catch (ParseException e) {
-                                            Timber.e(e);
+                                        //parsing day date
+                                        final Date date = Utils.parseYYYYMMddStr(day.getDate());
+                                        if (date != null) {
+                                            formalDate = Utils.formatFormalDate(date);
+                                        }
+
+                                        //adding it as a header
+                                        //except the current day, the first found in the list
+                                        if (i != 0) {
+                                            hours.add(WeatherDayHourEntity.builder()
+                                                    .withWeatherCode(WeatherHourItemsAdapter.DAY_STR)
+                                                    .withTime(formalDate)
+                                                    .build());
+                                        }
+                                        //adds the weather day hour items
+                                        hours.addAll(day.getHourly());
+
+                                        //find sunrise and sunset between given hours for each day
+                                        if (!Objects.isEmpty(day.getAstronomy())) {
+                                            final WeatherDayAstronomyEntity astronomy = day.getAstronomy().get(0);
+                                            //07:04 AM format
+                                            try {
+                                                //get sunshine date
+                                                WeatherDayHourEntity closeToSunriseEntity;
+                                                final Date yMdDate = Utils.parseYYYYMMddStr(day.getDate());
+                                                Date sunriseDate = Utils.mergeHHmmDates(yMdDate, astronomy.getSunrise());
+                                                if (sunriseDate != null && sunriseDate.compareTo(nowDate) >= 0) {
+                                                    //get the closest date from weather hour items compared to sunshine
+                                                    closeToSunriseEntity = Utils.getClosestWeatherDayHourEntity(hours, sunriseDate.getTime());
+                                                    if (closeToSunriseEntity != null) {
+                                                        addItem(hours, closeToSunriseEntity, sunriseDate, Utils.get24TimeFrom12(astronomy.getSunrise()), WeatherHourItemsAdapter.DAY_SUNRISE);
+                                                    }
+                                                }
+                                                //get sunset date
+                                                Date sunsetDate = Utils.mergeAmDate(yMdDate, astronomy.getSunset());
+                                                WeatherDayHourEntity closeToSunsetEntity;
+                                                if (sunsetDate != null && sunsetDate.compareTo(nowDate) > 0) {
+                                                    //get the closet date from weather hour items compared to sunset
+                                                    closeToSunsetEntity = Utils.getClosestWeatherDayHourEntity(hours, sunsetDate.getTime());
+                                                    if (closeToSunsetEntity != null) {
+                                                        addItem(hours, closeToSunsetEntity, sunsetDate, Utils.get24TimeFrom12(astronomy.getSunset()), WeatherHourItemsAdapter.DAY_SUNSET);
+                                                    }
+                                                }
+                                            } catch (Exception e) {
+                                                Timber.e(e);
+                                                postValue(Resource.error(e.getMessage(), hours, null));
+                                            }
                                         }
                                     }
-                                    day.setHourly(filteredHours);
-                                    ////////////////////////////////////////////////////////////////////////////////////////////
-
-                                    //parsing day date
-                                    final Date date = Utils.parseYYYYMMddStr(day.getDate());
-                                    if (date != null) {
-                                        formalDate = Utils.formatFormalDate(date);
-                                    }
-
-                                    //adding it as a header
-                                    //except the current day, the first found in the list
-                                    if (i != 0) {
-                                        hours.add(WeatherDayHourEntity.builder()
-                                                .withWeatherCode(WeatherHourItemsAdapter.DAY_STR)
-                                                .withTime(formalDate)
-                                                .build());
-                                    }
-                                    //adds the weather day hour items
-                                    hours.addAll(day.getHourly());
-
-                                    //find sunrise and sunset between given hours for each day
-                                    if (!Objects.isEmpty(day.getAstronomy())) {
-                                        final WeatherDayAstronomyEntity astronomy = day.getAstronomy().get(0);
-                                        //07:04 AM format
-                                        try {
-                                            //get sunshine date
-                                            WeatherDayHourEntity closeToSunriseEntity;
-                                            final Date yMdDate = Utils.parseYYYYMMddStr(day.getDate());
-                                            Date sunriseDate = Utils.mergeHHmmDates(yMdDate, astronomy.getSunrise());
-                                            if (sunriseDate != null && sunriseDate.compareTo(nowDate) >= 0) {
-                                                //get the closest date from weather hour items compared to sunshine
-                                                closeToSunriseEntity = Utils.getClosestWeatherDayHourEntity(hours, sunriseDate.getTime());
-                                                if (closeToSunriseEntity != null) {
-                                                    addItem(hours, closeToSunriseEntity, sunriseDate, Utils.get24TimeFrom12(astronomy.getSunrise()), WeatherHourItemsAdapter.DAY_SUNRISE);
-                                                }
-                                            }
-                                            //get sunset date
-                                            Date sunsetDate = Utils.mergeAmDate(yMdDate, astronomy.getSunset());
-                                            WeatherDayHourEntity closeToSunsetEntity;
-                                            if (sunsetDate != null && sunsetDate.compareTo(nowDate) > 0) {
-                                                //get the closet date from weather hour items compared to sunset
-                                                closeToSunsetEntity = Utils.getClosestWeatherDayHourEntity(hours, sunsetDate.getTime());
-                                                if (closeToSunsetEntity != null) {
-                                                    addItem(hours, closeToSunsetEntity, sunsetDate, Utils.get24TimeFrom12(astronomy.getSunset()), WeatherHourItemsAdapter.DAY_SUNSET);
-                                                }
-                                            }
-                                        } catch (Exception e) {
-                                            Timber.e(e);
-                                        }
-                                    }
+                                    //notify observer
+                                    postValue(Resource.success(hours));
                                 }
-                                //notify observer
-                                postValue(hours);
-                            });
+                            }, 450, TimeUnit.MILLISECONDS);
                         }
                     };
                 }

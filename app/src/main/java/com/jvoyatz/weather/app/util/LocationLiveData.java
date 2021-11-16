@@ -14,7 +14,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.location.LocationListenerCompat;
@@ -118,6 +117,7 @@ public class LocationLiveData extends LiveData<Resource<Location>> implements Lo
         final boolean isLocationProviderEnabled = Utils.isLocationProviderEnabled(context);
         final boolean hasPermission = Utils.hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
         if (hasPermission && isLocationProviderEnabled) {
+            trigger();
             try {
                 ArrayList<String> providers = getProviders();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && gnssStatusCallback != null) {

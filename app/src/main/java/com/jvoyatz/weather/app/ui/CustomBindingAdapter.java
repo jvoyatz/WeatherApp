@@ -2,16 +2,13 @@ package com.jvoyatz.weather.app.ui;
 
 import static com.jvoyatz.weather.app.ui.cities.CitiesListAdapter.DIFF_CALLBACK;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.BindingAdapter;
@@ -22,23 +19,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.models.entities.CityEntity;
-import com.jvoyatz.weather.app.models.entities.weather.WeatherDayEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
-import com.jvoyatz.weather.app.ui.cities.CitiesHandler;
 import com.jvoyatz.weather.app.util.Objects;
 import com.jvoyatz.weather.app.util.Utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import timber.log.Timber;
 
@@ -146,5 +131,12 @@ public class CustomBindingAdapter {
             }
         }
         textView.setText(text.toString());
+    }
+
+    @BindingAdapter("isFavorite")
+    public static void setIsFavoriteIcon(ImageView view, Boolean isFavorite){
+        if(isFavorite != null && isFavorite){
+            view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), R.drawable.baseline_favorite_black_24dp));
+        }
     }
 }

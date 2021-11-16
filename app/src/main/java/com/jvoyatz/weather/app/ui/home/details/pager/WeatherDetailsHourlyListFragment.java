@@ -1,24 +1,14 @@
 package com.jvoyatz.weather.app.ui.home.details.pager;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.TimeInterpolator;
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.R;
 import com.jvoyatz.weather.app.databinding.WeatherDetailsPagerFragmentHourlyListBinding;
+import com.jvoyatz.weather.app.models.Resource;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherDayHourEntity;
 import com.jvoyatz.weather.app.models.entities.weather.WeatherEntity;
 import com.jvoyatz.weather.app.ui.home.details.WeatherDetailsViewModel;
@@ -81,27 +72,39 @@ public class WeatherDetailsHourlyListFragment extends Fragment implements Weathe
 
         mViewModel = new ViewModelProvider(requireActivity()).get(WeatherDetailsViewModel.class);
 
-        adapter.showLoading();
-        mViewModel.getWeatherDayHourEntityLiveData().observe(getViewLifecycleOwner(), new Observer<List<WeatherDayHourEntity>>() {
+        mViewModel.getWeatherDayHourEntityLiveData().observe(getViewLifecycleOwner(), new Observer<Resource<List<WeatherDayHourEntity>>>() {
             @Override
-            public void onChanged(List<WeatherDayHourEntity> entities) {
-                try{
-                    adapter.submitList(entities);
-                    if(Objects.isEmpty(entities)){
-                        mBinding.hourCoordinatorLayout.setVisibility(View.GONE);
-                    }else{
-
-                        handler.postDelayed(() -> {
+            public void onChanged(Resource<List<WeatherDayHourEntity>> resource) {
+                if (resource != null) {
+                    switch (resource.status){
+                        case ERROR:
+                            Toast.makeText(requireContext(), getString(R.string.list_items_error), Toast.LENGTH_SHORT).show();
+                            adapter.submitList(resource.data);
+                            break;
+                        case SUCCESS:
                             try {
-                                onViewClicked(null, adapter.getCurrentList().get(4));
+                                adapter.submitList(resource.data);
+                                if (Objects.isEmpty(resource.data)) {
+                                    mBinding.hourCoordinatorLayout.setVisibility(View.GONE);
+                                } else {
+
+                                    handler.postDelayed(() -> {
+                                        try {
+                                            onViewClicked(null, adapter.getCurrentList().get(4));
+                                        } catch (Exception e) {
+                                            Timber.e(e);
+                                        }
+                                    }, 500);
+                                    mBinding.hourCoordinatorLayout.setVisibility(View.VISIBLE);
+                                }
                             } catch (Exception e) {
                                 Timber.e(e);
                             }
-                        }, 500);
-                        mBinding.hourCoordinatorLayout.setVisibility(View.VISIBLE);
+                            break;
+                        case LOADING:
+                            adapter.showLoading();
+                            break;
                     }
-                }catch (Exception e){
-                    Timber.e(e);
                 }
             }
         });

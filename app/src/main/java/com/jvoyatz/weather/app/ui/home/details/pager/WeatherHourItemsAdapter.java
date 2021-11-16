@@ -58,7 +58,9 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
             viewType = SUNSET_ID;
         }else if(TextUtils.equals(item.getWeatherCode(), NO_ITEMS)){
             viewType = NO_ITEMS_ID;
-        }else{
+        }else if(TextUtils.equals(item.getWeatherCode(), LOADING_STR)){
+            viewType = LOADING_ID;
+        } else{
             viewType = 0;
         }
 
@@ -77,6 +79,8 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
                 return DataBindingUtil.inflate(inflater, R.layout.weather_details_pager_fragment_hourly_list_sunset, parent, false);
             case NO_ITEMS_ID:
                 return DataBindingUtil.inflate(inflater, R.layout.recyclerview_exhausted_item, parent, false);
+            case LOADING_ID:
+                return DataBindingUtil.inflate(inflater, R.layout.recyclerview_loading_item, parent, false);
             default:
                 return DataBindingUtil.inflate(inflater, R.layout.weather_details_pager_fragment_hourly_list_item, parent, false);
         }
@@ -86,6 +90,8 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
     protected void bind(ViewDataBinding binding, WeatherDayHourEntity item, int position) {
         final Context context = binding.getRoot().getContext();
         switch (viewType){
+            case LOADING_ID:
+                break;
             case SUNRISE_ID:
             case SUNSET_ID:
             case DAY_ID:
@@ -104,9 +110,10 @@ public class WeatherHourItemsAdapter extends DataBoundListAdapter<WeatherDayHour
 
     public void showLoading(){
         ArrayList<WeatherDayHourEntity> list = new ArrayList<>(1);
-        list.add(WeatherDayHourEntity.builder().withWeatherCode(NO_ITEMS).build());
+        list.add(WeatherDayHourEntity.builder().withWeatherCode(LOADING_STR).build());
         submitList(list);
     }
+
     @Override
     public void submitList(@Nullable List<WeatherDayHourEntity> list) {
         if(Objects.isEmpty(list)){
