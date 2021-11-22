@@ -102,16 +102,14 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
     @Override
     public void onViewClicked(View view, @NonNull CityEntity item, @Nullable CityEntity selectedItem) {
         boolean areItemsTheSame = CitiesListAdapter.DIFF_CALLBACK.areContentsTheSame(item, selectedItem);
+        NavController navController = Navigation.findNavController(requireView());
         switch (view.getId()){
             case R.id.city_weather_forecast_btn:
                 if(!areItemsTheSame) {
                     mWeatherViewModel.setSelectedCityEntityLiveData(item);
                 }
-                NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(CitiesFragmentDirections.actionCitiesFragmentToHomeFragment());
                 break;
             default:
-
                 if(!areItemsTheSame) {
                     mWeatherViewModel.setSelectedCityEntityLiveData(item);
                 }else{
@@ -119,6 +117,7 @@ public class CitiesFragment extends Fragment implements CitiesHandler{
                 }
                 break;
         }
+        handler.postDelayed(() -> navController.navigate(CitiesFragmentDirections.actionCitiesFragmentToHomeFragment()), 400);
     }
 
     @Override

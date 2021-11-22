@@ -165,11 +165,11 @@
                 android:padding="1dp"
                 android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="@{Utils.formatStandardDate(Utils.getDateTimeByZone(city.timezone.zone))}"
+                android:text="@{Utils.formatYYYYMMddDate(Utils.getDateTimeByZone(city.timezone.zone))}"
                 app:layout_constraintTop_toBottomOf="@+id/cityIcon"
                 tools:text="17:32" />
 
-         <!--   <TextView
+            <TextView
                 android:id="@+id/time"
                 style="@style/TextAppearance.MaterialComponents.Overline"
                 android:layout_width="0dp"
@@ -183,7 +183,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/date"
                 app:layout_constraintStart_toStartOf="@+id/date"
                 app:layout_constraintTop_toBottomOf="@+id/date"
-                tools:text="17:32" />-->
+                tools:text="17:32" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

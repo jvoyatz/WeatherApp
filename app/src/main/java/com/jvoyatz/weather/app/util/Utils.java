@@ -228,7 +228,7 @@ public class Utils {
         return date == null ? "" : getHourDayFormatter().format(date);
     }
 
-    private static String formatYYYYMMddDate(Date date) {
+    public static String formatYYYYMMddDate(Date date) {
         return date == null ? "" : getYYYYMMddFormatter().format(date);
     }
 
