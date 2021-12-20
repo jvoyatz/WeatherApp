@@ -6,7 +6,8 @@ User is a able to search for worldwide cities and store them as favorites.
 
 Remote datasources, used to collect weather condition details and search for cities, are the APIs provide by [World Weather Online](#https://www.worldweatheronline.com/api/).
 
-|![Home](./imgs/0.jpg)  | ![Forecast](./imgs/1.jpg) | ![Hours](./imgs/3.jpg)|![Selected Hour](./imgs/4.jpg)|
+| ![Home](./imgs/0.jpg)  | ![Forecast](./imgs/1.jpg) | ![Hours](./imgs/3.jpg) | ![Selected Hour](./imgs/4.jpg) |
+|----------|:-------------:|------:|
 
 ![Cities](./imgs/2.jpg)
 ![Night](./imgs/5.jpg)
