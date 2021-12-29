@@ -38,19 +38,4 @@ public interface CityDao {
 
     @Query("SELECT * FROM CityEntity WHERE isFavorite = 1")
     List<CityEntity> getFavoriteCities();
-
-
-//    @Query("SELECT * FROM FavoriteCityEntity")
-//    LiveData<List<FavoriteCityEntity>> getAllFavoriteCities();
-//
-//    @Insert//(onConflict = OnConflictStrategy.REPLACE)
-//    void insertFavoriteCity(@NonNull FavoriteCityEntity favoriteCityEntity);
-//
-//    @Query("SELECT * FROM FavoriteCityEntity WHERE name LIKE '%' || :city || '%' AND  region LIKE '%' ||  :region || '%' AND country LIKE '%' || :country || '%' limit 1")
-//    LiveData<FavoriteCityEntity> findFavoriteByMultipleCriteria(@NonNull String city, @NonNull String region, @NonNull String country);
-
-
-//
-//    @Delete
-//    void delete(User user);
 }

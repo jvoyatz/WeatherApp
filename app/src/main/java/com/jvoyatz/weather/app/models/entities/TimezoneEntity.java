@@ -39,29 +39,6 @@ public class TimezoneEntity {
 		this.zone = zone;
 	}
 
-	@NonNull
-	@Override
-	public String toString() {
-		return "TimezoneEntity{" +
-				"offset='" + offset + '\'' +
-				", zone='" + zone + '\'' +
-				'}';
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		TimezoneEntity that = (TimezoneEntity) o;
-
-		return TextUtils.equals(offset, that.offset)
-				&& TextUtils.equals(zone, that.zone);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(offset, zone);
-	}
 
 	public static Builder builder() {
 		return new Builder();
