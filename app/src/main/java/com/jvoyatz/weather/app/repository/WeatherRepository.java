@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 
 import com.jvoyatz.weather.app.AppExecutors;
 import com.jvoyatz.weather.app.api.WorldWeatherAPI;
